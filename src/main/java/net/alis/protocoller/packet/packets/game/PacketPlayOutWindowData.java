@@ -1,0 +1,71 @@
+package net.alis.protocoller.packet.packets.game;
+
+import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.packet.MinecraftPacketType;
+import net.alis.protocoller.packet.Packet;
+import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketType;
+
+public class PacketPlayOutWindowData implements Packet {
+
+    private final PacketDataSerializer packetData;
+    private int syncId;
+    private int propertyId;
+    private int value;
+
+    public PacketPlayOutWindowData(PacketDataSerializer packetData) {
+        this.packetData = packetData;
+        this.syncId = packetData.readInt(0);
+        this.propertyId = packetData.readInt(1);
+        this.value = packetData.readInt(2);
+    }
+
+    public PacketPlayOutWindowData(int syncId, int propertyId, int value) {
+        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, syncId, propertyId, value));
+        this.syncId = syncId;
+        this.propertyId = propertyId;
+        this.value = value;
+    }
+
+    public int getSyncId() {
+        return syncId;
+    }
+
+    public void setSyncId(int syncId) {
+        this.packetData.writeInt(0, syncId);
+        this.syncId = syncId;
+    }
+
+    public int getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(int propertyId) {
+        this.packetData.writeInt(1, propertyId);
+        this.propertyId = propertyId;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.packetData.writeInt(2, value);
+        this.value = value;
+    }
+
+    @Override
+    public MinecraftPacketType getPacketType() {
+        return PacketType.Play.Server.WINDOW_DATA;
+    }
+
+    @Override
+    public PacketDataSerializer getPacketData() {
+        return packetData;
+    }
+
+    @Override
+    public Object getRawPacket() {
+        return getPacketData().getRawPacket();
+    }
+}

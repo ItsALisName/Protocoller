@@ -1,0 +1,8 @@
+name: Protocoller
+version: '${project.version}'
+main: net.alis.protocoller.bukkit.ProtocollerPlugin
+api-version: 1.13
+load: STARTUP
+authors: [ ALis ]
+description: A simple minecraft packets listener
+website: https://vk.com/alphatwo

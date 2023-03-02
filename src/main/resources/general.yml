@@ -1,0 +1,7 @@
+banned-plugins: []
+
+banned-authors: []
+
+listeners-registration-notify: true
+
+api-user-registration-notify: true
