@@ -11,7 +11,7 @@ import io.netty.util.ByteProcessor;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.nbt.NBTHelper;
+import net.alis.protocoller.parent.nbt.CompressedStreamTools;
 import net.alis.protocoller.parent.nbt.NBTSizeTracker;
 import net.alis.protocoller.parent.nbt.NBTTagCompound;
 import net.alis.protocoller.parent.network.chat.ChatComponent;
@@ -206,7 +206,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
             this.writeByte(0);
         } else {
             try {
-                NBTHelper.write(nbt, new ByteBufOutputStream(this));
+                CompressedStreamTools.write(nbt, new ByteBufOutputStream(this));
             }
             catch (IOException ioexception)
             {
@@ -225,7 +225,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
         } else {
             this.readerIndex(i);
             try {
-                return NBTHelper.read(new ByteBufInputStream(this), new NBTSizeTracker(2097152L));
+                return CompressedStreamTools.read(new ByteBufInputStream(this), new NBTSizeTracker(2097152L));
             } catch (IOException ioexception) {
                 throw new EncoderException(ioexception);
             }

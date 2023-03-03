@@ -69,8 +69,7 @@ public class BlockPosition extends BaseBlockPosition implements CopiedObject {
         return this.offset(Facing.UP, n);
     }
 
-    public BlockPosition down()
-    {
+    public BlockPosition down() {
         return this.down(1);
     }
 

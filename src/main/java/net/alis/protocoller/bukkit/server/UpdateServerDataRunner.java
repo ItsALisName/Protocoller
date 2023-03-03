@@ -10,15 +10,8 @@ import org.bukkit.Bukkit;
 
 public class UpdateServerDataRunner implements Runnable {
 
-    private static boolean isStarted = false;
-
     public static void start() {
-        if(!isStarted) {
-            TaskSimplifier.INSTANCE.preformAsyncTimerTask(new UpdateServerDataRunner(), 0L, 20L);
-            isStarted = true;
-        } else {
-            Bukkit.getConsoleSender().sendMessage("[Protocoller] Task 'UpdateServerInfo' already started!");
-        }
+        TaskSimplifier.INSTANCE.preformAsyncTimerTask(new UpdateServerDataRunner(), 0L, 20L);
     }
 
     @Override

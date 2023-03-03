@@ -3,6 +3,7 @@ package net.alis.protocoller.parent.entity.player;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.parent.nbt.NBTBase;
 import net.alis.protocoller.parent.nbt.NBTTagCompound;
 import net.alis.protocoller.util.CopiedObject;
 import net.alis.protocoller.util.ObjectAccessor;
@@ -94,7 +95,8 @@ public class PlayerAbilities implements CopiedObject {
         tagCompound.setBoolean("mayBuild", this.mayBuild);
         tagCompound.setFloat("flySpeed", this.flySpeed);
         tagCompound.setFloat("walkSpeed", this.walkSpeed);
-        return (NBTTagCompound) compound.setCompound("abilities", tagCompound);
+        compound.setTag("abilities", tagCompound);
+        return compound;
     }
 
     public void fromNBT(NBTTagCompound nbt) {

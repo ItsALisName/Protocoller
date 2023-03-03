@@ -1,6 +1,6 @@
 package net.alis.protocoller.bukkit.events;
 
-import net.alis.protocoller.entity.ApiUser;
+import net.alis.protocoller.ApiUser;
 import net.alis.protocoller.event.impl.PacketEventPriority;
 import net.alis.protocoller.event.RegisteredPacketListener;
 import net.alis.protocoller.event.impl.PacketListener;

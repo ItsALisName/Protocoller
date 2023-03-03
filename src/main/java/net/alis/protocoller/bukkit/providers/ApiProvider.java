@@ -1,14 +1,18 @@
 package net.alis.protocoller.bukkit.providers;
 
 import net.alis.protocoller.bukkit.exceptions.NetworkPlayerNotFoundException;
-import net.alis.protocoller.entity.ApiUser;
+import net.alis.protocoller.ApiUser;
 import net.alis.protocoller.ProtocollerApi;
+import net.alis.protocoller.bukkit.managers.LogsManager;
+import net.alis.protocoller.bukkit.util.TaskSimplifier;
 import net.alis.protocoller.bukkit.util.Utils;
 import net.alis.protocoller.bukkit.exceptions.BannedApiUserException;
 import net.alis.protocoller.entity.NetworkPlayer;
 import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.server.NetworkServer;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
@@ -26,12 +30,12 @@ public class ApiProvider implements ProtocollerApi {
             throw new BannedApiUserException(new String[]{user.getName(), user.getVersion()}, user.getAuthors());
         }
         GlobalProvider.instance().getData().getUsersContainer().getRegisteredUsers().add(user);
-        if(GlobalProvider.instance().getConfig().isApiUserRegistrationNotify()) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&Skip$1[Protocoller] New api user registered:"));
-            Bukkit.getConsoleSender().sendMessage(setColors("&Skip$1[Protocoller] Plugin Name: " + user.getName()));
-            Bukkit.getConsoleSender().sendMessage(setColors("&Skip$1[Protocoller] Version: " + user.getVersion()));
-            Bukkit.getConsoleSender().sendMessage(setColors("&Skip$1[Protocoller] Authors: " + String.join(", ", user.getAuthors())));
-        }
+        LogsManager.get().sendRegisteredUserNotify(user.getName(), user.getVersion(), String.join(", ", user.getAuthors()));
+    }
+
+    @Override
+    public NetworkPlayer getPlayer(@NotNull Player player) {
+        return getPlayer(player.getUniqueId());
     }
 
     @Override

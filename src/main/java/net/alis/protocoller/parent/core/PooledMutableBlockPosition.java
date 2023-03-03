@@ -21,7 +21,7 @@ public final class PooledMutableBlockPosition extends MutableBlockPosition {
     }
 
     public static PooledMutableBlockPosition retain(double xIn, double yIn, double zIn) {
-        return retain(MathHelper.floorDouble(xIn), MathHelper.floorDouble(yIn), MathHelper.floorDouble(zIn));
+        return retain(MathHelper.floor(xIn), MathHelper.floor(yIn), MathHelper.floor(zIn));
     }
 
     public static PooledMutableBlockPosition retain(BaseBlockPosition vec) {

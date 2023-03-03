@@ -13,6 +13,12 @@ public class InitialData {
     private final String craftBukkitPackage;
     private final Version preVersion;
 
+    private final String javaVersion;
+    private final String jdkVersion;
+    private final String osName;
+    private final String osVersion;
+    private final String osArchitecture;
+
     InitialData(Server server) {
         String packageName = server.getClass().getPackage().getName();
         this.serverPackageVersion = packageName.substring(packageName.lastIndexOf(46) + 1);
@@ -25,6 +31,31 @@ public class InitialData {
             this.packetsPackage = "net.minecraft.network.protocol";
             this.isLegacyServer = false;
         }
+        this.javaVersion = System.getProperty("java.version");
+        this.jdkVersion = System.getProperty("java.runtime.version");
+        this.osName = System.getProperty("os.name");
+        this.osVersion = System.getProperty("os.version");
+        this.osArchitecture = System.getProperty("os.arch");
+    }
+
+    public String getJavaVersion() {
+        return javaVersion;
+    }
+
+    public String getJdkVersion() {
+        return jdkVersion;
+    }
+
+    public String getOsName() {
+        return osName;
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public String getOsArchitecture() {
+        return osArchitecture;
     }
 
     public String getPacketsPackage() {

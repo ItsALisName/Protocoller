@@ -185,15 +185,15 @@ public enum Facing {
     }
 
     public static Facing getFront(int index) {
-        return VALUES[MathHelper.abs_int(index % VALUES.length)];
+        return VALUES[MathHelper.abs(index % VALUES.length)];
     }
 
     public static Facing getHorizontal(int p_176731_0_) {
-        return HORIZONTALS[MathHelper.abs_int(p_176731_0_ % HORIZONTALS.length)];
+        return HORIZONTALS[MathHelper.abs(p_176731_0_ % HORIZONTALS.length)];
     }
 
     public static Facing fromAngle(double angle) {
-        return getHorizontal(MathHelper.floorDouble(angle / 90.0D + 0.5D) & 3);
+        return getHorizontal(MathHelper.floor(angle / 90.0D + 0.5D) & 3);
     }
 
     public float getHorizontalAngle() {

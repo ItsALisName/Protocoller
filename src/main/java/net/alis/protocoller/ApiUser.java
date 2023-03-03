@@ -1,6 +1,4 @@
-package net.alis.protocoller.entity;
-
-import net.alis.protocoller.ProtocollerApi;
+package net.alis.protocoller;
 
 public interface ApiUser {
 

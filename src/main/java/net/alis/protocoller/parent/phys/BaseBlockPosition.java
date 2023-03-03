@@ -38,7 +38,7 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition> {
     }
 
     public BaseBlockPosition(double xIn, double yIn, double zIn) {
-        this(MathHelper.floorDouble(xIn), MathHelper.floorDouble(yIn), MathHelper.floorDouble(zIn));
+        this(MathHelper.floor(xIn), MathHelper.floor(yIn), MathHelper.floor(zIn));
     }
 
     public boolean equals(Object obj) {

@@ -1,6 +1,6 @@
 package net.alis.protocoller.bukkit.data;
 
-import net.alis.protocoller.entity.ApiUser;
+import net.alis.protocoller.ApiUser;
 
 import java.util.HashSet;
 import java.util.Set;

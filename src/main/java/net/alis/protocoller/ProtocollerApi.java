@@ -3,6 +3,7 @@ package net.alis.protocoller;
 import net.alis.protocoller.entity.NetworkPlayer;
 import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.server.NetworkServer;
+import org.bukkit.entity.Player;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -16,6 +17,8 @@ public interface ProtocollerApi {
     NetworkPlayer getPlayer(UUID uuid);
 
     NetworkPlayer getPlayer(InetSocketAddress address);
+
+    NetworkPlayer getPlayer(Player player);
 
     PacketEventsManager getEventManager();
 

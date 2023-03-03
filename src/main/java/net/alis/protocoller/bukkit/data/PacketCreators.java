@@ -72,6 +72,7 @@ public class PacketCreators {
         this.addAny(PacketType.Play.Client.CHAT_ACK_PACKET, ConstructorLevelIndicator.ServerboundChatAckPacket_1);
         this.addAny(PacketType.Play.Client.PONG_PACKET, ConstructorLevelIndicator.ServerboundPongPacket_1);
         this.addAny(PacketType.Play.Client.ITEM_NAME, ConstructorLevelIndicator.PacketPlayInItemName_1);
+        this.addAny(PacketType.Play.Client.SPECTATE, ConstructorLevelIndicator.PacketPlayInSpectate_1);
 
         this.add(PacketType.Play.Client.ADVANCEMENTS, ConstructorLevelIndicator.PacketPlayInAdvancements_0, Version.v1_12);
         this.add(PacketType.Play.Client.ADVANCEMENTS, ConstructorLevelIndicator.PacketPlayInAdvancements_1, Version.v1_17);
@@ -143,6 +144,12 @@ public class PacketCreators {
         this.add(PacketType.Play.Client.SETTINGS, ConstructorLevelIndicator.PacketPlayInSettings_0, Version.v1_8);
         this.add(PacketType.Play.Client.SETTINGS, ConstructorLevelIndicator.PacketPlayInSettings_1, Version.v1_17);
         this.add(PacketType.Play.Client.SETTINGS, ConstructorLevelIndicator.PacketPlayInSettings_2, Version.v1_18_n1);
+        this.add(PacketType.Play.Client.STEER_VEHICLE, ConstructorLevelIndicator.PacketPlayInSteerVehicle_0, Version.v1_8);
+        this.add(PacketType.Play.Client.STEER_VEHICLE, ConstructorLevelIndicator.PacketPlayInSteerVehicle_1, Version.v1_17);
+        this.add(PacketType.Play.Client.TILE_NBT_QUERY, ConstructorLevelIndicator.PacketPlayInTileNBTQuery_0, Version.v1_8);
+        this.add(PacketType.Play.Client.TILE_NBT_QUERY, ConstructorLevelIndicator.PacketPlayInTileNBTQuery_1, Version.v1_17);
+        this.add(PacketType.Play.Client.UPDATE_SIGN, ConstructorLevelIndicator.PacketPlayInUpdateSign_0, Version.v1_8);
+        this.add(PacketType.Play.Client.UPDATE_SIGN, ConstructorLevelIndicator.PacketPlayInUpdateSign_1, Version.v1_17);
     }
 
     void add(MinecraftPacketType type, ConstructorLevelIndicator indicator, Version version) {

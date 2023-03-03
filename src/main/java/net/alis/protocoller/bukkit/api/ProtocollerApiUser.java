@@ -1,6 +1,6 @@
 package net.alis.protocoller.bukkit.api;
 
-import net.alis.protocoller.entity.ApiUser;
+import net.alis.protocoller.ApiUser;
 import net.alis.protocoller.ProtocollerApi;
 import net.alis.protocoller.bukkit.providers.ApiProvider;
 import org.bukkit.plugin.Plugin;

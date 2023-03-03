@@ -7,6 +7,7 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 public enum ConstructorLevelIndicator {
 
@@ -64,6 +65,13 @@ public enum ConstructorLevelIndicator {
 
     PacketPlayInAbilities_1((byte) 1, ClassesContainer.INSTANCE.getPlayerAbilitiesClass()),
     PacketPlayInBoatMove_1((byte) 1, boolean.class, boolean.class),
+    PacketPlayInSpectate_1((byte) 1, UUID.class),
+    PacketPlayInSteerVehicle_0((byte) 0),
+    PacketPlayInSteerVehicle_1((byte) 1, float.class, float.class, boolean.class, boolean.class),
+    PacketPlayInTileNBTQuery_0((byte) 0),
+    PacketPlayInTileNBTQuery_1((byte) 1, int.class, ClassesContainer.INSTANCE.getBlockPositionClass()),
+    PacketPlayInUpdateSign_0((byte) 0),
+    PacketPlayInUpdateSign_1((byte) 1, ClassesContainer.INSTANCE.getBlockPositionClass(), String.class, String.class, String.class, String.class),
     PacketPlayInArmAnimation_0((byte) 0),
     PacketPlayInArmAnimation_1((byte) 1, ClassesContainer.INSTANCE.getHandEnum()),
     PacketPlayInAdvancements_0((byte) 0),

@@ -48,7 +48,7 @@ public class MutableBlockPosition extends BlockPosition {
         }*/
 
     public MutableBlockPosition setPos(double xIn, double yIn, double zIn) {
-        return this.setPos(MathHelper.floorDouble(xIn), MathHelper.floorDouble(yIn), MathHelper.floorDouble(zIn));
+        return this.setPos(MathHelper.floor(xIn), MathHelper.floor(yIn), MathHelper.floor(zIn));
     }
 
     public MutableBlockPosition setPos(BaseBlockPosition vec) {

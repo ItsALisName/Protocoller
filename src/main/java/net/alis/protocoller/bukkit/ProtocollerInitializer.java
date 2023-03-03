@@ -5,12 +5,14 @@ import net.alis.protocoller.bukkit.config.FileManager;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.data.InitialData;
 import net.alis.protocoller.bukkit.data.PacketCreators;
+import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.PacketTypesInitializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.server.UpdatePlayerDataRunner;
 import net.alis.protocoller.bukkit.server.UpdateServerDataRunner;
 import net.alis.protocoller.bukkit.server.listeners.InjectionListener;
 import net.alis.protocoller.bukkit.util.TaskSimplifier;
+import net.alis.protocoller.bukkit.util.Utils;
 import net.alis.protocoller.parent.network.chat.ChatSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -24,6 +26,8 @@ public class ProtocollerInitializer {
     }
 
     protected void syncPreLoad() {
+        LogsManager.init();
+        LogsManager.get().sendPreloadingStartMessage();
         TaskSimplifier.init(this.plugin);
         InitialData.init(Bukkit.getServer());
         ClassesContainer.init();
@@ -32,10 +36,11 @@ public class ProtocollerInitializer {
         PacketTypesInitializer.init();
         PacketCreators.init();
         GlobalProvider.init();
+        LogsManager.get().sendPreloadingFinishedMessage(this.plugin.getDescription().getVersion());
     }
 
     protected void asyncPreLoad() {
-        new Thread(this::syncPreLoad).start();
+        new Thread(this::syncPreLoad, "BootThread-" + Utils.generateRandomInt(5)).start();
     }
 
     protected void syncLoad() {

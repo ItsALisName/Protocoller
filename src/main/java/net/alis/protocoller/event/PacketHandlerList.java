@@ -1,7 +1,7 @@
 package net.alis.protocoller.event;
 
 import com.google.common.collect.Sets;
-import net.alis.protocoller.entity.ApiUser;
+import net.alis.protocoller.ApiUser;
 
 import java.util.Collections;
 import java.util.HashSet;

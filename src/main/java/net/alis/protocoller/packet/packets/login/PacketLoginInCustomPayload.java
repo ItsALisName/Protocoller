@@ -42,7 +42,7 @@ public class PacketLoginInCustomPayload implements Packet {
     }
 
     public PacketLoginInCustomPayload(MinecraftPacketDataSerializer serializer) {
-        this.queryId = serializer.readInt$0();
+        this.queryId = serializer.readVarIntFromBuffer();
         this.originalSerializer = serializer.read$0((buffer) -> {
             int i = buffer.readableBytes();
             if (i >= 0 && i <= 1048576) {

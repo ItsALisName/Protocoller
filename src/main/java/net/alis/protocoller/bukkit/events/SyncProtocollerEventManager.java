@@ -2,11 +2,12 @@ package net.alis.protocoller.bukkit.events;
 
 import io.netty.channel.Channel;
 import net.alis.protocoller.bukkit.exceptions.PacketEventException;
+import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.bukkit.util.TaskSimplifier;
 import net.alis.protocoller.bukkit.util.Utils;
-import net.alis.protocoller.entity.ApiUser;
+import net.alis.protocoller.ApiUser;
 import net.alis.protocoller.entity.NetworkPlayer;
 import net.alis.protocoller.event.RegisteredPacketListener;
 import net.alis.protocoller.event.impl.PacketEventHandler;
@@ -15,6 +16,7 @@ import net.alis.protocoller.event.synchronous.*;
 import net.alis.protocoller.event.impl.PacketListener;
 import net.alis.protocoller.event.manager.SynchronousEventManager;
 import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.parent.util.MathHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +29,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
     @Override
     public void registerListener(ApiUser user, PacketListener listener) {
         TaskSimplifier.INSTANCE.preformAsync(() -> {
+            Thread.currentThread().setName("RegistrationThread-" + Utils.generateRandomInt(15));
             int methodsCount = 0;
             for(Method method : listener.getClass().getDeclaredMethods()) {
                 method.setAccessible(true);
@@ -48,22 +51,13 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                         case SSE: PacketStatusSendEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
                         case HRE: PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
                     }
-                    if(GlobalProvider.instance().getConfig().isListenerRegistrationNotify()) {
-                        Bukkit.getConsoleSender().sendMessage(Utils.setColors("&a[Protocoller] A new packet listener has been registered"));
-                        Bukkit.getConsoleSender().sendMessage(Utils.setColors("&a[Protocoller] By: " + user.getName() + "(Version: " + user.getVersion() + ")"));
-                        Bukkit.getConsoleSender().sendMessage(Utils.setColors("&a[Protocoller] Event type: " + lt.inName));
-                        Bukkit.getConsoleSender().sendMessage(Utils.setColors("&a[Protocoller] Method: " + method.getName() + "(Class: " + listener.getClass().getName() + ")"));
-                    }
+                    LogsManager.get().sendRegisteredListenerMessage(user.getName(), user.getVersion(), lt.inName);
                     methodsCount += 1;
 
                 }
             }
             if(methodsCount == 0) {
-                new PacketEventException("No methods found listening for packets during registration of packet listener '" + listener.getClass().getSimpleName() + "'!").printStackTrace();
-            } else {
-                if(GlobalProvider.instance().getConfig().isListenerRegistrationNotify()) {
-                    Bukkit.getConsoleSender().sendMessage(Utils.setColors("&a&o[Protocoller] You can disable these notifications in the configuration file in the line: 'listeners-registration-notify'"));
-                }
+                LogsManager.get().getLogger(Thread.currentThread()).warn("No methods found listening for packets during registration of packet listener class '" + listener.getClass().getSimpleName() + "'");            } else {
             }
         });
     }

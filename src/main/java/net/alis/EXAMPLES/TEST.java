@@ -1,7 +1,7 @@
 package net.alis.EXAMPLES;
 
 import net.alis.protocoller.Protocoller;
-import net.alis.protocoller.entity.ApiUser;
+import net.alis.protocoller.ApiUser;
 import net.alis.protocoller.event.impl.PacketListener;
 import org.bukkit.plugin.Plugin;
 

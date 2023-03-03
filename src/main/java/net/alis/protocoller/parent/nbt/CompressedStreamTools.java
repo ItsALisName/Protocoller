@@ -1,14 +1,24 @@
 package net.alis.protocoller.parent.nbt;
 
-import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.nbt.tags.NBTTagEnd;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import javax.annotation.Nullable;
 
-public class NBTHelper {
+public class CompressedStreamTools {
 
     public static NBTTagCompound readCompressed(InputStream is) throws IOException {
         DataInputStream datainputstream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(is)));
@@ -29,9 +39,13 @@ public class NBTHelper {
 
     public static void safeWrite(NBTTagCompound compound, File fileIn) throws IOException {
         File file1 = new File(fileIn.getAbsolutePath() + "_tmp");
-        if (file1.exists()) file1.delete();
+        if (file1.exists()) {
+            file1.delete();
+        }
         write(compound, file1);
-        if (fileIn.exists()) fileIn.delete();
+        if (fileIn.exists()) {
+            fileIn.delete();
+        }
         if (fileIn.exists()) {
             throw new IOException("Failed to delete " + fileIn);
         } else {
@@ -45,6 +59,7 @@ public class NBTHelper {
         }
     }
 
+    @Nullable
     public static NBTTagCompound read(File fileIn) throws IOException {
         if (!fileIn.exists()) {
             return null;
@@ -59,7 +74,6 @@ public class NBTHelper {
             return nbttagcompound;
         }
     }
-
 
     public static NBTTagCompound read(DataInputStream inputStream) throws IOException {
         return read(inputStream, NBTSizeTracker.INFINITE);
@@ -97,23 +111,8 @@ public class NBTHelper {
                 nbtbase.read(input, depth, accounter);
                 return nbtbase;
             } catch (IOException ioexception) {
-                throw new RuntimeException("Failed to read tag [UNNAMED TAG] with type: " + b0);
+                throw new RuntimeException("Failed to read nbt tag[type=" + b0 + "] from nbt...", ioexception);
             }
         }
     }
-
-    public static BlockPosition readBlockPosition(NBTTagCompound tag) {
-        return new BlockPosition(tag.getInteger("X"), tag.getInteger("Y"), tag.getInteger("Z"));
-    }
-
-    public static NBTTagCompound createBlockPositionTag(BlockPosition pos) {
-        NBTTagCompound nbttagcompound = new NBTTagCompound();
-        nbttagcompound.setInteger("X", pos.getX());
-        nbttagcompound.setInteger("Y", pos.getY());
-        nbttagcompound.setInteger("Z", pos.getZ());
-        return nbttagcompound;
-    }
-
-
-
 }

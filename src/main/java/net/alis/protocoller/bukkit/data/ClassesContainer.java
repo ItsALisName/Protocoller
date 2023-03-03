@@ -24,7 +24,7 @@ public class ClassesContainer {
             minecraftEntityClass, protocolEnum, advancementsStatusEnum, craftChatMessageClass, serverDataClass, serverPingPlayerSampleClass,
             iChatMutableComponent, soundCategoryEnum, attributeBaseClass, attributeModifierClass, operationClass, factorCalculationDataClass,
             mobEffectClass, mobEffectListClass, mobEffectInfoEnum, playerTeleportFlagsEnum, craftItemStackClass, craftPlayerClass, resourcePackStatusEnum,
-            chatVisibilityEnum, mainHandEnum;
+            chatVisibilityEnum, mainHandEnum, nbtTagCompoundClass, vector3dClass;
 
     ClassesContainer() {
         setSuggestionClass(Reflection.getClass("com.mojang.brigadier.suggestion.Suggestion"));
@@ -114,6 +114,8 @@ public class ClassesContainer {
             setChatVisibilityEnum(Reflection.getNMSClass("EnumChatVisibility", "net.minecraft.world.entity.player.EnumChatVisibility"));
         }
         setMainHandEnum(Reflection.getNMSClass("EnumMainHand", "net.minecraft.world.entity.EnumMainHand"));
+        setNbtTagCompoundClass(Reflection.getNMSClass("NBTTagCompound", "net.minecraft.nbt.NBTTagCompound"));
+        setVector3dClass(Reflection.getNMSClass("Vec3D", "net.minecraft.world.phys.Vec3D"));
     }
 
     public static void init() {

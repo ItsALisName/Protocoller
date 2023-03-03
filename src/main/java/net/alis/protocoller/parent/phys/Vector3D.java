@@ -1,9 +1,13 @@
 package net.alis.protocoller.parent.phys;
 
+import net.alis.protocoller.bukkit.data.ClassesContainer;
+import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.parent.util.MathHelper;
+import net.alis.protocoller.util.CopiedObject;
+import net.alis.protocoller.util.ObjectAccessor;
 import org.jetbrains.annotations.Nullable;
 
-public class Vector3D {
+public class Vector3D implements CopiedObject {
 
     public static final Vector3D ZERO = new Vector3D(0.0D, 0.0D, 0.0D);
 
@@ -20,12 +24,19 @@ public class Vector3D {
         this.z = z;
     }
 
+    public Vector3D(Object originalVec3D) {
+        ObjectAccessor accessor = new ObjectAccessor(originalVec3D);
+        this.x = accessor.read(0, double.class);
+        this.y = accessor.read(1, double.class);
+        this.z = accessor.read(2, double.class);
+    }
+
     public Vector3D subtractReverse(Vector3D vec) {
         return new Vector3D(vec.x - this.x, vec.y - this.y, vec.z - this.z);
     }
 
     public Vector3D normalize() {
-        double d0 = (double) MathHelper.sqrt_double(this.x * this.x + this.y * this.y + this.z * this.z);
+        double d0 = (double) MathHelper.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
         return d0 < 1.0E-4D ? ZERO : new Vector3D(this.x / d0, this.y / d0, this.z / d0);
     }
 
@@ -57,7 +68,7 @@ public class Vector3D {
         double d0 = vec.x - this.x;
         double d1 = vec.y - this.y;
         double d2 = vec.z - this.z;
-        return (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
+        return (double)MathHelper.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
     }
     
     public double squareDistanceTo(Vector3D vec) {
@@ -79,7 +90,7 @@ public class Vector3D {
     }
     
     public double lengthVector() {
-        return (double)MathHelper.sqrt_double(this.x * this.x + this.y * this.y + this.z * this.z);
+        return (double)MathHelper.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
     public double lengthSquared() {
@@ -125,13 +136,13 @@ public class Vector3D {
         }
     }
 
-    public boolean equals(Object p_equals_1_) {
-        if (this == p_equals_1_) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        } else if (!(p_equals_1_ instanceof Vector3D)) {
+        } else if (!(obj instanceof Vector3D)) {
             return false;
         } else {
-            Vector3D Vector3D = (Vector3D)p_equals_1_;
+            Vector3D Vector3D = (Vector3D)obj;
             return Double.compare(Vector3D.x, this.x) == 0 && (Double.compare(Vector3D.y, this.y) == 0 && Double.compare(Vector3D.z, this.z) == 0);
         }
     }
@@ -180,4 +191,11 @@ public class Vector3D {
         return new Vector3D((f1 * f2), f3, (f * f2));
     }
 
+    @Override
+    public Object createOriginal() {
+        return Reflection.callConstructor(
+                Reflection.getConstructor(ClassesContainer.INSTANCE.getVector3dClass(), double.class, double.class, double.class),
+                this.x, this.y, this.z
+        );
+    }
 }
