@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.parent.phys.BaseBlockPosition;
+import net.alis.protocoller.parent.phys.Vector3D;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -188,8 +189,8 @@ public enum Facing {
         return VALUES[MathHelper.abs(index % VALUES.length)];
     }
 
-    public static Facing getHorizontal(int p_176731_0_) {
-        return HORIZONTALS[MathHelper.abs(p_176731_0_ % HORIZONTALS.length)];
+    public static Facing getHorizontal(int i) {
+        return HORIZONTALS[MathHelper.abs(i % HORIZONTALS.length)];
     }
 
     public static Facing fromAngle(double angle) {
@@ -215,6 +216,10 @@ public enum Facing {
             }
         }
         return facing;
+    }
+
+    public static Facing getFacingFromVector(Vector3D vector) {
+        return getFacingFromVector(Double.valueOf(vector.x).floatValue(), Double.valueOf(vector.y).floatValue(), Double.valueOf(vector.z).floatValue());
     }
 
     public String toString() {

@@ -41,7 +41,7 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             super.channelRead(ctx, msg);
             return;
         }
-        if(data.getType().getState() == PacketType.State.PLAY_IN && player == null) {
+        if(data.getType().getState() == PacketType.State.PLAY_CLIENTBOUND && player == null) {
             super.channelRead(ctx, msg);
             return;
         }
@@ -69,7 +69,7 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             super.write(ctx, msg, promise);
             return;
         }
-        if((data.getType().getState() == PacketType.State.PLAY_OUT || data.getType().getState() == PacketType.State.PLAY_OUT_CLIENTBOUND) && this.player == null) {
+        if((data.getType().getState() == PacketType.State.PLAY_SERVERBOUND || data.getType().getState() == PacketType.State.CLIENTBOUND) && this.player == null) {
             super.write(ctx, msg, promise);
             return;
         }

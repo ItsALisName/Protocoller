@@ -9,27 +9,27 @@ public class NetworkReflection {
     @Nullable
     public static Class<?> packet$getPacketClass(String packetName, PacketType.State packetState) {
         switch (packetState) {
-            case PLAY_OUT:
-            case PLAY_OUT_CLIENTBOUND:
-            case PLAY_IN:
+            case PLAY_SERVERBOUND:
+            case CLIENTBOUND:
+            case PLAY_CLIENTBOUND:
                 return Reflection.getClassOr(
                     InitialData.INSTANCE.getPacketsPackage() + ".game." + packetName,
                     InitialData.INSTANCE.getPacketsPackage() + "." + packetName
             );
-            case LOGIN_OUT:
-            case LOGIN_IN:
+            case LOGIN_SERVERBOUND:
+            case LOGIN_CLIENTBOUND:
                 return Reflection.getClassOr(
                     InitialData.INSTANCE.getPacketsPackage() + ".login." + packetName,
                     InitialData.INSTANCE.getPacketsPackage() + "." + packetName
             );
-            case HANDSHAKE_IN:
-            case HANDSHAKE_OUT:
+            case HANDSHAKE_CLIENTBOUND:
+            case HANDSHAKE_SERVERBOUND:
                 return Reflection.getClassOr(
                     InitialData.INSTANCE.getPacketsPackage() + ".handshake." + packetName,
                     InitialData.INSTANCE.getPacketsPackage() + "." + packetName
             );
-            case STATUS_IN:
-            case STATUS_OUT:
+            case STATUS_CLIENTBOUND:
+            case STATUS_SERVERBOUND:
                 return Reflection.getClassOr(
                     InitialData.INSTANCE.getPacketsPackage() + ".status." + packetName,
                     InitialData.INSTANCE.getPacketsPackage() + "." + packetName

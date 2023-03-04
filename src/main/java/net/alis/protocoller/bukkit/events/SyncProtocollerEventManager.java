@@ -3,7 +3,6 @@ package net.alis.protocoller.bukkit.events;
 import io.netty.channel.Channel;
 import net.alis.protocoller.bukkit.exceptions.PacketEventException;
 import net.alis.protocoller.bukkit.managers.LogsManager;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.bukkit.util.TaskSimplifier;
 import net.alis.protocoller.bukkit.util.Utils;
@@ -16,8 +15,6 @@ import net.alis.protocoller.event.synchronous.*;
 import net.alis.protocoller.event.impl.PacketListener;
 import net.alis.protocoller.event.manager.SynchronousEventManager;
 import net.alis.protocoller.packet.PacketDataSerializer;
-import net.alis.protocoller.parent.util.MathHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +87,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
 
     public static SyncPacketEvent callListeners(PacketDataSerializer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
         switch (data.getType().getState()) {
-            case PLAY_OUT_CLIENTBOUND: {
+            case CLIENTBOUND: {
                 if(player == null) {
                     throw new PacketEventException("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                 }
@@ -133,7 +130,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
                 return event;
             }
-            case PLAY_IN: {
+            case PLAY_CLIENTBOUND: {
                 if(player == null) {
                     throw new PacketEventException("An error occurred while trying to initialize the event 'PacketPlayReceiveEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                 }
@@ -176,7 +173,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
                 return event;
             }
-            case PLAY_OUT: {
+            case PLAY_SERVERBOUND: {
                 if(player == null) {
                     throw new PacketEventException("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                 }
@@ -219,7 +216,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
                 return event;
             }
-            case LOGIN_IN: {
+            case LOGIN_CLIENTBOUND: {
                 PacketLoginReceiveEvent event = new PacketLoginReceiveEvent(data, channel, address);
                 for(RegisteredPacketListener listener : PacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -259,7 +256,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
                 return event;
             }
-            case LOGIN_OUT: {
+            case LOGIN_SERVERBOUND: {
                 PacketLoginSendEvent event = new PacketLoginSendEvent(data, channel, address);
                 for(RegisteredPacketListener listener : PacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -299,7 +296,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
                 return event;
             }
-            case STATUS_IN: {
+            case STATUS_CLIENTBOUND: {
                 PacketStatusReceiveEvent event = new PacketStatusReceiveEvent(data, channel, address);
                 for(RegisteredPacketListener listener : PacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -339,7 +336,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
                 return event;
             }
-            case STATUS_OUT: {
+            case STATUS_SERVERBOUND: {
                 PacketStatusSendEvent event = new PacketStatusSendEvent(data, channel, address);
                 for(RegisteredPacketListener listener : PacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -379,7 +376,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
                 return event;
             }
-            case HANDSHAKE_IN: {
+            case HANDSHAKE_CLIENTBOUND: {
                 PacketHandshakeReceiveEvent event = new PacketHandshakeReceiveEvent(data, channel, address);
                 for(RegisteredPacketListener listener : PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {

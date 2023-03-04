@@ -1,11 +1,12 @@
 package net.alis.protocoller.bukkit.enums;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 
 public enum Version {
 
     UNKNOWN("Unknown", (short) 0),
-    v1_8("1.8.?", (short) 47),
+    v1_8("1.8", (short) 47),
     v1_8_3("1.8.3", (short) 48),
     v1_9_15w31a("1.9", (short) 49),
     v1_9_15w31b("1.9", (short) 50),
@@ -102,18 +103,18 @@ public enum Version {
     v1_12_17w17b("1.12", (short) 325),
     v1_12_17w18a("1.12", (short) 326),
     v1_12_17w18b("1.12", (short) 327),
-    v1_12_pre1("1.12", (short) 328),
-    v1_12_pre2("1.12", (short) 329),
-    v1_12_pre3("1.12", (short) 330),
-    v1_12_pre4("1.12", (short) 331),
-    v1_12_pre5("1.12", (short) 332),
-    v1_12_pre6("1.12", (short) 333),
-    v1_12_pre7("1.12", (short) 334),
+    v1_12_pre1("1.12-pre1", (short) 328),
+    v1_12_pre2("1.12-pre2", (short) 329),
+    v1_12_pre3("1.12-pre3", (short) 330),
+    v1_12_pre4("1.12-pre4", (short) 331),
+    v1_12_pre5("1.12-pre5", (short) 332),
+    v1_12_pre6("1.12-pre6", (short) 333),
+    v1_12_pre7("1.12-pre7", (short) 334),
     v1_12("1.12", (short) 335),
-    v1_12_1_17w31a("1.12.1", (short) 336),
-    v1_12_1_pre1("1.12.1", (short) 337),
+    v1_12_1_17w31a("1.12.1-17w31a", (short) 336),
+    v1_12_1_pre1("1.12.1-pre1", (short) 337),
     v1_12_1("1.12.1", (short) 338),
-    v1_12_2_pre("1.12.2", (short) 339),
+    v1_12_2_pre("1.12.2-pre", (short) 339),
     v1_12_2("1.12.2", (short) 340),
     v1_13_17w43a("1.13", (short) 341),
     v1_13_17w43b("1.13", (short) 342),
@@ -347,7 +348,9 @@ public enum Version {
     public static Version fromPackageName(String packageName) {
         packageName = packageName.replace("_", ".").replace("v", "").replace("R", "");
         for(Version version : Version.values()) {
-            if(version.name.contains(packageName)) return version;
+            if(version.name.equalsIgnoreCase(packageName)) {
+                return version;
+            }
         }
         return UNKNOWN;
     }

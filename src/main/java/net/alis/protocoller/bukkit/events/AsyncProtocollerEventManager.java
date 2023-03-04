@@ -3,7 +3,6 @@ package net.alis.protocoller.bukkit.events;
 import io.netty.channel.Channel;
 import net.alis.protocoller.bukkit.exceptions.PacketEventException;
 import net.alis.protocoller.bukkit.managers.LogsManager;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.bukkit.util.TaskSimplifier;
 import net.alis.protocoller.bukkit.util.Utils;
@@ -88,7 +87,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
     public static void callListeners(PacketDataSerializer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
         TaskSimplifier.INSTANCE.preformAsync(() -> {
             switch (data.getType().getState()) {
-                case PLAY_OUT_CLIENTBOUND: {
+                case CLIENTBOUND: {
                     if(player == null) {
                         throw new PacketEventException("An error occurred while trying to initialize the event 'AsyncPacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                     }
@@ -131,7 +130,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
                     }
                     return;
                 }
-                case PLAY_IN: {
+                case PLAY_CLIENTBOUND: {
                     if(player == null) {
                         throw new PacketEventException("An error occurred while trying to initialize the event 'AsyncPacketPlayReceiveEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                     }
@@ -168,7 +167,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
                     }
                     return;
                 }
-                case PLAY_OUT: {
+                case PLAY_SERVERBOUND: {
                     if(player == null) {
                         throw new PacketEventException("An error occurred while trying to initialize the event 'AsyncPacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                     }
@@ -211,7 +210,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
                     }
                     return;
                 }
-                case LOGIN_IN: {
+                case LOGIN_CLIENTBOUND: {
                     AsyncPacketLoginReceiveEvent event = new AsyncPacketLoginReceiveEvent(data, channel, address);
                     for(RegisteredPacketListener listener : AsyncPacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -251,7 +250,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
                     }
                     return;
                 }
-                case LOGIN_OUT: {
+                case LOGIN_SERVERBOUND: {
                     AsyncPacketLoginSendEvent event = new AsyncPacketLoginSendEvent(data, channel, address);
                     for(RegisteredPacketListener listener : AsyncPacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -291,7 +290,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
                     }
                     return;
                 }
-                case STATUS_IN: {
+                case STATUS_CLIENTBOUND: {
                     AsyncPacketStatusReceiveEvent event = new AsyncPacketStatusReceiveEvent(data, channel, address);
                     for(RegisteredPacketListener listener : AsyncPacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -331,7 +330,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
                     }
                     return;
                 }
-                case STATUS_OUT: {
+                case STATUS_SERVERBOUND: {
                     AsyncPacketStatusSendEvent event = new AsyncPacketStatusSendEvent(data, channel, address);
                     for(RegisteredPacketListener listener : AsyncPacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
@@ -371,7 +370,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
                     }
                     return;
                 }
-                case HANDSHAKE_IN: {
+                case HANDSHAKE_CLIENTBOUND: {
                     AsyncPacketHandshakeReceiveEvent event = new AsyncPacketHandshakeReceiveEvent(data, channel, address);
                     for(RegisteredPacketListener listener : AsyncPacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {

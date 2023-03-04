@@ -1,12 +1,15 @@
 package net.alis.protocoller.parent.phys;
 
+import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.parent.util.MathHelper;
+import net.alis.protocoller.util.CopiedObject;
+import net.alis.protocoller.util.ObjectAccessor;
 
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class BaseBlockPosition implements Comparable<BaseBlockPosition> {
+public class BaseBlockPosition implements Comparable<BaseBlockPosition>, CopiedObject {
 
     public static final BaseBlockPosition NULL_VECTOR = new BaseBlockPosition(0, 0, 0);
     private int x;
@@ -19,10 +22,17 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition> {
         this.z = zIn;
     }
 
-    public BaseBlockPosition(Object blockPosition) {
-        this.x = Reflection.readSuperclassField(blockPosition, 0, int.class);
-        this.y = Reflection.readSuperclassField(blockPosition, 1, int.class);
-        this.z = Reflection.readSuperclassField(blockPosition, 2, int.class);
+    public BaseBlockPosition(Object blockPosition, boolean trueLink) {
+        if (!trueLink) {
+            this.x = Reflection.readSuperclassField(blockPosition, 0, int.class);
+            this.y = Reflection.readSuperclassField(blockPosition, 1, int.class);
+            this.z = Reflection.readSuperclassField(blockPosition, 2, int.class);
+        } else {
+            ObjectAccessor accessor = new ObjectAccessor(blockPosition);
+            this.x = accessor.read(0, int.class);
+            this.y = accessor.read(1, int.class);
+            this.z = accessor.read(2, int.class);
+        }
     }
 
     public void setX(int x) {
@@ -99,6 +109,14 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition> {
 
     public double distanceSq(BaseBlockPosition to) {
         return this.distanceSq((double)to.getX(), (double)to.getY(), (double)to.getZ());
+    }
+
+    @Override
+    public Object createOriginal() {
+        return Reflection.callConstructor(
+                Reflection.getConstructor(ClassesContainer.INSTANCE.getBaseBlockPositionClass(), int.class, int.class, int.class),
+                this.x, this.y, this.z
+        );
     }
 
     @Override

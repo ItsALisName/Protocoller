@@ -1,7 +1,6 @@
 package net.alis.protocoller.bukkit.data;
 
 import net.alis.protocoller.bukkit.enums.Version;
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 
 public class InitialData {

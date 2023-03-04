@@ -2,6 +2,7 @@ package net.alis.protocoller.packet;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.PacketTypesInitializer;
+import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.parent.authlib.GameProfile;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.entity.player.PlayerAbilities;
@@ -12,6 +13,8 @@ import net.alis.protocoller.parent.network.status.ServerPing;
 import net.alis.protocoller.parent.phys.BaseBlockPosition;
 import net.alis.protocoller.parent.resources.MinecraftKey;
 import net.alis.protocoller.util.ObjectAccessor;
+import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 
 import java.security.PublicKey;
 import java.util.List;
@@ -54,9 +57,11 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
     public int readInt(int index) {
         return super.read(index, int.class);
     }
+
     public Optional<?> readOptional(int index) {
         return super.read(index, Optional.class);
     }
+
     public long readLong(int index) {
         return super.read(index, long.class);
     }
@@ -64,8 +69,13 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
     public Enum<?> readEnum(int index) {
         return super.read(index, Enum.class);
     }
+
     public MinecraftPacketDataSerializer readOriginalDataSerializer(int index) {
         return new MinecraftPacketDataSerializer((Object) super.read(index, ClassesContainer.INSTANCE.getPacketDataSerializerClass()));
+    }
+
+    public Entity readMinecraftEntity(int index) {
+        return AlMinecraftReflection.entityFromMinecraftEntity(super.read(index, ClassesContainer.INSTANCE.getMinecraftEntityClass()));
     }
 
     public PlayerAbilities readPlayerAbilities(int index) {
@@ -73,15 +83,21 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
     }
 
     public BlockPosition readBlockPosition(int index) {
-        return new BlockPosition(new BaseBlockPosition(super.read(index, ClassesContainer.INSTANCE.getBlockPositionClass())));
+        return new BlockPosition(new BaseBlockPosition(super.read(index, ClassesContainer.INSTANCE.getBlockPositionClass()), false));
+    }
+
+    public BaseBlockPosition readBaseBlockPosition(int index) {
+        return new BaseBlockPosition(super.read(index, ClassesContainer.INSTANCE.getBaseBlockPositionClass()), true);
     }
 
     public MinecraftKey readMinecraftKey(int index) {
         return new MinecraftKey((Object) super.read(0, ClassesContainer.INSTANCE.getMinecraftKeyClass()));
     }
+
     public ChatComponent readIChatBaseComponent(int index) {
         return new ChatComponent(ChatSerializer.fromComponent(super.read(index, ClassesContainer.INSTANCE.getIChatBaseComponentClass())));
     }
+
     public float readFloat(int index) {
         return super.read(index, float.class);
     }
@@ -93,12 +109,15 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
     public boolean[] readBooleanArray(int index) {
         return super.read(index, boolean[].class);
     }
+
     public <T> T readList(int index) {
         return super.read(index, List.class);
     }
+
     public PublicKey readPublicKey(int index) {
         return super.read(index, PublicKey.class);
     }
+
     public byte[] readByteArray(int index) {
         return super.read(index, byte[].class);
     }
@@ -147,16 +166,32 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
         return super.read(index, type);
     }
 
+    public ItemStack readMinecraftItemStack(int index) {
+        return AlMinecraftReflection.itemStackFromMinecraftItemStack(super.read(index, ClassesContainer.INSTANCE.getMinecraftItemStackClass()));
+    }
+
+
+
+    public void writeBaseBlockPosition(int index, BaseBlockPosition position) {
+        super.writeSpecify(index, ClassesContainer.INSTANCE.getBaseBlockPositionClass(), position.createOriginal());
+    }
+
+    public void writeMinecraftItemStack(int index, ItemStack stack) {
+        super.writeSpecify(index,ClassesContainer.INSTANCE.getMinecraftItemStackClass(), AlMinecraftReflection.getMinecraftItemStack(stack));
+    }
 
     private void writePlayerAbilities(int index, PlayerAbilities abilities) {
         super.write(index, abilities.createOriginal());
     }
+
     public void writeBlockPosition(int index, BlockPosition position) {
-        super.write(index, position.createOriginal());
+        super.writeSpecify(index, ClassesContainer.INSTANCE.getBlockPositionClass(), position.createOriginal());
     }
+
     public void writeMinecraftKey(int index, MinecraftKey key) {
         super.write(index, key.createOriginal());
     }
+
     public void writeBoolean(int index, boolean param) {
         super.write(index, param);
     }
@@ -180,24 +215,31 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
     public void writeInt(int index, int param) {
         super.write(index, param);
     }
+
     public void writeGameProfile(int index, GameProfile profile) {
         super.write(index, profile.createOriginal());
     }
+
     public void writeOptional(int index, Optional<?> param) {
         super.write(index, param);
     }
+
     public void writeOriginalDataSerializer(int index, MinecraftPacketDataSerializer serializer) {
         super.write(index, serializer.createOriginal());
     }
+
     public void writePublicKey(int index, PublicKey key) {
         super.write(index, key);
     }
+
     public void writeList(int index, List<?> param) {
         super.write(index, param);
     }
+
     public void writeLong(int index, long param) {
         super.write(index, param);
     }
+
     public void writeFloat(int index, float param) {
         super.write(index, param);
     }
@@ -205,38 +247,53 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
     public void writeDouble(int index, double param) {
         super.writeSpecify(index, double.class, param);
     }
+
     public void writeString(int index, String param) {
         super.write(index, param);
     }
+
     public void writeObject(int index, Object param) {
         super.write(index, param);
     }
+
     public void writeBooleanArray(int index, boolean[] array) {
         super.write(index, array);
     }
+
     public void writeByteArray(int index, byte[] param) {
         super.write(index, param);
     }
+
     public void writeShortArray(int index, short[] param) {
         super.write(index, param);
     }
+
     public void writeIntArray(int index, int[] param) {
         super.write(index, param);
     }
+
     public void writeLongArray(int index, long[] param) {
         super.write(index, param);
     }
+
     public void writeFloatArray(int index, float[] param) {
         super.write(index, param);
     }
+
     public void writeDoubleArray(int index, double[] param) {
         super.write(index, param);
     }
+
     public void writeStringArray(int index, String[] param) {
         super.write(index, param);
     }
+
     public void writeEnumConstant(int index, Enum<?> enumConstant) {
         super.write(index, enumConstant);
+    }
+
+    public void writeMinecraftEntity(int index, Entity entity) {
+        super.writeSpecify(index, ClassesContainer.INSTANCE.getMinecraftEntityClass(), AlMinecraftReflection.getMinecraftEntity(entity));
     }
 
     @Override

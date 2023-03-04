@@ -1,7 +1,5 @@
 package net.alis.protocoller.util;
 
-import org.bukkit.Bukkit;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +21,13 @@ public class ObjectAccessor {
         return object;
     }
 
-    public <O> O read(int index, Class<?> type) {
+    public <PARAM> PARAM read(int index, Class<?> type) {
         int start = 0;
         for(Field field : this.fields) {
             field.setAccessible(true);
             if(field.getType() == type) {
                 if(start == index) {
-                    try { return (O) field.get(this.object); } catch (IllegalAccessException e) {
+                    try { return (PARAM) field.get(this.object); } catch (IllegalAccessException e) {
                         throw new RuntimeException("Failed to read field with type '" +
                                 type.getSimpleName() +
                                 "' numbered '" + index +
@@ -41,6 +39,10 @@ public class ObjectAccessor {
                 }
                 start += 1; continue;
             }
+        }
+        PARAM param = readSuperclass(index, type);
+        if(param != null) {
+            return param;
         }
         if(start == 0) {
             throw new RuntimeException("Field with type '" + type.getSimpleName() +
@@ -78,6 +80,10 @@ public class ObjectAccessor {
                 start += 1; continue;
             }
         }
+        try {
+            writeSuperclass(index, param);
+            return;
+        } catch (Exception ignored) {}
         if(start == 0) {
             throw new RuntimeException("Field with type '" + type.getSimpleName() +
                     "' at number '" + index +
@@ -110,6 +116,82 @@ public class ObjectAccessor {
             }
             start += 1;
         }
+        writeSpecifySuperclass(index, specify, param);
     }
 
+
+    private <PARAM> PARAM readSuperclass(int index, Class<?> type) {
+        int start = 0;
+        for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if(field.getType() == type) {
+                if(index == start) {
+                    try {
+                        return (PARAM) field.get(this.object);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(
+                                "Failed to read field from object!\n" +
+                                        "\n[Protocoller] Details: " +
+                                        "\n[Protocoller] From object: '" + this.object.toString() + "'" +
+                                        "\n[Protocoller] Requested field type: '" + type.getSimpleName() + "'" +
+                                        "\n[Protocoller] Requested field index: '" + index + "'",
+                                e
+                        );
+                    }
+                }
+                start += 1;
+            }
+        }
+        return null;
+    }
+
+    private void writeSuperclass(int index, Object param) {
+        int start = 0;
+        for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if(field.getType() == param.getClass()) {
+                if(index == start) {
+                    try {
+                        field.set(this.object, param);
+                        return;
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(
+                                "Failed to write field in object(Superclass)!\n" +
+                                        "\n[Protocoller] Details: " +
+                                        "\n[Protocoller] In object: '" + this.object.toString() + "'" +
+                                        "\n[Protocoller] Requested field type: '" + param.getClass().getSimpleName() + "'" +
+                                        "\n[Protocoller] Requested field index: '" + index + "'",
+                                e
+                        );
+                    }
+                }
+                start += 1;
+            }
+        }
+    }
+
+    private void writeSpecifySuperclass(int index, Class<?> type, Object param) {
+        int start = 0;
+        for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if(field.getType() == type) {
+                if(index == start) {
+                    try {
+                        field.set(this.object, param);
+                        return;
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(
+                                "Failed to write field in object(Superclass)!\n" +
+                                        "\n[Protocoller] Details: " +
+                                        "\n[Protocoller] In object: '" + this.object.toString() + "'" +
+                                        "\n[Protocoller] Requested field type: '" + type.getSimpleName() + "'" +
+                                        "\n[Protocoller] Requested field index: '" + index + "'",
+                                e
+                        );
+                    }
+                }
+                start += 1;
+            }
+        }
+    }
 }

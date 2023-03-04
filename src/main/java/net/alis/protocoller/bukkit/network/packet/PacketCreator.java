@@ -2,6 +2,7 @@ package net.alis.protocoller.bukkit.network.packet;
 
 import net.alis.protocoller.bukkit.data.PacketCreators;
 import net.alis.protocoller.bukkit.enums.Version;
+import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.util.ObjectAccessor;
@@ -25,14 +26,14 @@ public class PacketCreator {
     }
 
     public Object create(@Nullable IndexedParam<?, ?>[] parameters, @Nullable Object... objects) {
-        if(this.indicator.getLevel() != 0) {
+        if(this.indicator.getLevel() > 0) {
             return Reflection.callConstructor(this.constructor, objects);
         } else {
             ObjectAccessor accessor = new ObjectAccessor(Reflection.classNewInstance(this.type.getPacketClass()));
             for(IndexedParam<?, ?> param : parameters) {
                 accessor.write(param.getIndex(), param.getObject());
             }
-            return accessor;
+            return accessor.getObject();
         }
     }
 
@@ -63,10 +64,9 @@ public class PacketCreator {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PacketCreator that = (PacketCreator) o;
-        return Objects.equals(type, that.type);
+        return type.getPacketName().equalsIgnoreCase(that.type.getPacketName());
     }
 
     @Override

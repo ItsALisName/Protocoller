@@ -1,6 +1,7 @@
 package net.alis.protocoller.bukkit.data;
 
 import net.alis.protocoller.bukkit.enums.Version;
+import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.ConstructorLevelIndicator;
 import net.alis.protocoller.bukkit.network.packet.PacketCreator;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -28,6 +29,8 @@ public class PacketCreators {
     }
 
     private void setup() {
+        long start = System.currentTimeMillis();
+
         this.addAny(PacketType.Play.Server.STOP_SOUND, ConstructorLevelIndicator.PacketPlayOutStopSound_1);
         this.addAny(PacketType.Status.Server.SERVER_INFO, ConstructorLevelIndicator.PacketStatusOutServerInfo_1);
         this.addAny(PacketType.Login.Server.DISCONNECT, ConstructorLevelIndicator.PacketLoginOutDisconnect_1);
@@ -150,22 +153,40 @@ public class PacketCreators {
         this.add(PacketType.Play.Client.TILE_NBT_QUERY, ConstructorLevelIndicator.PacketPlayInTileNBTQuery_1, Version.v1_17);
         this.add(PacketType.Play.Client.UPDATE_SIGN, ConstructorLevelIndicator.PacketPlayInUpdateSign_0, Version.v1_8);
         this.add(PacketType.Play.Client.UPDATE_SIGN, ConstructorLevelIndicator.PacketPlayInUpdateSign_1, Version.v1_17);
+        this.add(PacketType.Play.Client.HELD_ITEM_SLOT, ConstructorLevelIndicator.PacketPlayInHeldItemSlot_0, Version.v1_8);
+        this.add(PacketType.Play.Client.HELD_ITEM_SLOT, ConstructorLevelIndicator.PacketPlayInHeldItemSlot_1, Version.v1_17);
+        this.add(PacketType.Play.Client.SET_COMMAND_BLOCK, ConstructorLevelIndicator.PacketPlayInSetCommandBlock_0, Version.v1_13);
+        this.add(PacketType.Play.Client.SET_COMMAND_BLOCK, ConstructorLevelIndicator.PacketPlayInSetCommandBlock_1, Version.v1_17);
+        this.add(PacketType.Play.Client.SET_CREATIVE_SLOT, ConstructorLevelIndicator.PacketPlayInSetCreativeSlot_0, Version.v1_8);
+        this.add(PacketType.Play.Client.SET_CREATIVE_SLOT, ConstructorLevelIndicator.PacketPlayInSetCreativeSlot_1, Version.v1_17);
+        this.add(PacketType.Play.Client.SET_JIGSAW, ConstructorLevelIndicator.PacketPlayInSetJigsaw_0, Version.v1_14);
+        this.add(PacketType.Play.Client.SET_JIGSAW, ConstructorLevelIndicator.PacketPlayInSetJigsaw_1, Version.v1_17);
+        this.add(PacketType.Play.Client.STRUCT, ConstructorLevelIndicator.PacketPlayInStruct_0, Version.v1_13);
+        this.add(PacketType.Play.Client.STRUCT, ConstructorLevelIndicator.PacketPlayInStruct_1, Version.v1_17);
+        this.add(PacketType.Play.Client.USE_ENTITY, ConstructorLevelIndicator.PacketPlayInUseEntity_0, Version.v1_8);
+        this.add(PacketType.Play.Client.USE_ENTITY, ConstructorLevelIndicator.PacketPlayInUseEntity_1, Version.v1_9);
+        this.add(PacketType.Play.Client.USE_ENTITY, ConstructorLevelIndicator.PacketPlayInUseEntity_0, Version.v1_16);
+        this.add(PacketType.Play.Client.USE_ENTITY, ConstructorLevelIndicator.PacketPlayInUseEntity_2, Version.v1_17);
+        this.add(PacketType.Play.Client.USE_ITEM, ConstructorLevelIndicator.PacketPlayInUseItem_0, Version.v1_9);
+        this.add(PacketType.Play.Client.USE_ITEM, ConstructorLevelIndicator.PacketPlayInUseItem_1, Version.v1_17);
+        this.add(PacketType.Play.Client.USE_ITEM, ConstructorLevelIndicator.PacketPlayInUseItem_2, Version.v1_19);
+        this.add(PacketType.Play.Client.VEHICLE_MOVE, ConstructorLevelIndicator.PacketPlayInVehicleMove_1, Version.v1_9);
+        LogsManager.get().getLogger().info("[*] Packet creators loaded in " + (System.currentTimeMillis() - start) + "ms.");
     }
 
     void add(MinecraftPacketType type, ConstructorLevelIndicator indicator, Version version) {
         PacketCreator creator = new PacketCreator(type, indicator, version);
-        if(this.packetCreators.contains(creator)) {
-            for(PacketCreator c : this.packetCreators) {
-                if(!c.equals(creator)) continue;
-                if(c.getVersion().lessThan(version) && version.greaterThanOrEqualTo(InitialData.INSTANCE.getPreVersion())) {
+        for(PacketCreator c : this.packetCreators) {
+            if(c.equals(creator) && c.getVersion().lessThan(version)) {
+                if(version.lessThanOrEqualTo(InitialData.INSTANCE.getPreVersion())){
                     this.packetCreators.remove(c);
                     this.packetCreators.add(creator);
+                    return;
                 }
-                break;
+                return;
             }
-        } else {
-            this.packetCreators.add(creator);
         }
+        if(version.lessThanOrEqualTo(InitialData.INSTANCE.getPreVersion())) this.packetCreators.add(creator);
     }
 
     void addAny(MinecraftPacketType type, ConstructorLevelIndicator indicator) {

@@ -34,7 +34,7 @@ public class PacketPlayInBEdit implements Packet {
             this.pages = packetData.readList(0);
             this.title = ((Optional<String>)packetData.readOptional(0)).get();
         } else {
-            this.item = AlMinecraftReflection.getItemStackFromMinecraftStack(packetData.readObject(0, ClassesContainer.INSTANCE.getMinecraftItemStackClass()));
+            this.item = packetData.readMinecraftItemStack(0);
         }
     }
 
@@ -44,7 +44,7 @@ public class PacketPlayInBEdit implements Packet {
 
     public void setItem(@NotNull ItemStack item) {
         if(GlobalProvider.instance().getServer().isLegacy()) {
-            this.packetData.writeSpecify(0, ClassesContainer.INSTANCE.getMinecraftItemStackClass(), AlMinecraftReflection.getMinecraftItemStackFromItemStack(item));
+            this.packetData.writeMinecraftItemStack(0, item);
         }
         this.item = item;
     }

@@ -1,6 +1,6 @@
 package net.alis.protocoller.bukkit.network.packet;
 
-public class IndexedParam<O, I> {
+public class IndexedParam<O, I extends Integer> {
 
     private final O object;
     private final I index;
@@ -10,8 +10,8 @@ public class IndexedParam<O, I> {
         this.index = index;
     }
 
-    public short getIndex() {
-        return (short) index;
+    public int getIndex() {
+        return index;
     }
 
     public Object getObject() {

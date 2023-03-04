@@ -22,7 +22,7 @@ public class UpdatePlayerDataRunner implements Runnable {
     @Override
     public void run() {
         for(Player player : Bukkit.getOnlinePlayers()) {
-            GlobalProvider.instance().getServer().getPlayersInjector().updatePlayerObject(player, PlayerReflection.getPlayerChannel(player));
+            GlobalProvider.instance().getServer().getPlayersInjector().refreshInterceptor(player, PlayerReflection.getPlayerChannel(player));
         }
     }
 }

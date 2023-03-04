@@ -13,7 +13,7 @@ public class PlayersInjector implements ChannelInjector.PlayerInjector {
 
     @Override
     public void inject(Player player) {
-        this.updatePlayerObject(player, PlayerReflection.getPlayerChannel(player));
+        this.refreshInterceptor(player, PlayerReflection.getPlayerChannel(player));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PlayersInjector implements ChannelInjector.PlayerInjector {
         }
     }
 
-    public void updatePlayerObject(Player player, Channel channel) {
+    public void refreshInterceptor(Player player, Channel channel) {
         NettyPacketInterceptor handler = this.getInterceptor(channel);
         if (handler != null) {
             handler.setPlayer(player);

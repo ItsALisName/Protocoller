@@ -2,11 +2,14 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.util.annotations.AddedSince;
+import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 import static net.alis.protocoller.bukkit.enums.Version.v1_13;
 
@@ -53,6 +56,11 @@ public class PacketPlayInSetCommandMinecart implements Packet {
 
     public int getEntityId() {
         return entityId;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
     }
 
     public void setEntityId(int entityId) {

@@ -8,6 +8,7 @@ import net.alis.protocoller.parent.phys.Vector3D;
 import net.alis.protocoller.parent.util.Facing;
 import net.alis.protocoller.parent.util.MathHelper;
 import net.alis.protocoller.util.CopiedObject;
+import org.bukkit.entity.Entity;
 
 import javax.annotation.concurrent.Immutable;
 import java.util.Iterator;
@@ -33,9 +34,9 @@ public class BlockPosition extends BaseBlockPosition implements CopiedObject {
         super(x, y, z);
     }
 
-    /*public BlockPosition(Entity source) {
-        this(source.posX, source.posY, source.posZ);
-    }*/
+    public BlockPosition(Entity entity) {
+        this(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ());
+    }
 
     public BlockPosition(Vector3D vec) {
         this(vec.x, vec.y, vec.z);

@@ -227,16 +227,16 @@ public abstract class PacketType {
     }
 
     public enum State {
-        PLAY_IN,
-        PLAY_OUT,
-        LOGIN_IN,
-        LOGIN_OUT,
-        HANDSHAKE_IN,
-        HANDSHAKE_OUT,
-        STATUS_IN,
-        STATUS_OUT,
-        PLAY_OUT_CLIENTBOUND,
-        PLAY_IN_SERVERBOUND
+        PLAY_CLIENTBOUND,
+        PLAY_SERVERBOUND,
+        LOGIN_CLIENTBOUND,
+        LOGIN_SERVERBOUND,
+        HANDSHAKE_CLIENTBOUND,
+        HANDSHAKE_SERVERBOUND,
+        STATUS_CLIENTBOUND,
+        STATUS_SERVERBOUND,
+        CLIENTBOUND,
+        SERVERBOUND
     }
 
 }

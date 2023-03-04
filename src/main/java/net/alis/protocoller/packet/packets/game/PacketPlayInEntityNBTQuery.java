@@ -2,10 +2,13 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.PacketType;
+import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 public class PacketPlayInEntityNBTQuery implements Packet {
 
@@ -38,6 +41,11 @@ public class PacketPlayInEntityNBTQuery implements Packet {
         }
         this.transactionId = transactionId;
         this.entityId = entityId;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
     }
 
     public int getTransactionId() {

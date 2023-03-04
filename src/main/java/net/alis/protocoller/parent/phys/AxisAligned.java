@@ -1,12 +1,16 @@
 package net.alis.protocoller.parent.phys;
 
 import com.google.common.annotations.VisibleForTesting;
+import net.alis.protocoller.bukkit.data.ClassesContainer;
+import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.util.Facing;
+import net.alis.protocoller.util.CopiedObject;
+import net.alis.protocoller.util.ObjectAccessor;
 
 import javax.annotation.Nullable;
 
-public class AxisAligned {
+public class AxisAligned implements CopiedObject {
     public final double minX;
     public final double minY;
     public final double minZ;
@@ -21,6 +25,16 @@ public class AxisAligned {
         this.maxX = Math.max(x1, x2);
         this.maxY = Math.max(y1, y2);
         this.maxZ = Math.max(z1, z2);
+    }
+
+    public AxisAligned(Object original) {
+        ObjectAccessor accessor = new ObjectAccessor(original);
+        this.minX = accessor.read(0, double.class);
+        this.minY = accessor.read(1, double.class);
+        this.minZ = accessor.read(2, double.class);
+        this.maxX = accessor.read(3, double.class);
+        this.maxY = accessor.read(4, double.class);
+        this.maxZ = accessor.read(5, double.class);
     }
 
     public AxisAligned(BlockPosition pos) {
@@ -106,7 +120,7 @@ public class AxisAligned {
     }
 
 
-    public AxisAligned addCoord(double x, double y, double z) {
+    public AxisAligned addCord(double x, double y, double z) {
         double d0 = this.minX;
         double d1 = this.minY;
         double d2 = this.minZ;
@@ -166,6 +180,7 @@ public class AxisAligned {
     public AxisAligned offset(Vector3D vec) {
         return this.offset(vec.x, vec.y, vec.z);
     }
+
     public double calculateXOffset(AxisAligned other, double offsetX) {
         if (other.maxY > this.minY && other.minY < this.maxY && other.maxZ > this.minZ && other.minZ < this.maxZ) {
             if (offsetX > 0.0D && other.maxX <= this.minX) {
@@ -182,7 +197,6 @@ public class AxisAligned {
         }
         return offsetX;
     }
-
     public double calculateYOffset(AxisAligned other, double offsetY) {
         if (other.maxX > this.minX && other.minX < this.maxX && other.maxZ > this.minZ && other.minZ < this.maxZ) {
             if (offsetY > 0.0D && other.maxY <= this.minY) {
@@ -336,5 +350,13 @@ public class AxisAligned {
 
     public Vector3D getCenter() {
         return new Vector3D(this.minX + (this.maxX - this.minX) * 0.5D, this.minY + (this.maxY - this.minY) * 0.5D, this.minZ + (this.maxZ - this.minZ) * 0.5D);
+    }
+
+    @Override
+    public Object createOriginal() {
+        return Reflection.callConstructor(
+                Reflection.getConstructor(ClassesContainer.INSTANCE.getAxisAlignedClass(), double.class, double.class, double.class, double.class, double.class, double.class),
+                this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ
+        );
     }
 }

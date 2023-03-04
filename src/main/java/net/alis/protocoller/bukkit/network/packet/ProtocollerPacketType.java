@@ -15,16 +15,16 @@ public class ProtocollerPacketType implements MinecraftPacketType {
         this.packetState = state;
         this.packetId = packetId;
         switch (state) {
-            case PLAY_IN:this.packetName = "PacketPlayIn" + packetName; break;
-            case PLAY_OUT:this.packetName = "PacketPlayOut" + packetName; break;
-            case PLAY_OUT_CLIENTBOUND:this.packetName = "Clientbound" + packetName; break;
-            case PLAY_IN_SERVERBOUND:this.packetName = "Serverbound" + packetName; break;
-            case LOGIN_IN:this.packetName = "PacketLoginIn" + packetName; break;
-            case LOGIN_OUT:this.packetName = "PacketLoginOut" + packetName; break;
-            case STATUS_IN:this.packetName = "PacketStatusIn" + packetName; break;
-            case STATUS_OUT:this.packetName = "PacketStatusOut" + packetName; break;
-            case HANDSHAKE_IN:this.packetName = "PacketHandshakingIn" + packetName; break;
-            case HANDSHAKE_OUT:this.packetName = "PacketHandshakingOut" + packetName; break;
+            case PLAY_CLIENTBOUND:this.packetName = "PacketPlayIn" + packetName; break;
+            case PLAY_SERVERBOUND:this.packetName = "PacketPlayOut" + packetName; break;
+            case CLIENTBOUND:this.packetName = "Clientbound" + packetName; break;
+            case SERVERBOUND:this.packetName = "Serverbound" + packetName; break;
+            case LOGIN_CLIENTBOUND:this.packetName = "PacketLoginIn" + packetName; break;
+            case LOGIN_SERVERBOUND:this.packetName = "PacketLoginOut" + packetName; break;
+            case STATUS_CLIENTBOUND:this.packetName = "PacketStatusIn" + packetName; break;
+            case STATUS_SERVERBOUND:this.packetName = "PacketStatusOut" + packetName; break;
+            case HANDSHAKE_CLIENTBOUND:this.packetName = "PacketHandshakingIn" + packetName; break;
+            case HANDSHAKE_SERVERBOUND:this.packetName = "PacketHandshakingOut" + packetName; break;
             default: this.packetName = "UnknownPacket"; break;
         }
         this.packetClass = NetworkReflection.packet$getPacketClass(this.packetName, state);

@@ -7,6 +7,8 @@ import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.PacketType;
+import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 public class PacketPlayOutCollect implements Packet {
 
@@ -64,6 +66,11 @@ public class PacketPlayOutCollect implements Packet {
     public void setCollectorId(int collectorId) {
         this.packetData.writeInt(1, collectorId);
         this.collectorId = collectorId;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
     }
 
     public int getStackAmount() {
