@@ -3,11 +3,12 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.phys.MovingObjectPositionBlock;
@@ -21,7 +22,7 @@ import static net.alis.protocoller.bukkit.enums.Version.v1_9;
 @AddedSince(v1_9)
 public class PacketPlayInUseItem implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private MovingObjectPositionBlock blockHitResult;
     private PacketPlayInArmAnimation.Hand hand;
 
@@ -31,7 +32,7 @@ public class PacketPlayInUseItem implements Packet {
 
     private @NotOnAllVersions int sequence;
 
-    public PacketPlayInUseItem(PacketDataSerializer packetData) {
+    public PacketPlayInUseItem(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.hand = PacketPlayInArmAnimation.Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
         if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14)) {
@@ -62,7 +63,7 @@ public class PacketPlayInUseItem implements Packet {
      * For versions less than 1.14
      */
     public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, PacketPlayInArmAnimation.Hand hand, int sequence, float f1, float f2, float f3) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
@@ -81,15 +82,15 @@ public class PacketPlayInUseItem implements Packet {
                         new IndexedParam<>(hand.original(), 0)
                     };
                 }
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, hand.original(), blockHitResult.createOriginal()));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, hand.original(), blockHitResult.createOriginal()));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(creator.create(null, hand.original(), blockHitResult.createOriginal(), sequence));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, hand.original(), blockHitResult.createOriginal(), sequence));
                 break;
             }
             default: {
@@ -176,7 +177,7 @@ public class PacketPlayInUseItem implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

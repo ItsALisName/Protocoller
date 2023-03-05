@@ -1,28 +1,29 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.resources.MinecraftKey;
 import net.alis.protocoller.parent.sounds.SoundCategory;
 
 public class PacketPlayOutStopSound implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private MinecraftKey minecraftKey;
     private SoundCategory soundCategory;
 
-    public PacketPlayOutStopSound(PacketDataSerializer packetData) {
+    public PacketPlayOutStopSound(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.minecraftKey = packetData.readMinecraftKey(0);
         this.soundCategory = SoundCategory.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getSoundCategoryEnum()).ordinal());
     }
 
     public PacketPlayOutStopSound(MinecraftKey minecraftKey, SoundCategory soundCategory) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, minecraftKey.createOriginal(), soundCategory.original()));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, minecraftKey.createOriginal(), soundCategory.original()));
         this.minecraftKey = minecraftKey;
         this.soundCategory = soundCategory;
     }
@@ -51,7 +52,7 @@ public class PacketPlayOutStopSound implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

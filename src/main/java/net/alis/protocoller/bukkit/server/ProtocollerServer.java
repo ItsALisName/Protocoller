@@ -2,6 +2,7 @@ package net.alis.protocoller.bukkit.server;
 
 import com.google.common.collect.Lists;
 
+import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.netty.interceptors.NettyPacketInterceptor;
 import net.alis.protocoller.bukkit.network.netty.injectors.PlayersInjector;
 import net.alis.protocoller.bukkit.network.netty.injectors.ServerInjector;
@@ -42,11 +43,13 @@ public class ProtocollerServer implements NetworkServer {
         this.channelFutures = Collections.synchronizedList(Lists.newArrayList());
         List<Object> networkManagers = ServerReflection.getServerNetworkManagers();
         synchronized (networkManagers) {
-            for(Object networkManager : ServerReflection.getServerNetworkManagers())
+            for(Object networkManager : networkManagers) {
                 this.channels.add(Reflection.readField(networkManager, 0, Channel.class));
+            }
         }
-        for(Object future : ServerReflection.getServerChannelFutures())
+        for(Object future : ServerReflection.getServerChannelFutures()) {
             this.channelFutures.add((ChannelFuture) future);
+        }
         this.packetInterceptors = new ArrayList<>();
         this.playersInjector = new PlayersInjector();
         this.serverInjector = new ServerInjector();

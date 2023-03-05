@@ -1,31 +1,32 @@
 package net.alis.protocoller.packet.packets.status;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketStatusInPing implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private long startTime;
 
-    public PacketStatusInPing(PacketDataSerializer data) {
-        this.packetData = new PacketDataSerializer(data.getRawPacket());
+    public PacketStatusInPing(PacketDataContainer data) {
+        this.packetData = data;
         this.startTime = data.readLong(0);
     }
 
     public PacketStatusInPing(long startTime) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         if(converter.getConstructorIndicator().getLevel() > 0) {
-            this.packetData = new PacketDataSerializer(converter.create(null, startTime));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(null, startTime));
         } else {
             IndexedParam<?, ?>[] params = {
                     new IndexedParam<>(startTime, 0)
             };
-            this.packetData = new PacketDataSerializer(converter.create(params));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(params));
         }
         this.startTime = startTime;
     }
@@ -50,7 +51,7 @@ public class PacketStatusInPing implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return this.packetData;
     }
 }

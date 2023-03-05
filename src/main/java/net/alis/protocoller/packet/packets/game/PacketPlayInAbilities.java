@@ -1,11 +1,12 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.entity.player.PlayerAbilities;
 import net.alis.protocoller.util.annotations.NotOnAllVersions;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PacketPlayInAbilities implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private @NotOnAllVersions boolean isInvulnerable;
     private boolean isFlying;
     private @NotOnAllVersions boolean canFly;
@@ -23,7 +24,7 @@ public class PacketPlayInAbilities implements Packet {
 
     private final boolean legacy = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16);
 
-    public PacketPlayInAbilities(PacketDataSerializer packetData) {
+    public PacketPlayInAbilities(PacketDataContainer packetData) {
         this.packetData = packetData;
         if(!legacy) {
             this.isFlying = packetData.readBoolean(0);
@@ -38,7 +39,7 @@ public class PacketPlayInAbilities implements Packet {
     }
 
     public PacketPlayInAbilities(@NotNull PlayerAbilities abilities) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, abilities.createOriginal()));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, abilities.createOriginal()));
         this.isInvulnerable = abilities.isInvulnerable();
         this.isFlying = abilities.isFlying();
         this.canFly = abilities.isCanFly();
@@ -121,7 +122,7 @@ public class PacketPlayInAbilities implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

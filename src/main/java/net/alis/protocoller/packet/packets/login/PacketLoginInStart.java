@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.login;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.authlib.GameProfile;
 
@@ -12,12 +13,12 @@ import java.util.UUID;
 
 public class PacketLoginInStart implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private GameProfile gameProfile;
 
-    private final PacketCreator converter = PacketCreator.get(getPacketType());
+    private final PacketBuilder converter = PacketBuilder.get(getPacketType());
 
-    public PacketLoginInStart(PacketDataSerializer packetData) {
+    public PacketLoginInStart(PacketDataContainer packetData) {
         this.packetData = packetData;
         if(converter.getConstructorIndicator().getLevel() == 2) {
             this.gameProfile = new GameProfile(((Optional<UUID>) packetData.readOptional(0)).get(), packetData.readString(0));
@@ -29,11 +30,11 @@ public class PacketLoginInStart implements Packet {
     public PacketLoginInStart(GameProfile gameProfile) {
         switch (converter.getConstructorIndicator().getLevel()) {
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, gameProfile.createOriginal()));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, gameProfile.createOriginal()));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(converter.create(null, gameProfile.getName(), Optional.ofNullable(gameProfile.getId())));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, gameProfile.getName(), Optional.ofNullable(gameProfile.getId())));
                 break;
             }
             default: {
@@ -64,7 +65,7 @@ public class PacketLoginInStart implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

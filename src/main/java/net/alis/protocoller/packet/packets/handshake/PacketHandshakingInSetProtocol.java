@@ -2,24 +2,25 @@ package net.alis.protocoller.packet.packets.handshake;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.network.ProtocolEnum;
 
 public class PacketHandshakingInSetProtocol implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     public String address;
     private int protocolVersion;
     public int port;
     public ProtocolEnum intendedState;
     private final boolean isLegacy = GlobalProvider.instance().getServer().isLegacy();
 
-    public PacketHandshakingInSetProtocol(PacketDataSerializer packetData) {
+    public PacketHandshakingInSetProtocol(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.address = packetData.readString(0);
         this.intendedState = ProtocolEnum.get(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getProtocolEnum()).ordinal());
@@ -33,7 +34,7 @@ public class PacketHandshakingInSetProtocol implements Packet {
     }
 
     public PacketHandshakingInSetProtocol(String address, int port, ProtocolEnum intendedState) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?, ?>[] params = {
@@ -41,11 +42,11 @@ public class PacketHandshakingInSetProtocol implements Packet {
                         new IndexedParam<>(port, 0),
                         new IndexedParam<>(ProtocolEnum.original(intendedState), 0)
                 };
-                this.packetData = new PacketDataSerializer(converter.create(params));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, address, port, ProtocolEnum.original(intendedState)));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, address, port, ProtocolEnum.original(intendedState)));
                 break;
             }
             default: {
@@ -109,7 +110,7 @@ public class PacketHandshakingInSetProtocol implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return this.packetData;
     }
 

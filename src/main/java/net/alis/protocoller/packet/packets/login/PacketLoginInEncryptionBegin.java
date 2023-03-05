@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.login;
 
 import net.alis.protocoller.bukkit.exceptions.CryptographyException;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.MinecraftEncryption;
 
@@ -14,28 +15,28 @@ import java.security.PublicKey;
 
 public class PacketLoginInEncryptionBegin implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private byte[] publicKey;
     private byte[] nonce;
 
-    public PacketLoginInEncryptionBegin(PacketDataSerializer packetData) {
+    public PacketLoginInEncryptionBegin(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.publicKey = packetData.readByteArray(0);
         this.nonce = packetData.readByteArray(1);
     }
 
     public PacketLoginInEncryptionBegin(SecretKey secretKey, PublicKey publicKey, byte[] nonce) throws CryptographyException {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         this.publicKey = MinecraftEncryption.readBytes(publicKey, secretKey.getEncoded());
         this.nonce = MinecraftEncryption.readBytes(publicKey, nonce);
         if(converter.getConstructorIndicator().getLevel() > 0) {
-            this.packetData = new PacketDataSerializer(converter.create(null, secretKey, publicKey, nonce));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(null, secretKey, publicKey, nonce));
         } else {
             IndexedParam<?,?>[] params = {
                 new IndexedParam<>(this.publicKey, 0),
                 new IndexedParam<>(this.nonce, 1)
             };
-            this.packetData = new PacketDataSerializer(converter.create(params));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(params));
         }
     }
 
@@ -73,7 +74,7 @@ public class PacketLoginInEncryptionBegin implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return this.packetData;
     }
 

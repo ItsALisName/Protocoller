@@ -2,33 +2,34 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayInArmAnimation implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private Hand hand;
 
-    public PacketPlayInArmAnimation(PacketDataSerializer packetData) {
+    public PacketPlayInArmAnimation(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
     }
 
     public PacketPlayInArmAnimation(Hand hand) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {new IndexedParam<>(hand.original(), 0)};
-                this.packetData = new PacketDataSerializer(converter.create(params));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, hand.original()));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, hand.original()));
                 break;
             }
             default: {
@@ -54,7 +55,7 @@ public class PacketPlayInArmAnimation implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

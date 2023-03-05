@@ -3,13 +3,14 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.phys.Vector3D;
 import net.alis.protocoller.util.annotations.NotOnAllVersions;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PacketPlayInUseEntity implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int entityId;
     private boolean sneaking;
     private EntityUseAction entityUseAction;
@@ -26,9 +27,9 @@ public class PacketPlayInUseEntity implements Packet {
     private @NotOnAllVersions Vector3D vector;
     private @NotOnAllVersions PacketPlayInArmAnimation.Hand hand;
 
-    private final PacketCreator creator = PacketCreator.get(getPacketType());
+    private final PacketBuilder creator = PacketBuilder.get(getPacketType());
 
-    public PacketPlayInUseEntity(PacketDataSerializer packetData) {
+    public PacketPlayInUseEntity(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.entityUseAction = EntityUseAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getEntityUseActionEnum()).ordinal());
@@ -68,15 +69,15 @@ public class PacketPlayInUseEntity implements Packet {
                         new IndexedParam<>(vector.createOriginal(), 0)
                     };
                 }
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, AlMinecraftReflection.getMinecraftEntity(entity)));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, AlMinecraftReflection.getMinecraftEntity(entity)));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(creator.create(null, entity.getEntityId(), sneaking, entityUseAction.original()));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, entity.getEntityId(), sneaking, entityUseAction.original()));
                 break;
             }
             default: {
@@ -169,7 +170,7 @@ public class PacketPlayInUseEntity implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

@@ -1,25 +1,26 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayInClientCommand implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private ClientCommand mode;
 
-    public PacketPlayInClientCommand(PacketDataSerializer packetData) {
+    public PacketPlayInClientCommand(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.mode = ClientCommand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getClientCommandEnum()).ordinal());
     }
 
     public PacketPlayInClientCommand(ClientCommand mode) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, mode.original()));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, mode.original()));
         this.mode = mode;
     }
 
@@ -38,7 +39,7 @@ public class PacketPlayInClientCommand implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

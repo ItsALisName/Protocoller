@@ -3,12 +3,13 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.util.Facing;
@@ -16,13 +17,13 @@ import net.alis.protocoller.util.annotations.NotOnAllVersions;
 
 public class PacketPlayInBlockDig implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private PlayerDigType digType;
     private BlockPosition blockPosition;
     private Facing facing;
     private @NotOnAllVersions int sequence;
 
-    public PacketPlayInBlockDig(PacketDataSerializer packetData) {
+    public PacketPlayInBlockDig(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.digType = PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerDigTypeEnum()).ordinal());
         this.blockPosition = packetData.readBlockPosition(0);
@@ -35,7 +36,7 @@ public class PacketPlayInBlockDig implements Packet {
     }
 
     public PacketPlayInBlockDig(PlayerDigType digType, BlockPosition blockPosition, Facing facing, int sequence) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
@@ -43,15 +44,15 @@ public class PacketPlayInBlockDig implements Packet {
                         new IndexedParam<>(facing.original(), 0),
                         new IndexedParam<>(digType.original(), 0)
                 };
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, digType.original(), blockPosition.createOriginal(), facing.original()));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, digType.original(), blockPosition.createOriginal(), facing.original()));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(creator.create(null, digType.original(), blockPosition.createOriginal(), facing.original(), sequence));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, digType.original(), blockPosition.createOriginal(), facing.original(), sequence));
                 break;
             }
             default: {
@@ -111,7 +112,7 @@ public class PacketPlayInBlockDig implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

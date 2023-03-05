@@ -1,11 +1,12 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 import java.util.ArrayList;
@@ -14,8 +15,8 @@ import java.util.Set;
 
 public class PacketPlayOutPosition implements Packet {
 
-    private final PacketDataSerializer packetData;
-    private final PacketCreator converter = PacketCreator.get(getPacketType());
+    private final PacketDataContainer packetData;
+    private final PacketBuilder converter = PacketBuilder.get(getPacketType());
     private double x;
     private double y;
     private double z;
@@ -25,7 +26,7 @@ public class PacketPlayOutPosition implements Packet {
     private int teleportId;
     private boolean shouldDismount;
 
-    public PacketPlayOutPosition(PacketDataSerializer packetData) {
+    public PacketPlayOutPosition(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.x = packetData.readDouble(0);
         this.y = packetData.readDouble(1);
@@ -57,15 +58,15 @@ public class PacketPlayOutPosition implements Packet {
         }
         switch (converter.getConstructorIndicator().getLevel()) {
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, x, y, z, yaw, pitch, newFlags));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, x, y, z, yaw, pitch, newFlags));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(converter.create(null, x, y, z, yaw, pitch, newFlags, teleportId));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, x, y, z, yaw, pitch, newFlags, teleportId));
                 break;
             }
             case 3: {
-                this.packetData = new PacketDataSerializer(converter.create(null, x, y, z, yaw, pitch, newFlags, teleportId, shouldDismount));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, x, y, z, yaw, pitch, newFlags, teleportId, shouldDismount));
                 break;
             }
             default: {
@@ -168,7 +169,7 @@ public class PacketPlayOutPosition implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

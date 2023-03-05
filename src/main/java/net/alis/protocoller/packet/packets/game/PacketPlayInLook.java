@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.util.annotations.AddedSince;
 
@@ -12,12 +13,12 @@ import static net.alis.protocoller.bukkit.enums.Version.v1_17;
 @AddedSince(v1_17)
 public class PacketPlayInLook implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private float yaw;
     private float pitch;
     private boolean onGround;
 
-    public PacketPlayInLook(PacketDataSerializer packetData) {
+    public PacketPlayInLook(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.yaw = packetData.readFloat(0);
         this.pitch = packetData.readFloat(1);
@@ -25,7 +26,7 @@ public class PacketPlayInLook implements Packet {
     }
 
     public PacketPlayInLook(float yaw, float pitch, boolean onGround) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, yaw, pitch, onGround));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, yaw, pitch, onGround));
         this.yaw = yaw;
         this.pitch = pitch;
         this.onGround = onGround;
@@ -64,7 +65,7 @@ public class PacketPlayInLook implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

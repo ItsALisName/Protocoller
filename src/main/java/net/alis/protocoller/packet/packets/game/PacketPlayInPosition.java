@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.util.annotations.AddedSince;
 
@@ -12,13 +13,13 @@ import static net.alis.protocoller.bukkit.enums.Version.v1_17;
 @AddedSince(v1_17)
 public class PacketPlayInPosition implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private double x;
     private double y;
     private double z;
     private boolean onGround;
 
-    public PacketPlayInPosition(PacketDataSerializer packetData) {
+    public PacketPlayInPosition(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.x = packetData.readDouble(0);
         this.y = packetData.readDouble(1);
@@ -27,7 +28,7 @@ public class PacketPlayInPosition implements Packet {
     }
 
     public PacketPlayInPosition(double x, double y, double z, boolean onGround) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, x, y, z, onGround));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, x, y, z, onGround));
         this.x = x;
         this.y = y;
         this.z = z;
@@ -76,7 +77,7 @@ public class PacketPlayInPosition implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

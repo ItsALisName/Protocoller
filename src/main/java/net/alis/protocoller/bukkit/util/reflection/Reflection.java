@@ -1,9 +1,9 @@
 package net.alis.protocoller.bukkit.util.reflection;
 
 import net.alis.protocoller.bukkit.data.InitialData;
+import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.util.ObjectAccessor;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +22,33 @@ public class Reflection {
         try {
             return Class.forName(clazz);
         } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Field getField(Class<?> instance, String fieldName) {
+        for(Field field : instance.getDeclaredFields()) {
+            field.setAccessible(true);
+            if(field.getName().equalsIgnoreCase(fieldName)) return field;
+        }
+        return null;
+    }
+
+    public static void writeField(Object instance, @NotNull Field field, Object param) {
+        field.setAccessible(true);
+        try {
+            field.set(instance, param);
+        } catch (IllegalAccessException e) {
+            LogsManager.get().getLogger().error("Failed to read field '" + field.getName() + "' in class '" + instance.getClass().getSimpleName() + "'!", e);
+        }
+    }
+
+    @Nullable
+    public static <PARAM> PARAM readField(Object instance, Field field) {
+        try {
+            return (PARAM) field.get(instance);
+        } catch (IllegalAccessException accessException) {
             return null;
         }
     }
@@ -77,6 +104,14 @@ public class Reflection {
         return null;
     }
 
+    public static Method getMethodNullParams(Class<?> instance, Class<?> returnType) {
+        for(Method method : instance.getDeclaredMethods()) {
+            method.setAccessible(true);
+            if(method.getReturnType() == returnType && method.getParameterTypes().length == 0) return method;
+        }
+        return null;
+    }
+
     public static Method getMethod(Class<?> instance, String name, Class<?>[] params, Class<?> returnType) {
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
@@ -99,22 +134,6 @@ public class Reflection {
         }
         if (cls.getSuperclass() != null) {
             return getMethod(cls.getSuperclass(), index, params);
-        }
-        return null;
-    }
-
-    public static Method getMethodCheckContainsString(Class<?> cls, String nameContainsThisStr, Class<?> returning) {
-        if (cls == null) {
-            return null;
-        }
-        for (Method m : cls.getDeclaredMethods()) {
-            if (m.getName().contains(nameContainsThisStr) && (returning == null || m.getReturnType().equals(returning))) {
-                m.setAccessible(true);
-                return m;
-            }
-        }
-        if (cls.getSuperclass() != null) {
-            return getMethodCheckContainsString(cls.getSuperclass(), nameContainsThisStr, returning);
         }
         return null;
     }

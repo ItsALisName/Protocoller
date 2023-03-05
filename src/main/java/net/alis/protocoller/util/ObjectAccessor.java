@@ -1,5 +1,7 @@
 package net.alis.protocoller.util;
 
+import net.alis.protocoller.bukkit.managers.LogsManager;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,9 @@ public class ObjectAccessor {
     private final List<Field> fields;
 
     public ObjectAccessor(Object object) {
+        if(object == null) {
+            LogsManager.get().warning("Object cannot be null! (ObjectAccessor)");
+        }
         this.object = object;
         this.fields = new ArrayList<>();
         for(Field field : object.getClass().getDeclaredFields()) {

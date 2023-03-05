@@ -1,31 +1,32 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayInHeldItemSlot implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int selectedSlot;
 
-    public PacketPlayInHeldItemSlot(PacketDataSerializer packetData) {
+    public PacketPlayInHeldItemSlot(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.selectedSlot = packetData.readInt(0);
     }
 
     public PacketPlayInHeldItemSlot(int selectedSlot) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
-                this.packetData = new PacketDataSerializer(creator.create(new IndexedParam[]{new IndexedParam<>(selectedSlot, 0)}));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(new IndexedParam[]{new IndexedParam<>(selectedSlot, 0)}));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, selectedSlot));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, selectedSlot));
                 break;
             }
             default: {
@@ -51,7 +52,7 @@ public class PacketPlayInHeldItemSlot implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

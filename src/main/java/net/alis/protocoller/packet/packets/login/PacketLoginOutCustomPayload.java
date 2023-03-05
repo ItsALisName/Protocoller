@@ -1,39 +1,40 @@
 package net.alis.protocoller.packet.packets.login;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.network.MinecraftPacketDataSerializer;
 import net.alis.protocoller.parent.resources.MinecraftKey;
 
 public class PacketLoginOutCustomPayload implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int queryId;
     private MinecraftKey channel;
     private MinecraftPacketDataSerializer payload;
 
-    public PacketLoginOutCustomPayload(PacketDataSerializer packetData) {
+    public PacketLoginOutCustomPayload(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.channel = packetData.readMinecraftKey(0);
         this.payload = packetData.readOriginalDataSerializer(0);
     }
 
     public PacketLoginOutCustomPayload(int queryId, MinecraftKey channel, MinecraftPacketDataSerializer payload) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                     new IndexedParam<>(queryId, 0), new IndexedParam<>(channel.createOriginal(), 0), new IndexedParam<>(payload.createOriginal(), 0)
                 };
-                this.packetData = new PacketDataSerializer(converter.create(params));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, queryId, channel.createOriginal(), payload.createOriginal()));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, queryId, channel.createOriginal(), payload.createOriginal()));
                 break;
             }
             default: {
@@ -79,7 +80,7 @@ public class PacketLoginOutCustomPayload implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

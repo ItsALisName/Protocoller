@@ -1,8 +1,9 @@
-package net.alis.protocoller.packet;
+package net.alis.protocoller.bukkit.network.packet;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.PacketTypesInitializer;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
+import net.alis.protocoller.packet.MinecraftPacketType;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.parent.authlib.GameProfile;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.entity.player.PlayerAbilities;
@@ -14,28 +15,42 @@ import net.alis.protocoller.parent.phys.BaseBlockPosition;
 import net.alis.protocoller.parent.resources.MinecraftKey;
 import net.alis.protocoller.util.ObjectAccessor;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.PublicKey;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
+public class PacketDataSerializer extends ObjectAccessor implements PacketDataContainer, Cloneable {
 
     private final MinecraftPacketType packetType;
+    private @Nullable Player player;
 
-    public PacketDataSerializer(Object rawPacket) {
+    public PacketDataSerializer(Object rawPacket, @Nullable Player player) {
         super(rawPacket);
+        this.player = player;
         this.packetType = PacketTypesInitializer.setPacketType(rawPacket);
     }
 
-    public PacketDataSerializer(PacketDataSerializer serializer) {
+    public PacketDataSerializer(Object rawPacket) {
+        this(rawPacket, null);
+    }
+
+    public PacketDataSerializer(@NotNull PacketDataSerializer serializer) {
         super(new ObjectAccessor(serializer.getObject()).getObject());
         packetType = serializer.packetType;
     }
 
     public MinecraftPacketType getType() {
         return packetType;
+    }
+
+    @Nullable
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     public Object getRawPacket() {
@@ -72,6 +87,21 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
 
     public MinecraftPacketDataSerializer readOriginalDataSerializer(int index) {
         return new MinecraftPacketDataSerializer((Object) super.read(index, ClassesContainer.INSTANCE.getPacketDataSerializerClass()));
+    }
+
+    @Override
+    public Collection<Object> readCollection(int index) {
+        return super.read(index, Collection.class);
+    }
+
+    @Override
+    public Map<Object, Object> readMap(int index) {
+        return super.read(index, Map.class);
+    }
+
+    @Override
+    public Set<Object> readSet(int index) {
+        return super.read(index, Set.class);
     }
 
     public Entity readMinecraftEntity(int index) {
@@ -172,23 +202,38 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
 
 
 
-    public void writeBaseBlockPosition(int index, BaseBlockPosition position) {
+    public void writeBaseBlockPosition(int index, @NotNull BaseBlockPosition position) {
         super.writeSpecify(index, ClassesContainer.INSTANCE.getBaseBlockPositionClass(), position.createOriginal());
+    }
+
+    @Override
+    public void writeCollection(int index, Collection<Object> collection) {
+        super.write(index, collection);
+    }
+
+    @Override
+    public void writeMap(int index, Map<Object, Object> map) {
+        super.write(index, map);
+    }
+
+    @Override
+    public void writeSet(int index, Set<Object> set) {
+        super.write(index, set);
     }
 
     public void writeMinecraftItemStack(int index, ItemStack stack) {
         super.writeSpecify(index,ClassesContainer.INSTANCE.getMinecraftItemStackClass(), AlMinecraftReflection.getMinecraftItemStack(stack));
     }
 
-    private void writePlayerAbilities(int index, PlayerAbilities abilities) {
+    public void writePlayerAbilities(int index, @NotNull PlayerAbilities abilities) {
         super.write(index, abilities.createOriginal());
     }
 
-    public void writeBlockPosition(int index, BlockPosition position) {
+    public void writeBlockPosition(int index, @NotNull BlockPosition position) {
         super.writeSpecify(index, ClassesContainer.INSTANCE.getBlockPositionClass(), position.createOriginal());
     }
 
-    public void writeMinecraftKey(int index, MinecraftKey key) {
+    public void writeMinecraftKey(int index, @NotNull MinecraftKey key) {
         super.write(index, key.createOriginal());
     }
 
@@ -204,11 +249,11 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
         super.write(index, param);
     }
 
-    public void writeIChatBaseComponent(int index, ChatComponent component) {
-        super.writeSpecify(index, ClassesContainer.INSTANCE.getIChatBaseComponentClass(), component.createIChatBaseComponent());
+    public void writeIChatBaseComponent(int index, @NotNull ChatComponent component) {
+        super.writeSpecify(index, ClassesContainer.INSTANCE.getIChatBaseComponentClass(), component.asIChatBaseComponent());
     }
 
-    public void writeServerPing(int index, ServerPing param) {
+    public void writeServerPing(int index, @NotNull ServerPing param) {
         super.write(index, param.createOriginal());
     }
 
@@ -216,7 +261,7 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
         super.write(index, param);
     }
 
-    public void writeGameProfile(int index, GameProfile profile) {
+    public void writeGameProfile(int index, @NotNull GameProfile profile) {
         super.write(index, profile.createOriginal());
     }
 
@@ -224,7 +269,7 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
         super.write(index, param);
     }
 
-    public void writeOriginalDataSerializer(int index, MinecraftPacketDataSerializer serializer) {
+    public void writeOriginalDataSerializer(int index, @NotNull MinecraftPacketDataSerializer serializer) {
         super.write(index, serializer.createOriginal());
     }
 
@@ -301,3 +346,4 @@ public class PacketDataSerializer extends ObjectAccessor implements Cloneable {
         return super.clone();
     }
 }
+

@@ -1,21 +1,22 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.core.BlockPosition;
 
 public class PacketPlayInJigsawGenerate implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private BlockPosition position;
     private int maxDepth;
     private boolean keepJigsaws;
 
-    public PacketPlayInJigsawGenerate(PacketDataSerializer packetData) {
+    public PacketPlayInJigsawGenerate(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.maxDepth = packetData.readInt(0);
@@ -23,7 +24,7 @@ public class PacketPlayInJigsawGenerate implements Packet {
     }
 
     public PacketPlayInJigsawGenerate(BlockPosition position, int maxDepth, boolean keepJigsaws) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
@@ -31,11 +32,11 @@ public class PacketPlayInJigsawGenerate implements Packet {
                         new IndexedParam<>(maxDepth, 0),
                         new IndexedParam<>(keepJigsaws, 0)
                 };
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, position.createOriginal(), maxDepth, keepJigsaws));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, position.createOriginal(), maxDepth, keepJigsaws));
                 break;
             }
             default: {
@@ -81,7 +82,7 @@ public class PacketPlayInJigsawGenerate implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

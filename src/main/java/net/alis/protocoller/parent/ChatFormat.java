@@ -1,6 +1,8 @@
 package net.alis.protocoller.parent;
 
 import com.google.common.collect.Lists;
+import net.alis.protocoller.bukkit.data.ClassesContainer;
+import net.alis.protocoller.bukkit.util.reflection.Reflection;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -154,13 +156,16 @@ public enum ChatFormat {
         List<String> list = Lists.newArrayList();
         ChatFormat[] chatFormats = values();
         int length = chatFormats.length;
-        for(int i = 0; i < length; ++i) {
-            ChatFormat chatFormatting = chatFormats[i];
+        for (ChatFormat chatFormatting : chatFormats) {
             if ((!chatFormatting.isReset() || colors) && (!chatFormatting.isFormat() || modifiers)) {
                 list.add(chatFormatting.getName());
             }
         }
         return list;
+    }
+
+    public Enum<?> original() {
+        return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getChatFormatEnum(), this.ordinal());
     }
 
     public String asString() {

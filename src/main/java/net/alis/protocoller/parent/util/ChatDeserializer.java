@@ -23,6 +23,16 @@ public class ChatDeserializer {
         return isJsonPrimitive(object, element) && object.getAsJsonPrimitive(element).isString();
     }
 
+    public static int intFromObject(JsonObject object, String element, int defaultInt) {
+        return object.has(element) ? intFromElement(object.get(element), element) : defaultInt;
+    }
+
+    @Nullable
+    @Contract("_,_,!null->!null;_,_,null->_")
+    public static JsonArray arrayFromObject(JsonObject object, String name, @Nullable JsonArray defaultArray) {
+        return object.has(name) ? jsonArrayFromElement(object.get(name), name) : defaultArray;
+    }
+
     public static boolean isJsonPrimitiveString(JsonElement element) {
         return element.isJsonPrimitive() && element.getAsJsonPrimitive().isString();
     }

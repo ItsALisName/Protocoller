@@ -1,24 +1,25 @@
 package net.alis.protocoller.packet.packets.login;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketLoginOutSetCompression implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int compressionThreshold;
 
-    public PacketLoginOutSetCompression(PacketDataSerializer packetData) {
+    public PacketLoginOutSetCompression(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.compressionThreshold = packetData.readInt(0);
     }
 
     public PacketLoginOutSetCompression(int compressionThreshold) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
-        this.packetData = new PacketDataSerializer(converter.create(null, compressionThreshold));
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
+        this.packetData = new PacketDataSerializer(converter.buildPacket(null, compressionThreshold));
         this.compressionThreshold = compressionThreshold;
     }
 
@@ -37,7 +38,7 @@ public class PacketLoginOutSetCompression implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return this.packetData;
     }
 

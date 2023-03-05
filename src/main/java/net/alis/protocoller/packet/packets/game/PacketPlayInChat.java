@@ -1,28 +1,29 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.*;
 
 public class PacketPlayInChat implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private String message;
 
-    public PacketPlayInChat(PacketDataSerializer packetData) {
+    public PacketPlayInChat(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.message = this.packetData.readString(0);
     }
 
     public PacketPlayInChat(String message) {
-        PacketCreator converter = PacketCreator.get(PacketType.Play.Client.CHAT);
+        PacketBuilder converter = PacketBuilder.get(PacketType.Play.Client.CHAT);
         if(converter.getConstructorIndicator().getLevel() > 0) {
-            this.packetData = new PacketDataSerializer(converter.create(null, message));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(null, message));
         } else {
             IndexedParam<?, ?>[] params = {
                     new IndexedParam<>(message, 0)
             };
-            this.packetData = new PacketDataSerializer(converter.create(params, (Object) null));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(params, (Object) null));
         }
     }
 
@@ -41,7 +42,7 @@ public class PacketPlayInChat implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return this.packetData;
     }
 

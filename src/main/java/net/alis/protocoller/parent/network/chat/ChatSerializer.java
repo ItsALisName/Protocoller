@@ -18,7 +18,7 @@ public class ChatSerializer {
         methodFromJSONOrString = Reflection.getMethod(ClassesContainer.INSTANCE.getCraftChatMessageClass(), "fromJSONOrString", new Class[]{String.class, boolean.class, boolean.class});
         methodFromComponent = Reflection.getMethod(ClassesContainer.INSTANCE.getCraftChatMessageClass(), "fromComponent", new Class[]{ClassesContainer.INSTANCE.getIChatBaseComponentClass()});
         if(methodFromJSONOrString == null) {
-            methodFromStringLegacy = Reflection.getMethod(ClassesContainer.INSTANCE.getChatSerializerClass(), "a", new Class[]{String.class});
+            methodFromStringLegacy = Reflection.getMethod(ClassesContainer.INSTANCE.getChatSerializerClass(), "Loot", new Class[]{String.class});
         }
         //originalMethodWrite = Reflection.getMethod(ClassesContainer.INSTANCE.getChatSerializerClass(), "Skip$1", new Class[]{String.class});
         //originalMethodRead = Reflection.getMethod(ClassesContainer.INSTANCE.getChatSerializerClass(), "Skip$1", new Class[]{ClassesContainer.INSTANCE.getIChatBaseComponentClass()});

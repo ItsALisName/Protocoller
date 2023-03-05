@@ -3,24 +3,25 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.entity.player.PlayerAction;
 import org.bukkit.entity.Entity;
 
 public class PacketPlayInEntityAction implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int entityId;
     private PlayerAction action;
     private int mountJumpHeight;
 
-    public PacketPlayInEntityAction(PacketDataSerializer packetData) {
+    public PacketPlayInEntityAction(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.action = PlayerAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerActionEnum()).ordinal());
@@ -29,7 +30,7 @@ public class PacketPlayInEntityAction implements Packet {
 
     public PacketPlayInEntityAction(int entityId, PlayerAction action, int mountJumpHeight) {
         if(GlobalProvider.instance().getData().getEntitiesContainer().isIdPresent(entityId)) {
-            PacketCreator creator = PacketCreator.get(getPacketType());
+            PacketBuilder creator = PacketBuilder.get(getPacketType());
             switch (creator.getConstructorIndicator().getLevel()) {
                 case 0: {
                     IndexedParam<?,?>[] params = {
@@ -37,11 +38,11 @@ public class PacketPlayInEntityAction implements Packet {
                         new IndexedParam<>(action.original(), 0),
                         new IndexedParam<>(mountJumpHeight, 1)
                     };
-                    this.packetData = new PacketDataSerializer(creator.create(params));
+                    this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                     break;
                 }
                 case 1: {
-                    this.packetData = new PacketDataSerializer(creator.create(null,
+                    this.packetData = new PacketDataSerializer(creator.buildPacket(null,
                             AlMinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId)),
                             action.original(),
                             mountJumpHeight
@@ -100,7 +101,7 @@ public class PacketPlayInEntityAction implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

@@ -1,19 +1,20 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayOutOpenWindowHorse implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int syncId;
     private int slotCount;
     private int horseId;
 
-    public PacketPlayOutOpenWindowHorse(PacketDataSerializer packetData) {
+    public PacketPlayOutOpenWindowHorse(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.syncId = packetData.readInt(0);
         this.slotCount = packetData.readInt(1);
@@ -21,7 +22,7 @@ public class PacketPlayOutOpenWindowHorse implements Packet {
     }
 
     public PacketPlayOutOpenWindowHorse(int syncId, int slotCount, int horseId) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, syncId, slotCount, horseId));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, syncId, slotCount, horseId));
         this.syncId = syncId;
         this.slotCount = slotCount;
         this.horseId = horseId;
@@ -60,7 +61,7 @@ public class PacketPlayOutOpenWindowHorse implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

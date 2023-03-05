@@ -1,19 +1,20 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayOutWindowData implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int syncId;
     private int propertyId;
     private int value;
 
-    public PacketPlayOutWindowData(PacketDataSerializer packetData) {
+    public PacketPlayOutWindowData(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.syncId = packetData.readInt(0);
         this.propertyId = packetData.readInt(1);
@@ -21,7 +22,7 @@ public class PacketPlayOutWindowData implements Packet {
     }
 
     public PacketPlayOutWindowData(int syncId, int propertyId, int value) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, syncId, propertyId, value));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, syncId, propertyId, value));
         this.syncId = syncId;
         this.propertyId = propertyId;
         this.value = value;
@@ -60,7 +61,7 @@ public class PacketPlayOutWindowData implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

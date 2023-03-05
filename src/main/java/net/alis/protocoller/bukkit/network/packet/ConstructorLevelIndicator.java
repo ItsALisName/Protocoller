@@ -1,13 +1,11 @@
 package net.alis.protocoller.bukkit.network.packet;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
+import net.alis.protocoller.bukkit.util.FastUtilLegacyAdapter;
 
 import javax.crypto.SecretKey;
 import java.security.PublicKey;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public enum ConstructorLevelIndicator {
 
@@ -150,11 +148,12 @@ public enum ConstructorLevelIndicator {
     PacketPlayOutPosition_1((byte) 1, double.class, double.class, double.class, float.class, float.class, Set.class),
     PacketPlayOutPosition_2((byte) 2, double.class, double.class, double.class, float.class, float.class, Set.class, int.class),
     PacketPlayOutPosition_3((byte) 3, double.class, double.class, double.class, float.class, float.class, Set.class, int.class, boolean.class),
-
+    PacketPlayOutAbilities_1((byte) 1, ClassesContainer.INSTANCE.getPlayerAbilitiesClass()),
     PacketPlayOutCollect_1((byte) 1, int.class, int.class),
     PacketPlayOutCollect_2((byte) 2, int.class, int.class, int.class),
     PacketPlayOutExperience_1((byte) 1, float.class, int.class, int.class),
     PacketPlayOutHeldItemSlot_1((byte) 1, int.class),
+    PacketPlayOutAutoRecipe_1((byte) 1, int.class, ClassesContainer.INSTANCE.getIRecipeClass()),
     PacketPlayOutKeepAlive_1((byte) 1, int.class),
     PacketPlayOutKeepAlive_2((byte) 2, long.class),
     PacketPlayOutOpenWindowHorse_1((byte) 1, int.class, int.class, int.class),
@@ -163,7 +162,13 @@ public enum ConstructorLevelIndicator {
     PacketPlayOutUpdateTime_1((byte) 1, long.class, long.class, boolean.class),
     PacketPlayOutViewCentre_1((byte) 1, int.class, int.class),
     PacketPlayOutViewDistance_1((byte) 1, int.class),
-    PacketPlayOutWindowData_1((byte) 1, int.class, int.class, int.class);
+    PacketPlayOutWindowData_1((byte) 1, int.class, int.class, int.class),
+    PacketPlayOutAdvancements_1((byte) 1, boolean.class, Collection.class, Set.class, Map.class),
+    PacketPlayOutAnimation_1((byte) 1, ClassesContainer.INSTANCE.getMinecraftEntityClass(), int.class),
+    PacketPlayOutAttachEntity_1((byte) 1, int.class, ClassesContainer.INSTANCE.getMinecraftEntityClass(), ClassesContainer.INSTANCE.getMinecraftEntityClass()),
+    PacketPlayOutAttachEntity_2((byte) 2, ClassesContainer.INSTANCE.getMinecraftEntityClass(), ClassesContainer.INSTANCE.getMinecraftEntityClass()),
+    PacketPlayInWindowClick_0((byte) 0),
+    PacketPlayInWindowClick_1((byte) 1, int.class, int.class, int.class, int.class, ClassesContainer.INSTANCE.getInventoryClickTypeEnum(), ClassesContainer.INSTANCE.getMinecraftItemStackClass(), FastUtilLegacyAdapter.Classes.Int2ObjectMap);
 
 
 

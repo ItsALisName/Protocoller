@@ -1,11 +1,12 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.util.annotations.AddedSince;
 import org.bukkit.entity.Entity;
@@ -16,12 +17,12 @@ import static net.alis.protocoller.bukkit.enums.Version.v1_13;
 @AddedSince(v1_13)
 public class PacketPlayInSetCommandMinecart implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int entityId;
     private String command;
     private boolean trackOutput;
 
-    public PacketPlayInSetCommandMinecart(PacketDataSerializer packetData) {
+    public PacketPlayInSetCommandMinecart(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.command = packetData.readString(0);
@@ -29,7 +30,7 @@ public class PacketPlayInSetCommandMinecart implements Packet {
     }
 
     public PacketPlayInSetCommandMinecart(int entityId, String command, boolean trackOutput) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
@@ -37,11 +38,11 @@ public class PacketPlayInSetCommandMinecart implements Packet {
                         new IndexedParam<>(command, 0),
                         new IndexedParam<>(trackOutput, 0)
                 };
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, entityId, command, trackOutput));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, entityId, command, trackOutput));
                 break;
             }
             default: {
@@ -92,7 +93,7 @@ public class PacketPlayInSetCommandMinecart implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

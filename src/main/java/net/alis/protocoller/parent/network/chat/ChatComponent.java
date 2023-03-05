@@ -257,7 +257,7 @@ public class ChatComponent {
         return o instanceof ChatComponent && ((ChatComponent) o).component.equals(component);
     }
 
-    public Object createIChatBaseComponent() {
+    public Object asIChatBaseComponent() {
         return ChatSerializer.fromJSONOrString(ComponentSerializer.toString(get()), true, true);
     }
 

@@ -84,7 +84,7 @@ public class CompressedStreamTools {
         if (nbtbase instanceof NBTTagCompound) {
             return (NBTTagCompound)nbtbase;
         } else {
-            throw new IOException("Root tag must be a named compound tag");
+            throw new IOException("Root tag must be Loot named compound tag");
         }
     }
 

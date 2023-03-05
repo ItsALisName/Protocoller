@@ -1,21 +1,22 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayInSteerVehicle implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private float sideways;
     private float forward;
     private boolean jumping;
     private boolean sneaking;
 
-    public PacketPlayInSteerVehicle(PacketDataSerializer packetData) {
+    public PacketPlayInSteerVehicle(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.sideways = packetData.readFloat(0);
         this.forward = packetData.readFloat(1);
@@ -24,7 +25,7 @@ public class PacketPlayInSteerVehicle implements Packet {
     }
 
     public PacketPlayInSteerVehicle(float sideways, float forward, boolean jumping, boolean sneaking) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
@@ -33,11 +34,11 @@ public class PacketPlayInSteerVehicle implements Packet {
                         new IndexedParam<>(jumping, 0),
                         new IndexedParam<>(sneaking, 1)
                 };
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, sideways, forward, jumping, sneaking));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, sideways, forward, jumping, sneaking));
                 break;
             }
             default: {
@@ -93,7 +94,7 @@ public class PacketPlayInSteerVehicle implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

@@ -1,39 +1,40 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import org.bukkit.inventory.ItemStack;
 
 public class PacketPlayInSetCreativeSlot implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int slot;
     private ItemStack itemStack;
 
-    public PacketPlayInSetCreativeSlot(PacketDataSerializer packetData) {
+    public PacketPlayInSetCreativeSlot(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.slot = packetData.readInt(0);
         this.itemStack = packetData.readMinecraftItemStack(0);
     }
 
     public PacketPlayInSetCreativeSlot(int slot, ItemStack itemStack) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                     new IndexedParam<>(slot, 0),
                     new IndexedParam<>(AlMinecraftReflection.getMinecraftItemStack(itemStack), 0)
                 };
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, slot, AlMinecraftReflection.getMinecraftItemStack(itemStack)));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, slot, AlMinecraftReflection.getMinecraftItemStack(itemStack)));
                 break;
             }
             default: {
@@ -69,7 +70,7 @@ public class PacketPlayInSetCreativeSlot implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

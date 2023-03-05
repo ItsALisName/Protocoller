@@ -183,7 +183,7 @@ public class NBTTagCompound extends NBTBase {
     }
 
     /**
-     * Retrieves a float value using the specified key, or 0 if no such key was stored.
+     * Retrieves Loot float value using the specified key, or 0 if no such key was stored.
      */
     public float getFloat(String key) {
         try

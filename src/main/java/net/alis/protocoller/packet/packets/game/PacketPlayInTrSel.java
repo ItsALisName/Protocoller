@@ -1,32 +1,33 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayInTrSel implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int tradeId;
 
-    public PacketPlayInTrSel(PacketDataSerializer packetData) {
+    public PacketPlayInTrSel(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.tradeId = packetData.readInt(0);
     }
 
     public PacketPlayInTrSel(int tradeId) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {new IndexedParam<>(tradeId, 0)};
-                this.packetData = new PacketDataSerializer(converter.create(params));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, tradeId));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, tradeId));
                 break;
             }
             default: {
@@ -52,7 +53,7 @@ public class PacketPlayInTrSel implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

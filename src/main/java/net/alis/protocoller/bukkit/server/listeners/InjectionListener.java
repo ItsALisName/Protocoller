@@ -29,8 +29,7 @@ public class InjectionListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         new ProtocollerPlayer(new NettyChannelManager(PlayerReflection.getPlayerChannel(player)), player.getName(), player.getUniqueId(), player.getAddress());
-        if(!GlobalProvider.instance().getServer().getPlayersInjector().isInjected(player))
-            GlobalProvider.instance().getServer().getPlayersInjector().inject(player);
+        GlobalProvider.instance().getServer().getPlayersInjector().inject(player);
         TaskSimplifier.INSTANCE.preformAsync(() -> {
             Thread.currentThread().setName("ProtocollerUtilThread-" + Utils.generateRandomInt(5));
             GlobalProvider.instance().getData().getEntitiesContainer().addEntity(player.getEntityId(), player);

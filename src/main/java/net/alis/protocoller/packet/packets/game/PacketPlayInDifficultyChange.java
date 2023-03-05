@@ -1,25 +1,26 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.difficulty.Difficulty;
 
 public class PacketPlayInDifficultyChange implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private Difficulty difficulty;
 
-    public PacketPlayInDifficultyChange(PacketDataSerializer packetData) {
+    public PacketPlayInDifficultyChange(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.difficulty = Difficulty.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getDifficultyEnum()).ordinal());
     }
 
     public PacketPlayInDifficultyChange(Difficulty difficulty) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, difficulty.original()));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, difficulty.original()));
         this.difficulty = difficulty;
     }
 
@@ -38,7 +39,7 @@ public class PacketPlayInDifficultyChange implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

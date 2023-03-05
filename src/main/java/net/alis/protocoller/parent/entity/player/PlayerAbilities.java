@@ -1,6 +1,7 @@
 package net.alis.protocoller.parent.entity.player;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
+import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.parent.nbt.NBTBase;
@@ -29,6 +30,16 @@ public class PlayerAbilities implements CopiedObject {
         this.mayBuild = accessor.read(4, boolean.class);
         this.flySpeed = accessor.read(0, Float.TYPE);
         this.walkSpeed = accessor.read(1, Float.TYPE);
+    }
+
+    public PlayerAbilities(boolean isInvulnerable, boolean isFlying, boolean canFly, boolean canInstantlyBuild, boolean mayBuild, float flySpeed, float walkSpeed) {
+        this.isInvulnerable = isInvulnerable;
+        this.isFlying = isFlying;
+        this.canFly = canFly;
+        this.canInstantlyBuild = canInstantlyBuild;
+        this.mayBuild = mayBuild;
+        this.flySpeed = flySpeed;
+        this.walkSpeed = walkSpeed;
     }
 
     public boolean isInvulnerable() {
@@ -99,7 +110,7 @@ public class PlayerAbilities implements CopiedObject {
         return compound;
     }
 
-    public void fromNBT(NBTTagCompound nbt) {
+    public PlayerAbilities fromNBT(NBTTagCompound nbt) {
         if (nbt.getCompoundTag("abilities") != null) {
             NBTTagCompound compoundTag = nbt.getCompoundTag("abilities");
             this.isInvulnerable = compoundTag.getBoolean("invulnerable");
@@ -109,7 +120,10 @@ public class PlayerAbilities implements CopiedObject {
             this.flySpeed = compoundTag.getFloat("flySpeed");
             this.walkSpeed = compoundTag.getFloat("walkSpeed");
             this.mayBuild = compoundTag.getBoolean("mayBuild");
+            return this;
         }
+        LogsManager.get().getLogger().warn("Failed to create PlayerAbilities from nbt, key \"abilities\" not founded!");
+        return this;
     }
 
     @Override

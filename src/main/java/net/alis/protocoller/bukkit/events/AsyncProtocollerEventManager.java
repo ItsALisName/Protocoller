@@ -14,7 +14,7 @@ import net.alis.protocoller.event.impl.PacketEventHandler;
 import net.alis.protocoller.event.impl.PacketEventPriority;
 import net.alis.protocoller.event.impl.PacketListener;
 import net.alis.protocoller.event.manager.AsynchronousEventManager;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,7 +84,7 @@ public class AsyncProtocollerEventManager implements AsynchronousEventManager {
         }
     }
     
-    public static void callListeners(PacketDataSerializer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
+    public static void callListeners(PacketDataContainer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
         TaskSimplifier.INSTANCE.preformAsync(() -> {
             switch (data.getType().getState()) {
                 case CLIENTBOUND: {

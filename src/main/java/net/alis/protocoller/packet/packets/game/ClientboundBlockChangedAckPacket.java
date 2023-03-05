@@ -1,23 +1,24 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class ClientboundBlockChangedAckPacket implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int decodedInt$0;
 
-    public ClientboundBlockChangedAckPacket(PacketDataSerializer packetData) {
+    public ClientboundBlockChangedAckPacket(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.decodedInt$0 = packetData.readInt(0);
     }
 
     public ClientboundBlockChangedAckPacket(int decodedInt$0) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, decodedInt$0));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, decodedInt$0));
         this.decodedInt$0 = decodedInt$0;
     }
 
@@ -36,7 +37,7 @@ public class ClientboundBlockChangedAckPacket implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

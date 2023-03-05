@@ -5,23 +5,23 @@ import net.alis.protocoller.bukkit.exceptions.PacketDeserializeException;
 import net.alis.protocoller.event.impl.CancellablePacketEvent;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 
 import java.net.InetSocketAddress;
 
 public class SyncPacketEvent implements CancellablePacketEvent {
-    private PacketDataSerializer data;
+    private PacketDataContainer data;
     private final Channel channel;
     private final InetSocketAddress address;
     private boolean cancelled;
 
-    public SyncPacketEvent(PacketDataSerializer data, Channel channel, InetSocketAddress address) {
+    public SyncPacketEvent(PacketDataContainer data, Channel channel, InetSocketAddress address) {
         this.data = data;
         this.channel = channel;
         this.address = address;
     }
 
-    public PacketDataSerializer getData() {
+    public PacketDataContainer getData() {
         return this.data;
     }
 
@@ -42,7 +42,7 @@ public class SyncPacketEvent implements CancellablePacketEvent {
             this.data = packet.getPacketData();
             return;
         }
-        throw new PacketDeserializeException("Failed to get new packet data. Have you done everything right?");
+        throw new PacketDeserializeException("Failed to get new packet data. Have you configure everything right?");
     }
 
     @Override

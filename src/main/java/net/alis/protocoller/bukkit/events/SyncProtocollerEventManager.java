@@ -14,7 +14,8 @@ import net.alis.protocoller.event.impl.PacketEventPriority;
 import net.alis.protocoller.event.synchronous.*;
 import net.alis.protocoller.event.impl.PacketListener;
 import net.alis.protocoller.event.manager.SynchronousEventManager;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +55,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 }
             }
             if(methodsCount == 0) {
-                LogsManager.get().getLogger(Thread.currentThread()).warn("No methods found listening for packets during registration of packet listener class '" + listener.getClass().getSimpleName() + "'");            } else {
+                LogsManager.get().getLogger().warn("No methods found listening for packets during registration of packet listener class '" + listener.getClass().getSimpleName() + "'");            } else {
             }
         });
     }
@@ -85,7 +86,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
 
     }
 
-    public static SyncPacketEvent callListeners(PacketDataSerializer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
+    public static SyncPacketEvent callListeners(PacketDataContainer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
         switch (data.getType().getState()) {
             case CLIENTBOUND: {
                 if(player == null) {

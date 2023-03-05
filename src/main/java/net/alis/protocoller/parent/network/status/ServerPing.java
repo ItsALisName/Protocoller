@@ -145,7 +145,7 @@ public class ServerPing {
     public Object createOriginal() {
         ObjectAccessor accessor = new ObjectAccessor(Reflection.callConstructor(Reflection.getConstructor(ClassesContainer.INSTANCE.getServerPingClass())));
         if(this.favicon != null) accessor.write(0, this.favicon);
-        if(this.description != null) accessor.writeSpecify(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass(), this.description.createIChatBaseComponent());
+        if(this.description != null) accessor.writeSpecify(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass(), this.description.asIChatBaseComponent());
         if(this.version != null) accessor.write(0, this.version.createOriginal());
         if(this.players != null) accessor.write(0, this.players.createOriginal());
         return accessor.getObject();

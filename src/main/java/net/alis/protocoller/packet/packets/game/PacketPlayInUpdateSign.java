@@ -3,11 +3,12 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.network.chat.ChatSerializer;
@@ -16,13 +17,13 @@ import java.lang.reflect.Array;
 
 public class PacketPlayInUpdateSign implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private BlockPosition position;
     private String[] lines;
 
     private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9);
 
-    public PacketPlayInUpdateSign(PacketDataSerializer packetData) {
+    public PacketPlayInUpdateSign(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.lines = new String[4];
@@ -44,7 +45,7 @@ public class PacketPlayInUpdateSign implements Packet {
     }
 
     public PacketPlayInUpdateSign(BlockPosition position, String[] lines) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
@@ -61,18 +62,18 @@ public class PacketPlayInUpdateSign implements Packet {
                             new IndexedParam<>(position.createOriginal(), 0),
                             new IndexedParam<>(icbc, 0)
                     };
-                    this.packetData = new PacketDataSerializer(creator.create(params));
+                    this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 } else {
                     params = new IndexedParam[]{
                             new IndexedParam<>(position.createOriginal(), 0),
                             new IndexedParam<>(lines, 0)
                     };
-                    this.packetData = new PacketDataSerializer(creator.create(params));
+                    this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 }
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, position.createOriginal(), lines[0], lines[1], lines[2], lines[3]));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, position.createOriginal(), lines[0], lines[1], lines[2], lines[3]));
                 break;
             }
             default: {
@@ -108,7 +109,7 @@ public class PacketPlayInUpdateSign implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

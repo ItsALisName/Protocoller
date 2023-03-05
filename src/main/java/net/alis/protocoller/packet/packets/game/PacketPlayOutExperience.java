@@ -1,19 +1,20 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayOutExperience implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private float barProgress;
     private int experienceLevel;
     private int experience;
 
-    public PacketPlayOutExperience(PacketDataSerializer packetData) {
+    public PacketPlayOutExperience(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.barProgress = packetData.readFloat(0);
         this.experienceLevel = packetData.readInt(0);
@@ -21,7 +22,7 @@ public class PacketPlayOutExperience implements Packet {
     }
 
     public PacketPlayOutExperience(float barProgress, int experienceLevel, int experience) {
-        this.packetData = new PacketDataSerializer(PacketCreator.get(getPacketType()).create(null, barProgress, experienceLevel, experience));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, barProgress, experienceLevel, experience));
         this.barProgress = barProgress;
         this.experienceLevel = experienceLevel;
         this.experience = experience;
@@ -60,7 +61,7 @@ public class PacketPlayOutExperience implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

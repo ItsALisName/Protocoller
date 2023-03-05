@@ -22,6 +22,30 @@ public class LogsManager {
         return LogManager.getLogger("Protocoller/" + thread.getName());
     }
 
+    public void info(String... lines) {
+        getLogger().info("[*]=============================== [Protocoller] =============================[*]");
+        for(String line : lines) getLogger().info("[*] " + line);
+        getLogger().info("[*]=============================== [Protocoller] =============================[*]");
+    }
+
+    public void warning(String... lines) {
+        getLogger().warn("[*]=============================== [Protocoller] =============================[*]");
+        for(String line : lines) getLogger().warn("[*] " + line);
+        getLogger().warn("[*]=============================== [Protocoller] =============================[*]");
+    }
+
+    public void error(String... lines) {
+        getLogger().error("[*]=============================== [Protocoller] =============================[*]");
+        for(String line : lines) getLogger().error("[*] " + line);
+        getLogger().error("[*]=============================== [Protocoller] =============================[*]");
+    }
+
+    public void fatal(String... lines) {
+        getLogger().fatal("[*]=============================== [Protocoller] =============================[*]");
+        for(String line : lines) getLogger().fatal("[*] " + line);
+        getLogger().fatal("[*]=============================== [Protocoller] =============================[*]");
+    }
+
     public final void sendPreloadingStartMessage() {
         Logger log = getLogger(Thread.currentThread());
         logger.log(Level.INFO, "[*]============================================================[*]");

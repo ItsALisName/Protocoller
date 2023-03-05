@@ -6,10 +6,12 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 
 import net.alis.protocoller.bukkit.network.netty.ChannelInjector;
+import net.alis.protocoller.bukkit.network.netty.NettyHelper;
 import net.alis.protocoller.bukkit.network.netty.interceptors.NettyPacketInterceptor;
 import net.alis.protocoller.bukkit.network.netty.initializers.NettyChannelInitializer;
 
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 
@@ -30,16 +32,8 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
             }
         }
         for (Channel channel : GlobalProvider.instance().getServer().getChannels()) {
-            if (channel == null || channel.getClass().getSimpleName().equalsIgnoreCase("FakeChannel")) {
-                continue;
-            }
-            if (channel.pipeline().get("protocoller_handler") != null) {
-                channel.pipeline().remove("protocoller_handler");
-            }
-
-            if (channel.pipeline().get("packet_handler") != null) {
-                channel.pipeline().addBefore("packet_handler", "protocoller_handler", new NettyPacketInterceptor());
-            }
+            NettyHelper.ejectChannel(channel);
+            NettyHelper.injectChannel(channel);
         }
     }
 
@@ -59,7 +53,7 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
                     }
                     ChannelInitializer<Channel> oldInit = (ChannelInitializer<Channel>) childHandlerField.get(handler);
                     if (oldInit instanceof NettyChannelInitializer) bootstrapAcceptor = handler;
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
             }
             if (bootstrapAcceptor == null) bootstrapAcceptor = future.channel().pipeline().first();
             try {
@@ -76,40 +70,19 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
     }
 
     private void injectChannelFuture(ChannelFuture channelFuture) {
-        List<String> channelHandlerNames = channelFuture.channel().pipeline().names();
-        ChannelHandler bootstrapAcceptor = null;
-        Field bootstrapAcceptorField = null;
-        for (String handlerName : channelHandlerNames) {
-            ChannelHandler handler = channelFuture.channel().pipeline().get(handlerName);
-            try {
-                bootstrapAcceptorField = handler.getClass().getDeclaredField("childHandler");
-                bootstrapAcceptorField.setAccessible(true);
-                bootstrapAcceptorField.get(handler);
-                bootstrapAcceptor = handler;
-            } catch (Exception ignored) {
-
-            }
-        }
-        if (bootstrapAcceptor == null) bootstrapAcceptor = channelFuture.channel().pipeline().first();
-        ChannelInitializer<?> originalChannelInitializer = null;
+        ChannelHandler bootstrapAcceptor = NettyHelper.getBootstrapAcceptor(channelFuture);
         try {
-            originalChannelInitializer = (ChannelInitializer<?>) bootstrapAcceptorField.get(bootstrapAcceptor);
+            ChannelInitializer<?> originalChannelInitializer = NettyHelper.getInitializerFromBootstrap(bootstrapAcceptor);
             ChannelInitializer<?> channelInitializer = new NettyChannelInitializer(originalChannelInitializer);
-            bootstrapAcceptorField.setAccessible(true);
-            bootstrapAcceptorField.set(bootstrapAcceptor, channelInitializer);
+            NettyHelper.replaceInitializers(bootstrapAcceptor, channelInitializer);
             injectedFutures.add(channelFuture);
-        } catch (IllegalAccessException e) {
-            ClassLoader cl = bootstrapAcceptor.getClass().getClassLoader();
-            if (cl.getClass().getName().equals("org.bukkit.plugin.java.PluginClassLoader")) {
-                PluginDescriptionFile yaml = null;
-                try {
-                    yaml = (PluginDescriptionFile) PluginDescriptionFile.class.getDeclaredField("description").get(cl);
-                } catch (IllegalAccessException | NoSuchFieldException e2) {
-                    e2.printStackTrace();
-                }
-                throw new IllegalStateException("Failed to inject, because of " + bootstrapAcceptor.getClass().getName() + ", you might want to try running without " + yaml.getName() + "?");
+        } catch (Exception e) {
+            ClassLoader loader = bootstrapAcceptor.getClass().getClassLoader();
+            if (loader.getClass().getName().equalsIgnoreCase("org.bukkit.plugin.java.PluginClassLoader")) {
+                PluginDescriptionFile errorSourceDescription = Reflection.readField(loader, "description");
+                throw new RuntimeException("Failed to inject to ChannelFuture. Source of the error: \"" + bootstrapAcceptor.getClass().getSimpleName() + "\". Try to start the server without using: \"" + errorSourceDescription.getName() + "\"");
             } else {
-                throw new IllegalStateException("Failed to find core component 'childHandler', please check your plugins. issue: " + bootstrapAcceptor.getClass().getName());
+                throw new IllegalStateException("Failed to inject to ChannelFuture. Source of the error: \"" + bootstrapAcceptor.getClass().getSimpleName() + "\"");
             }
         }
 

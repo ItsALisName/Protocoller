@@ -4,15 +4,21 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import net.alis.protocoller.bukkit.events.AsyncProtocollerEventManager;
 import net.alis.protocoller.bukkit.events.SyncProtocollerEventManager;
-import net.alis.protocoller.bukkit.exceptions.PacketEventException;
+import net.alis.protocoller.bukkit.managers.LogsManager;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.TaskSimplifier;
+import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.entity.NetworkPlayer;
 import net.alis.protocoller.event.synchronous.SyncPacketEvent;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 @ChannelHandler.Sharable
 public class NettyPacketInterceptor extends ChannelDuplexHandler {
@@ -34,11 +40,24 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             super.channelRead(ctx, msg);
             return;
         }
-        PacketDataSerializer data = null;
+        PacketDataContainer data = null;
         try {
-            data = new PacketDataSerializer(msg);
+            data = new PacketDataSerializer(msg, player);
         } catch (Exception e) {
             super.channelRead(ctx, msg);
+            TaskSimplifier.INSTANCE.preformAsync(() -> {
+                String[] dataReport = new String[(msg.getClass().getDeclaredFields().length)];
+                for(int i = 0; i < msg.getClass().getDeclaredFields().length; i++) {
+                    Field field = msg.getClass().getDeclaredFields()[i]; field.setAccessible(true);
+                    dataReport[i] = "'" + field.getName() + "/" + field.getType().getSimpleName() + "/" + Reflection.readField(msg, field);
+                }
+                LogsManager.get().warning(
+                        "Failed to recognize the \"" + msg.getClass().getSimpleName() + "\" packet! Skipping it...",
+                        "Full class: " + msg.getClass().getName(),
+                        "Packet data(Name/Type/Value): " + String.join(", ", dataReport),
+                        "(Please report about this)"
+                );
+            });
             return;
         }
         if(data.getType().getState() == PacketType.State.PLAY_CLIENTBOUND && player == null) {
@@ -52,7 +71,16 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             return;
         } catch (Exception e) {
             super.channelRead(ctx, msg);
-            throw new PacketEventException("An error occurred during the registration of the packet (ON_PACKET_RECEIVE)! Report this error to the author: https://vk.com/alphatwo");
+            LogsManager.get().fatal(
+                    "An error occurred during the registration of the packet (ON_PACKET_RECEIVE)! Report this error to the author: https://vk.com/alphatwo",
+                    "Reason: \"" + e.getCause().getMessage() + "\""
+            );
+            LogsManager.get().fatal(Arrays.toString(e.getStackTrace()));
+            LogsManager.get().fatal(
+                    "An error occurred during the registration of the packet (ON_PACKET_RECEIVE)! Report this error to the author: https://vk.com/alphatwo",
+                    "Reason: \"" + e.getCause().getMessage() + "\""
+            );
+            return;
         }
     }
 
@@ -62,11 +90,24 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             super.write(ctx, msg, promise);
             return;
         }
-        PacketDataSerializer data = null;
+        PacketDataContainer data = null;
         try {
-            data = new PacketDataSerializer(msg);
+            data = new PacketDataSerializer(msg, player);
         } catch (Exception e) {
             super.write(ctx, msg, promise);
+            TaskSimplifier.INSTANCE.preformAsync(() -> {
+                String[] dataReport = new String[(msg.getClass().getDeclaredFields().length)];
+                for(int i = 0; i < msg.getClass().getDeclaredFields().length; i++) {
+                    Field field = msg.getClass().getDeclaredFields()[i]; field.setAccessible(true);
+                    dataReport[i] = "'" + field.getName() + "/" + field.getType().getSimpleName() + "/" + Reflection.readField(msg, field);
+                }
+                LogsManager.get().warning(
+                        "Failed to recognize the \"" + msg.getClass().getSimpleName() + "\" packet! Skipping it...",
+                        "Full class: " + msg.getClass().getName(),
+                        "Packet data(Name/Type/Value): " + String.join(", ", dataReport),
+                        "(Please report about this)"
+                );
+            });
             return;
         }
         if((data.getType().getState() == PacketType.State.PLAY_SERVERBOUND || data.getType().getState() == PacketType.State.CLIENTBOUND) && this.player == null) {
@@ -80,7 +121,16 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             return;
         } catch (Exception e) {
             super.write(ctx, msg, promise);
-            throw new PacketEventException("An error occurred during the registration of the packet (ON_PACKET_SEND)! Report this error to the author: https://vk.com/alphatwo");
+            LogsManager.get().fatal(
+                    "An error occurred during the registration of the packet (ON_PACKET_RECEIVE)! Report this error to the author: https://vk.com/alphatwo",
+                    "Reason: \"" + e.getCause().getMessage() + "\""
+            );
+            LogsManager.get().fatal(Arrays.toString(e.getStackTrace()));
+            LogsManager.get().fatal(
+                    "An error occurred during the registration of the packet (ON_PACKET_RECEIVE)! Report this error to the author: https://vk.com/alphatwo",
+                    "Reason: \"" + e.getCause().getMessage() + "\""
+            );
+            return;
         }
     }
 

@@ -3,11 +3,12 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.entity.block.TileEntityJigsawJointType;
@@ -20,7 +21,7 @@ import static net.alis.protocoller.bukkit.enums.Version.v1_14;
 @AddedSince(v1_14)
 public class PacketPlayInSetJigsaw implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private BlockPosition position;
     private MinecraftKey name;
     private MinecraftKey target;
@@ -28,7 +29,7 @@ public class PacketPlayInSetJigsaw implements Packet {
     private String finalState;
     private @NotOnAllVersions TileEntityJigsawJointType jointType;
 
-    public PacketPlayInSetJigsaw(PacketDataSerializer packetData) {
+    public PacketPlayInSetJigsaw(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.name = packetData.readMinecraftKey(0);
@@ -44,7 +45,7 @@ public class PacketPlayInSetJigsaw implements Packet {
     }
 
     public PacketPlayInSetJigsaw(BlockPosition position, MinecraftKey name, MinecraftKey target, @NotOnAllVersions MinecraftKey pool, String finalState, @NotOnAllVersions TileEntityJigsawJointType jointType) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
@@ -65,11 +66,11 @@ public class PacketPlayInSetJigsaw implements Packet {
                             new IndexedParam<>(finalState, 0)
                     };
                 }
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, position.createOriginal(), name.createOriginal(), target.createOriginal(), pool.createOriginal(), finalState, jointType.original()));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, position.createOriginal(), name.createOriginal(), target.createOriginal(), pool.createOriginal(), finalState, jointType.original()));
                 break;
             }
             default: {
@@ -151,7 +152,7 @@ public class PacketPlayInSetJigsaw implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

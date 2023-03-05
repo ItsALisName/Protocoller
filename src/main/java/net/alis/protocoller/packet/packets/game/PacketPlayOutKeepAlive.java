@@ -1,19 +1,20 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayOutKeepAlive implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private long id;
     private final boolean isVeryLegacy = GlobalProvider.instance().getServer().isVeryLegacy();
 
-    public PacketPlayOutKeepAlive(PacketDataSerializer packetData) {
+    public PacketPlayOutKeepAlive(PacketDataContainer packetData) {
         this.packetData = packetData;
         if(isVeryLegacy) {
             this.id = packetData.readInt(0);
@@ -23,11 +24,11 @@ public class PacketPlayOutKeepAlive implements Packet {
     }
 
     public PacketPlayOutKeepAlive(long id) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         if(isVeryLegacy) {
-            this.packetData = new PacketDataSerializer(converter.create(null, Math.toIntExact(id)));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(null, Math.toIntExact(id)));
         } else {
-            this.packetData = new PacketDataSerializer(converter.create(null, id));
+            this.packetData = new PacketDataSerializer(converter.buildPacket(null, id));
         }
         this.id = id;
     }
@@ -51,7 +52,7 @@ public class PacketPlayOutKeepAlive implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

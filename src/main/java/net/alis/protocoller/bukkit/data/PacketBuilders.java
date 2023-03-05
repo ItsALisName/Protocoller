@@ -3,34 +3,35 @@ package net.alis.protocoller.bukkit.data;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.ConstructorLevelIndicator;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.packet.MinecraftPacketType;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class PacketCreators {
+public class PacketBuilders {
 
-    public static PacketCreators INSTANCE;
+    public static PacketBuilders INSTANCE;
     public static void init() {
-        INSTANCE = new PacketCreators();
+        INSTANCE = new PacketBuilders();
         INSTANCE.setup();
     }
 
-    private final Set<PacketCreator> packetCreators;
+    private final Set<PacketBuilder> packetBuilders;
 
-    private PacketCreators() {
-        this.packetCreators = new HashSet<>();
+    private PacketBuilders() {
+        this.packetBuilders = new HashSet<>();
     }
 
-    public Set<PacketCreator> getPacketCreators() {
-        return packetCreators;
+    public Set<PacketBuilder> getPacketCreators() {
+        return packetBuilders;
     }
 
     private void setup() {
         long start = System.currentTimeMillis();
-
+        this.addAny(PacketType.Play.Server.ANIMATION, ConstructorLevelIndicator.PacketPlayOutAnimation_1);
         this.addAny(PacketType.Play.Server.STOP_SOUND, ConstructorLevelIndicator.PacketPlayOutStopSound_1);
         this.addAny(PacketType.Status.Server.SERVER_INFO, ConstructorLevelIndicator.PacketStatusOutServerInfo_1);
         this.addAny(PacketType.Login.Server.DISCONNECT, ConstructorLevelIndicator.PacketLoginOutDisconnect_1);
@@ -76,7 +77,10 @@ public class PacketCreators {
         this.addAny(PacketType.Play.Client.PONG_PACKET, ConstructorLevelIndicator.ServerboundPongPacket_1);
         this.addAny(PacketType.Play.Client.ITEM_NAME, ConstructorLevelIndicator.PacketPlayInItemName_1);
         this.addAny(PacketType.Play.Client.SPECTATE, ConstructorLevelIndicator.PacketPlayInSpectate_1);
+        this.addAny(PacketType.Play.Server.ABILITIES, ConstructorLevelIndicator.PacketPlayOutAbilities_1);
 
+        this.add(PacketType.Play.Server.ATTACH_ENTITY, ConstructorLevelIndicator.PacketPlayOutAttachEntity_1, Version.v1_8);
+        this.add(PacketType.Play.Server.ATTACH_ENTITY, ConstructorLevelIndicator.PacketPlayOutAttachEntity_2, Version.v1_9);
         this.add(PacketType.Play.Client.ADVANCEMENTS, ConstructorLevelIndicator.PacketPlayInAdvancements_0, Version.v1_12);
         this.add(PacketType.Play.Client.ADVANCEMENTS, ConstructorLevelIndicator.PacketPlayInAdvancements_1, Version.v1_17);
         this.add(PacketType.Login.Client.CUSTOM_PAYLOAD, ConstructorLevelIndicator.PacketLoginInCustomPayload_0, Version.v1_13);
@@ -103,6 +107,7 @@ public class PacketCreators {
         this.add(PacketType.Play.Client.CUSTOM_PAYLOAD, ConstructorLevelIndicator.PacketPlayInCustomPayload_1, Version.v1_17);
         this.add(PacketType.Play.Client.DIFFICULTY_LOCK, ConstructorLevelIndicator.PacketPlayInDifficultyLock_0, Version.v1_8);
         this.add(PacketType.Play.Client.DIFFICULTY_LOCK, ConstructorLevelIndicator.PacketPlayInDifficultyLock_1, Version.v1_17);
+        this.add(PacketType.Play.Server.AUTO_RECIPE, ConstructorLevelIndicator.PacketPlayOutAutoRecipe_1, Version.v1_13);
         this.add(PacketType.Play.Client.ENCHANT_ITEM, ConstructorLevelIndicator.PacketPlayInEnchantItem_0, Version.v1_8);
         this.add(PacketType.Play.Client.ENCHANT_ITEM, ConstructorLevelIndicator.PacketPlayInEnchantItem_1, Version.v1_17);
         this.add(PacketType.Play.Client.ENTITY_ACTION, ConstructorLevelIndicator.PacketPlayInEntityAction_0, Version.v1_8);
@@ -171,25 +176,28 @@ public class PacketCreators {
         this.add(PacketType.Play.Client.USE_ITEM, ConstructorLevelIndicator.PacketPlayInUseItem_1, Version.v1_17);
         this.add(PacketType.Play.Client.USE_ITEM, ConstructorLevelIndicator.PacketPlayInUseItem_2, Version.v1_19);
         this.add(PacketType.Play.Client.VEHICLE_MOVE, ConstructorLevelIndicator.PacketPlayInVehicleMove_1, Version.v1_9);
+        this.add(PacketType.Play.Client.WINDOW_CLICK, ConstructorLevelIndicator.PacketPlayInWindowClick_0, Version.v1_8);
+        this.add(PacketType.Play.Client.WINDOW_CLICK, ConstructorLevelIndicator.PacketPlayInWindowClick_1, Version.v1_17);
+        this.add(PacketType.Play.Server.ADVANCEMENTS, ConstructorLevelIndicator.PacketPlayInAdvancements_1, Version.v1_13);
         LogsManager.get().getLogger().info("[*] Packet creators loaded in " + (System.currentTimeMillis() - start) + "ms.");
     }
 
     void add(MinecraftPacketType type, ConstructorLevelIndicator indicator, Version version) {
-        PacketCreator creator = new PacketCreator(type, indicator, version);
-        for(PacketCreator c : this.packetCreators) {
+        PacketBuilder creator = new PacketBuilder(type, indicator, version);
+        for(PacketBuilder c : this.packetBuilders) {
             if(c.equals(creator) && c.getVersion().lessThan(version)) {
                 if(version.lessThanOrEqualTo(InitialData.INSTANCE.getPreVersion())){
-                    this.packetCreators.remove(c);
-                    this.packetCreators.add(creator);
+                    this.packetBuilders.remove(c);
+                    this.packetBuilders.add(creator);
                     return;
                 }
                 return;
             }
         }
-        if(version.lessThanOrEqualTo(InitialData.INSTANCE.getPreVersion())) this.packetCreators.add(creator);
+        if(version.lessThanOrEqualTo(InitialData.INSTANCE.getPreVersion())) this.packetBuilders.add(creator);
     }
 
     void addAny(MinecraftPacketType type, ConstructorLevelIndicator indicator) {
-        this.packetCreators.add(new PacketCreator(type, indicator, Version.ANY));
+        this.packetBuilders.add(new PacketBuilder(type, indicator, Version.ANY));
     }
 }

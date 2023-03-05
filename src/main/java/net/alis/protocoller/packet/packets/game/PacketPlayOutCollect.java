@@ -1,25 +1,26 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 public class PacketPlayOutCollect implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int entityId;
     private int collectorId;
     private int stackAmount;
 
-    private final boolean is_1_9_orLower = GlobalProvider.instance().getServer().getVersion().ordinal() <= Version.v1_9.ordinal();
+    private final boolean is_1_9_orLower = GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_9);
 
-    public PacketPlayOutCollect(PacketDataSerializer packetData) {
+    public PacketPlayOutCollect(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.collectorId = packetData.readInt(1);
@@ -30,14 +31,14 @@ public class PacketPlayOutCollect implements Packet {
     }
 
     public PacketPlayOutCollect(int entityId, int collectorId, int stackAmount) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, entityId, collectorId));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, entityId, collectorId));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(converter.create(null, entityId, collectorId, stackAmount));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, entityId, collectorId, stackAmount));
                 break;
             }
             default: {
@@ -88,7 +89,7 @@ public class PacketPlayOutCollect implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

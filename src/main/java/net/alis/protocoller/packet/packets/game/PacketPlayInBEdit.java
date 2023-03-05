@@ -1,11 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.util.annotations.AddedSince;
 import net.alis.protocoller.util.annotations.NotOnAllVersions;
@@ -20,14 +18,14 @@ import static net.alis.protocoller.bukkit.enums.Version.v1_13;
 @AddedSince(v1_13)
 public class PacketPlayInBEdit implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int slot;
     private List<String> pages;
     private String title;
 
     private @NotOnAllVersions ItemStack item;
 
-    public PacketPlayInBEdit(PacketDataSerializer packetData) {
+    public PacketPlayInBEdit(PacketDataContainer packetData) {
         this.packetData = packetData;
         if(!GlobalProvider.instance().getServer().isLegacy()) {
             this.slot = packetData.readInt(4);
@@ -86,7 +84,7 @@ public class PacketPlayInBEdit implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

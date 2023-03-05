@@ -1,22 +1,23 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 
 public class PacketPlayInTabComplete implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int completionId;
     private String partialCommand;
 
     private final boolean isVeryLegacy = GlobalProvider.instance().getServer().isVeryLegacy();
 
-    public PacketPlayInTabComplete(PacketDataSerializer packetData) {
+    public PacketPlayInTabComplete(PacketDataContainer packetData) {
         this.packetData = packetData;
         if (isVeryLegacy) {
             this.completionId = 0;
@@ -27,7 +28,7 @@ public class PacketPlayInTabComplete implements Packet {
     }
 
     public PacketPlayInTabComplete(int completionId, String partialCommand) {
-        PacketCreator converter = PacketCreator.get(PacketType.Play.Client.TAB_COMPLETE);
+        PacketBuilder converter = PacketBuilder.get(PacketType.Play.Client.TAB_COMPLETE);
         switch (converter.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?, ?>[] params;
@@ -36,15 +37,15 @@ public class PacketPlayInTabComplete implements Packet {
                 } else {
                     params = new IndexedParam<?, ?>[]{new IndexedParam<>(completionId, 0), new IndexedParam<>(partialCommand, 0)};
                 }
-                this.packetData = new PacketDataSerializer(converter.create(params));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, partialCommand));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, partialCommand));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(converter.create(null, completionId, partialCommand));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, completionId, partialCommand));
                 break;
             }
             default: {
@@ -82,7 +83,7 @@ public class PacketPlayInTabComplete implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return this.packetData;
     }
 

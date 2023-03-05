@@ -2,17 +2,18 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.core.BlockPosition;
 import net.alis.protocoller.parent.entity.block.TileEntityCommandType;
 
 public class PacketPlayInSetCommandBlock implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private BlockPosition position;
     private String command;
     private TileEntityCommandType type;
@@ -20,7 +21,7 @@ public class PacketPlayInSetCommandBlock implements Packet {
     private boolean conditional;
     private boolean alwaysActive;
 
-    public PacketPlayInSetCommandBlock(PacketDataSerializer packetData) {
+    public PacketPlayInSetCommandBlock(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.command = packetData.readString(0);
@@ -31,7 +32,7 @@ public class PacketPlayInSetCommandBlock implements Packet {
     }
 
     public PacketPlayInSetCommandBlock(BlockPosition pos, String command, TileEntityCommandType type, boolean trackOutput, boolean conditional, boolean alwaysActive) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
@@ -42,11 +43,11 @@ public class PacketPlayInSetCommandBlock implements Packet {
                         new IndexedParam<>(conditional, 1),
                         new IndexedParam<>(alwaysActive, 2)
                 };
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, pos.createOriginal(), command, type.original(), trackOutput, conditional, alwaysActive));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, pos.createOriginal(), command, type.original(), trackOutput, conditional, alwaysActive));
                 break;
             }
             default: {
@@ -122,7 +123,7 @@ public class PacketPlayInSetCommandBlock implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

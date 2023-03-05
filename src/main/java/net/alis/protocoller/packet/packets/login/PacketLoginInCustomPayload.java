@@ -1,35 +1,36 @@
 package net.alis.protocoller.packet.packets.login;
 
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.parent.network.MinecraftPacketDataSerializer;
 
 public class PacketLoginInCustomPayload implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private int queryId;
     private MinecraftPacketDataSerializer originalSerializer;
 
-    public PacketLoginInCustomPayload(PacketDataSerializer packetData) {
+    public PacketLoginInCustomPayload(PacketDataContainer packetData) {
         this.packetData = packetData;
         this.queryId = packetData.readInt(0);
         this.originalSerializer = packetData.readOriginalDataSerializer(0);
     }
 
     public PacketLoginInCustomPayload(int queryId, MinecraftPacketDataSerializer originalSerializer) {
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {new IndexedParam<>(queryId, 0), new IndexedParam<>(originalSerializer.createOriginal(), 0)};
-                this.packetData = new PacketDataSerializer(converter.create(params));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, queryId, originalSerializer.createOriginal()));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, queryId, originalSerializer.createOriginal()));
                 break;
             }
             default: {
@@ -51,15 +52,15 @@ public class PacketLoginInCustomPayload implements Packet {
                 throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
             }
         });
-        PacketCreator converter = PacketCreator.get(getPacketType());
+        PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?, ?>[] params = {new IndexedParam<>(this.queryId, 0), new IndexedParam<>(serializer.createOriginal(), 0)};
-                this.packetData = new PacketDataSerializer(converter.create(params));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(converter.create(null, this.queryId, serializer.createOriginal()));
+                this.packetData = new PacketDataSerializer(converter.buildPacket(null, this.queryId, serializer.createOriginal()));
                 break;
             }
             default: {
@@ -93,7 +94,7 @@ public class PacketLoginInCustomPayload implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 

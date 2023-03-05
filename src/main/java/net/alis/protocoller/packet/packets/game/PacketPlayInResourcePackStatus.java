@@ -3,24 +3,25 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketCreator;
+import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
+import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.PacketDataSerializer;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.util.annotations.NotOnAllVersions;
 
 public class PacketPlayInResourcePackStatus implements Packet {
 
-    private final PacketDataSerializer packetData;
+    private final PacketDataContainer packetData;
     private @NotOnAllVersions String decodedString;
     private ResourcePackStatus resourcePackStatus;
 
     private final boolean legacyPack = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_11);
 
-    public PacketPlayInResourcePackStatus(PacketDataSerializer packetData) {
+    public PacketPlayInResourcePackStatus(PacketDataContainer packetData) {
         this.packetData = packetData;
         if(legacyPack) {
             this.decodedString = packetData.readString(0);
@@ -31,18 +32,18 @@ public class PacketPlayInResourcePackStatus implements Packet {
     }
 
     public PacketPlayInResourcePackStatus(@NotOnAllVersions String decodedString, ResourcePackStatus resourcePackStatus) {
-        PacketCreator creator = PacketCreator.get(getPacketType());
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                         new IndexedParam<>(decodedString, 0),
                         new IndexedParam<>(resourcePackStatus.original(), 0)
                 };
-                this.packetData = new PacketDataSerializer(creator.create(params));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.create(null, resourcePackStatus.original()));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, resourcePackStatus.original()));
                 break;
             }
             default: {
@@ -79,7 +80,7 @@ public class PacketPlayInResourcePackStatus implements Packet {
     }
 
     @Override
-    public PacketDataSerializer getPacketData() {
+    public PacketDataContainer getPacketData() {
         return packetData;
     }
 
