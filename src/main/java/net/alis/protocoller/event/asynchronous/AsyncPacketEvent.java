@@ -35,7 +35,7 @@ public class AsyncPacketEvent {
         return address;
     }
 
-    public void trySendPacket(Packet packet) throws Exception {
+    protected void trySendPacket(Packet packet) throws Exception {
         this.channel.writeAndFlush(packet.getRawPacket());
     }
 

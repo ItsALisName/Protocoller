@@ -4,15 +4,15 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
-import net.alis.protocoller.parent.authlib.GameProfile;
-import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.entity.player.PlayerAbilities;
-import net.alis.protocoller.parent.network.MinecraftPacketDataSerializer;
-import net.alis.protocoller.parent.network.chat.ChatComponent;
-import net.alis.protocoller.parent.network.chat.ChatSerializer;
-import net.alis.protocoller.parent.network.status.ServerPing;
-import net.alis.protocoller.parent.phys.BaseBlockPosition;
-import net.alis.protocoller.parent.resources.MinecraftKey;
+import net.alis.protocoller.samples.authlib.GameProfile;
+import net.alis.protocoller.samples.core.BlockPosition;
+import net.alis.protocoller.samples.entity.player.PlayerAbilities;
+import net.alis.protocoller.samples.network.MinecraftPacketDataSerializer;
+import net.alis.protocoller.samples.network.chat.ChatComponent;
+import net.alis.protocoller.samples.network.chat.ChatSerializer;
+import net.alis.protocoller.samples.network.status.ServerPing;
+import net.alis.protocoller.samples.phys.BaseBlockPosition;
+import net.alis.protocoller.samples.resources.MinecraftKey;
 import net.alis.protocoller.util.ObjectAccessor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -87,6 +87,11 @@ public class PacketDataSerializer extends ObjectAccessor implements PacketDataCo
 
     public MinecraftPacketDataSerializer readOriginalDataSerializer(int index) {
         return new MinecraftPacketDataSerializer((Object) super.read(index, ClassesContainer.INSTANCE.getPacketDataSerializerClass()));
+    }
+
+    @Override
+    public UUID readUUID(int index) {
+        return super.read(index, UUID.class);
     }
 
     @Override
@@ -201,6 +206,10 @@ public class PacketDataSerializer extends ObjectAccessor implements PacketDataCo
     }
 
 
+    @Override
+    public void writeUUID(int index, UUID uuid) {
+        super.write(index, uuid);
+    }
 
     public void writeBaseBlockPosition(int index, @NotNull BaseBlockPosition position) {
         super.writeSpecify(index, ClassesContainer.INSTANCE.getBaseBlockPositionClass(), position.createOriginal());

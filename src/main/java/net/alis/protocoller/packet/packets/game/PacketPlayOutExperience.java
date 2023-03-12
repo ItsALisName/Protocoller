@@ -2,19 +2,22 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayOutExperience implements Packet {
+public class PacketPlayOutExperience implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private float barProgress;
     private int experienceLevel;
     private int experience;
 
-    public PacketPlayOutExperience(PacketDataContainer packetData) {
+    public PacketPlayOutExperience(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.barProgress = packetData.readFloat(0);
         this.experienceLevel = packetData.readInt(0);
@@ -61,12 +64,12 @@ public class PacketPlayOutExperience implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

@@ -4,25 +4,28 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayInPacket;
 import net.alis.protocoller.util.annotations.AddedSince;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.alis.protocoller.bukkit.enums.Version.v1_13;
 
 @AddedSince(v1_13)
-public class PacketPlayInSetCommandMinecart implements Packet {
+public class PacketPlayInSetCommandMinecart implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int entityId;
     private String command;
     private boolean trackOutput;
 
-    public PacketPlayInSetCommandMinecart(PacketDataContainer packetData) {
+    public PacketPlayInSetCommandMinecart(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.command = packetData.readString(0);
@@ -93,12 +96,12 @@ public class PacketPlayInSetCommandMinecart implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

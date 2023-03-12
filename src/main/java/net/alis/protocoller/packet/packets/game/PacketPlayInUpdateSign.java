@@ -6,16 +6,18 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.network.chat.ChatSerializer;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.core.BlockPosition;
+import net.alis.protocoller.samples.network.chat.ChatSerializer;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 
-public class PacketPlayInUpdateSign implements Packet {
+public class PacketPlayInUpdateSign implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private BlockPosition position;
@@ -23,7 +25,8 @@ public class PacketPlayInUpdateSign implements Packet {
 
     private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9);
 
-    public PacketPlayInUpdateSign(PacketDataContainer packetData) {
+    public PacketPlayInUpdateSign(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.lines = new String[4];
@@ -109,12 +112,12 @@ public class PacketPlayInUpdateSign implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

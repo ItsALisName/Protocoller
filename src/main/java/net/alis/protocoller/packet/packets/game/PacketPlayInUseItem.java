@@ -6,36 +6,43 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.phys.MovingObjectPositionBlock;
-import net.alis.protocoller.parent.phys.Vector3D;
-import net.alis.protocoller.parent.util.Facing;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.core.BlockPosition;
+import net.alis.protocoller.samples.entity.Hand;
+import net.alis.protocoller.samples.phys.MovingObjectPositionBlock;
+import net.alis.protocoller.samples.phys.Vector3D;
+import net.alis.protocoller.samples.util.Facing;
 import net.alis.protocoller.util.annotations.AddedSince;
-import net.alis.protocoller.util.annotations.NotOnAllVersions;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import static net.alis.protocoller.bukkit.enums.Version.v1_9;
 
 @AddedSince(v1_9)
-public class PacketPlayInUseItem implements Packet {
+public class PacketPlayInUseItem implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private MovingObjectPositionBlock blockHitResult;
-    private PacketPlayInArmAnimation.Hand hand;
+    private Hand hand;
 
-    private @NotOnAllVersions float decodedFloat$0;
-    private @NotOnAllVersions float decodedFloat$1;
-    private @NotOnAllVersions float decodedFloat$2;
+    private @Nullable float decodedFloat$0;
+    private @Nullable float decodedFloat$1;
+    private @Nullable float decodedFloat$2;
 
-    private @NotOnAllVersions int sequence;
+    private @Nullable int sequence;
 
-    public PacketPlayInUseItem(PacketDataContainer packetData) {
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14);
+    private final boolean modernPacket = GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
+    
+    public PacketPlayInUseItem(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.hand = PacketPlayInArmAnimation.Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14)) {
+        this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
+        if(legacyPacket) {
             BlockPosition pos = packetData.readBlockPosition(0);
             this.blockHitResult = new MovingObjectPositionBlock(
                     false,
@@ -51,7 +58,7 @@ public class PacketPlayInUseItem implements Packet {
         } else {
             this.decodedFloat$0 = 0.0F; this.decodedFloat$1 = 0.0F; this.decodedFloat$2 = 0.0F;
             this.blockHitResult = new MovingObjectPositionBlock(packetData.readObject(0, ClassesContainer.INSTANCE.getMovingObjectPositionBlockClass()));
-            if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+            if(modernPacket) {
                 this.sequence = packetData.readInt(0);
             } else {
                 this.sequence = 0;
@@ -62,7 +69,7 @@ public class PacketPlayInUseItem implements Packet {
     /**
      * For versions less than 1.14
      */
-    public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, PacketPlayInArmAnimation.Hand hand, int sequence, float f1, float f2, float f3) {
+    public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, Hand hand, int sequence, float f1, float f2, float f3) {
         PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
@@ -106,14 +113,14 @@ public class PacketPlayInUseItem implements Packet {
     /**
      * For versions 1.17 - 1.19
      */
-    public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, PacketPlayInArmAnimation.Hand hand) {
+    public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, Hand hand) {
         this(blockHitResult, hand, 0, 0, 0, 0);
     }
 
     /**
      * For version 1.19+
      */
-    public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, PacketPlayInArmAnimation.Hand hand, int sequence) {
+    public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, Hand hand, int sequence) {
         this(blockHitResult, hand, sequence, 0, 0, 0);
     }
 
@@ -122,15 +129,15 @@ public class PacketPlayInUseItem implements Packet {
     }
 
     public void setBlockHitResult(MovingObjectPositionBlock blockHitResult) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14)) this.packetData.writeBlockPosition(0, blockHitResult.getPosition());
+        if(legacyPacket) this.packetData.writeBlockPosition(0, blockHitResult.getPosition());
         this.blockHitResult = blockHitResult;
     }
 
-    public PacketPlayInArmAnimation.Hand getHand() {
+    public Hand getHand() {
         return hand;
     }
 
-    public void setHand(PacketPlayInArmAnimation.Hand hand) {
+    public void setHand(@NotNull Hand hand) {
         this.packetData.writeEnumConstant(0, hand.original());
         this.hand = hand;
     }
@@ -140,7 +147,7 @@ public class PacketPlayInUseItem implements Packet {
     }
 
     public void setDecodedFloat$0(float decodedFloat$0) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14)) this.packetData.writeFloat(0, decodedFloat$0);
+        if(legacyPacket) this.packetData.writeFloat(0, decodedFloat$0);
         this.decodedFloat$0 = decodedFloat$0;
     }
 
@@ -149,7 +156,7 @@ public class PacketPlayInUseItem implements Packet {
     }
 
     public void setDecodedFloat$1(float decodedFloat$1) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14)) this.packetData.writeFloat(1, decodedFloat$1);
+        if(legacyPacket) this.packetData.writeFloat(1, decodedFloat$1);
         this.decodedFloat$1 = decodedFloat$1;
     }
 
@@ -158,7 +165,7 @@ public class PacketPlayInUseItem implements Packet {
     }
 
     public void setDecodedFloat$2(float decodedFloat$2) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14)) this.packetData.writeFloat(2, decodedFloat$2);
+        if(legacyPacket) this.packetData.writeFloat(2, decodedFloat$2);
         this.decodedFloat$2 = decodedFloat$2;
     }
 
@@ -167,7 +174,7 @@ public class PacketPlayInUseItem implements Packet {
     }
 
     public void setSequence(int sequence) {
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) this.packetData.writeInt(0, sequence);
+        if(modernPacket) this.packetData.writeInt(0, sequence);
         this.sequence = sequence;
     }
 
@@ -177,12 +184,12 @@ public class PacketPlayInUseItem implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

@@ -3,17 +3,21 @@ package net.alis.protocoller.packet.packets.status;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.StatusInPacket;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketStatusInPing implements Packet {
+public class PacketStatusInPing implements StatusInPacket {
 
     private final PacketDataContainer packetData;
     private long startTime;
 
-    public PacketStatusInPing(PacketDataContainer data) {
+    public PacketStatusInPing(@NotNull PacketDataContainer data) {
+        PacketUtils.checkPacketCompatibility(data.getType(), this.getPacketType());
         this.packetData = data;
         this.startTime = data.readLong(0);
     }
@@ -51,7 +55,7 @@ public class PacketStatusInPing implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return this.packetData;
     }
 }

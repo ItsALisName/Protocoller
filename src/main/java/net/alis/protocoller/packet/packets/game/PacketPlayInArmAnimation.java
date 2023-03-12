@@ -4,18 +4,21 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.entity.Hand;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInArmAnimation implements Packet {
+public class PacketPlayInArmAnimation implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private Hand hand;
 
-    public PacketPlayInArmAnimation(PacketDataContainer packetData) {
+    public PacketPlayInArmAnimation(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
     }
@@ -44,7 +47,7 @@ public class PacketPlayInArmAnimation implements Packet {
         return hand;
     }
 
-    public void setHand(Hand hand) {
+    public void setHand(@NotNull Hand hand) {
         this.packetData.writeEnumConstant(0, hand.original());
         this.hand = hand;
     }
@@ -55,37 +58,13 @@ public class PacketPlayInArmAnimation implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
-    }
-
-    public enum Hand {
-        MAIN_HAND(0), OFF_HAND(1);
-
-        private final int id;
-
-        Hand(int id) {
-            this.id = id;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public static Hand getById(int id) {
-            for(Hand s : Hand.values())
-                if(s.id == id) return s;
-            return null;
-        }
-
-        public Enum<?> original() {
-            return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum(), this.id);
-        }
+        return getData().getRawPacket();
     }
 
 }

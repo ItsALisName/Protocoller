@@ -3,18 +3,22 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInEnchantItem implements Packet {
+public class PacketPlayInEnchantItem implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int syncId;
     private int buttonId;
 
-    public PacketPlayInEnchantItem(PacketDataContainer packetData) {
+    public PacketPlayInEnchantItem(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.syncId = packetData.readInt(0);
         this.buttonId = packetData.readInt(1);
@@ -59,7 +63,7 @@ public class PacketPlayInEnchantItem implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return this.packetData;
     }
 

@@ -2,7 +2,9 @@ package net.alis.protocoller.event.asynchronous;
 
 import io.netty.channel.Channel;
 import net.alis.protocoller.event.PacketHandlerList;
+import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
+import net.alis.protocoller.packet.type.HandshakeInPacket;
 
 import java.net.InetSocketAddress;
 
@@ -12,6 +14,10 @@ public class AsyncPacketHandshakeReceiveEvent extends AsyncPacketEvent {
 
     public AsyncPacketHandshakeReceiveEvent(PacketDataContainer data, Channel channel, InetSocketAddress address) {
         super(data, channel, address);
+    }
+
+    public void trySendPacket(HandshakeInPacket packet) throws Exception {
+        super.trySendPacket(packet);
     }
 
     public static PacketHandlerList getHandlerList() {

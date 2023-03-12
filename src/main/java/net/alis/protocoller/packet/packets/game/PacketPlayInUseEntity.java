@@ -6,51 +6,56 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.phys.Vector3D;
-import net.alis.protocoller.util.annotations.NotOnAllVersions;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.entity.Hand;
+import net.alis.protocoller.samples.phys.Vector3D;
+import org.jetbrains.annotations.Nullable;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PacketPlayInUseEntity implements Packet {
+public class PacketPlayInUseEntity implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int entityId;
     private boolean sneaking;
     private EntityUseAction entityUseAction;
 
-    private @NotOnAllVersions Vector3D vector;
-    private @NotOnAllVersions PacketPlayInArmAnimation.Hand hand;
+    private @Nullable Vector3D vector;
+    private @Nullable Hand hand;
 
     private final PacketBuilder creator = PacketBuilder.get(getPacketType());
 
-    public PacketPlayInUseEntity(PacketDataContainer packetData) {
+    public PacketPlayInUseEntity(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.entityUseAction = EntityUseAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getEntityUseActionEnum()).ordinal());
         if(creator.getConstructorIndicator().getLevel() < 2) {
             this.vector = new Vector3D(packetData.readObject(0, ClassesContainer.INSTANCE.getVector3dClass()));
             if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
-                this.hand = PacketPlayInArmAnimation.Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
+                this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
                 if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
                     this.sneaking = packetData.readBoolean(0);
                 }
             } else {
-                this.hand = PacketPlayInArmAnimation.Hand.MAIN_HAND;
+                this.hand = Hand.MAIN_HAND;
             }
         } else {
             this.vector = Vector3D.ZERO;
-            this.hand = PacketPlayInArmAnimation.Hand.MAIN_HAND;
+            this.hand = Hand.MAIN_HAND;
             this.sneaking = packetData.readBoolean(0);
         }
     }
 
-    public PacketPlayInUseEntity(Entity entity, boolean sneaking, EntityUseAction entityUseAction, @NotOnAllVersions Vector3D vector, @NotOnAllVersions PacketPlayInArmAnimation.Hand hand) {
+    public PacketPlayInUseEntity(Entity entity, boolean sneaking, EntityUseAction entityUseAction, @Nullable Vector3D vector, @Nullable Hand hand) {
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
@@ -92,19 +97,19 @@ public class PacketPlayInUseEntity implements Packet {
         this.hand = hand;
     }
 
-    public PacketPlayInUseEntity(int entityId, boolean sneaking, EntityUseAction entityUseAction, @NotOnAllVersions Vector3D vector, @NotOnAllVersions PacketPlayInArmAnimation.Hand hand) {
+    public PacketPlayInUseEntity(int entityId, boolean sneaking, EntityUseAction entityUseAction, @Nullable Vector3D vector, @Nullable Hand hand) {
         this(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId), sneaking, entityUseAction, vector, hand);
     }
 
-    public PacketPlayInUseEntity(int entityId, EntityUseAction entityUseAction, @NotOnAllVersions Vector3D vector) {
-        this(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId), true, entityUseAction, vector, PacketPlayInArmAnimation.Hand.MAIN_HAND);
+    public PacketPlayInUseEntity(int entityId, EntityUseAction entityUseAction, @Nullable Vector3D vector) {
+        this(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId), true, entityUseAction, vector, Hand.MAIN_HAND);
     }
 
     /*
      * 1.17 and bigger
      */
     public PacketPlayInUseEntity(int entityId, boolean sneaking, EntityUseAction entityUseAction) {
-        this(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId), sneaking, entityUseAction, Vector3D.ZERO, PacketPlayInArmAnimation.Hand.MAIN_HAND);
+        this(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId), sneaking, entityUseAction, Vector3D.ZERO, Hand.MAIN_HAND);
     }
 
     @Nullable
@@ -121,7 +126,7 @@ public class PacketPlayInUseEntity implements Packet {
         this.entityId = entityId;
     }
 
-    public void setEntityId(Entity entity) {
+    public void setEntityId(@NotNull Entity entity) {
         this.packetData.writeInt(0, entity.getEntityId());
         this.entityId = entity.getEntityId();
     }
@@ -139,27 +144,27 @@ public class PacketPlayInUseEntity implements Packet {
         return entityUseAction;
     }
 
-    public void setEntityUseAction(EntityUseAction entityUseAction) {
+    public void setEntityUseAction(@NotNull EntityUseAction entityUseAction) {
         this.packetData.writeEnumConstant(0, entityUseAction.original());
         this.entityUseAction = entityUseAction;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public Vector3D getVector() {
         return vector;
     }
 
-    public void setVector(@NotOnAllVersions Vector3D vector) {
+    public void setVector(@Nullable Vector3D vector) {
         if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_17)) this.packetData.writeObject(0, vector.createOriginal());
         this.vector = vector;
     }
 
-    @NotOnAllVersions
-    public PacketPlayInArmAnimation.Hand getHand() {
+    @Nullable
+    public Hand getHand() {
         return hand;
     }
 
-    public void setHand(@NotOnAllVersions PacketPlayInArmAnimation.Hand hand) {
+    public void setHand(@Nullable Hand hand) {
         if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9) && GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_17)) this.packetData.writeEnumConstant(0, hand.original());
         this.hand = hand;
     }
@@ -170,13 +175,13 @@ public class PacketPlayInUseEntity implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 
     public enum EntityUseAction {
@@ -195,14 +200,15 @@ public class PacketPlayInUseEntity implements Packet {
             return id;
         }
 
-        public static EntityUseAction getById(int id) {
+        @Contract(pure = true)
+        public static @Nullable EntityUseAction getById(int id) {
             for(EntityUseAction useAction : values()) {
                 if(useAction.id == id) return useAction;
             }
             return null;
         }
 
-        public Enum<?> original() {
+        public @NotNull Enum<?> original() {
             return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getEntityUseActionEnum(), this.id);
         }
     }

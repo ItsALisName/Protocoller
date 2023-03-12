@@ -2,17 +2,21 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInCloseWindow implements Packet {
+public class PacketPlayInCloseWindow implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int syncId;
 
-    public PacketPlayInCloseWindow(PacketDataContainer packetData) {
+    public PacketPlayInCloseWindow(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.syncId = packetData.readInt(0);
     }
@@ -37,7 +41,7 @@ public class PacketPlayInCloseWindow implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return this.packetData;
     }
 

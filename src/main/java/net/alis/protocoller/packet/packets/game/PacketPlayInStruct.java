@@ -4,22 +4,24 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.entity.block.BlockMirror;
-import net.alis.protocoller.parent.entity.block.BlockRotation;
-import net.alis.protocoller.parent.entity.block.TileEntityStructureUpdateType;
-import net.alis.protocoller.parent.entity.block.properties.BlockPropertyStructureMode;
-import net.alis.protocoller.parent.phys.BaseBlockPosition;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.core.BlockPosition;
+import net.alis.protocoller.samples.entity.block.BlockMirror;
+import net.alis.protocoller.samples.entity.block.BlockRotation;
+import net.alis.protocoller.samples.entity.block.TileEntityStructureUpdateType;
+import net.alis.protocoller.samples.entity.block.properties.BlockPropertyStructureMode;
+import net.alis.protocoller.samples.phys.BaseBlockPosition;
 import net.alis.protocoller.util.annotations.AddedSince;
+import org.jetbrains.annotations.NotNull;
 
 import static net.alis.protocoller.bukkit.enums.Version.v1_13;
 
 @AddedSince(v1_13)
-public class PacketPlayInStruct implements Packet {
+public class PacketPlayInStruct implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private BlockPosition position;
@@ -37,7 +39,8 @@ public class PacketPlayInStruct implements Packet {
     private float integrity;
     private long seed;
 
-    public PacketPlayInStruct(PacketDataContainer packetData) {
+    public PacketPlayInStruct(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.action = TileEntityStructureUpdateType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getTileEntityStructureUpdateType()).ordinal());
@@ -116,7 +119,7 @@ public class PacketPlayInStruct implements Packet {
         return action;
     }
 
-    public void setAction(TileEntityStructureUpdateType action) {
+    public void setAction(@NotNull TileEntityStructureUpdateType action) {
         this.packetData.writeEnumConstant(0, action.original());
         this.action = action;
     }
@@ -125,7 +128,7 @@ public class PacketPlayInStruct implements Packet {
         return mode;
     }
 
-    public void setMode(BlockPropertyStructureMode mode) {
+    public void setMode(@NotNull BlockPropertyStructureMode mode) {
         this.packetData.writeEnumConstant(0, mode.original());
         this.mode = mode;
     }
@@ -161,7 +164,7 @@ public class PacketPlayInStruct implements Packet {
         return mirror;
     }
 
-    public void setMirror(BlockMirror mirror) {
+    public void setMirror(@NotNull BlockMirror mirror) {
         this.packetData.writeEnumConstant(0, mirror.original());
         this.mirror = mirror;
     }
@@ -170,7 +173,7 @@ public class PacketPlayInStruct implements Packet {
         return rotation;
     }
 
-    public void setRotation(BlockRotation rotation) {
+    public void setRotation(@NotNull BlockRotation rotation) {
         this.packetData.writeEnumConstant(0, rotation.original());
         this.rotation = rotation;
     }
@@ -235,12 +238,12 @@ public class PacketPlayInStruct implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

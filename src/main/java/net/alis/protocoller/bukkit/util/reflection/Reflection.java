@@ -4,6 +4,7 @@ import net.alis.protocoller.bukkit.data.InitialData;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.util.ObjectAccessor;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +28,7 @@ public class Reflection {
     }
 
     @Nullable
-    public static Field getField(Class<?> instance, String fieldName) {
+    public static Field getField(@NotNull Class<?> instance, String fieldName) {
         for(Field field : instance.getDeclaredFields()) {
             field.setAccessible(true);
             if(field.getName().equalsIgnoreCase(fieldName)) return field;
@@ -44,8 +45,9 @@ public class Reflection {
         }
     }
 
+    @Contract(pure = true)
     @Nullable
-    public static <PARAM> PARAM readField(Object instance, Field field) {
+    public static <PARAM> PARAM readField(Object instance, @NotNull Field field) {
         try {
             return (PARAM) field.get(instance);
         } catch (IllegalAccessException accessException) {
@@ -53,7 +55,7 @@ public class Reflection {
         }
     }
 
-    public static Class<?> getSubClass(Class<?> clazz, String name) {
+    public static @Nullable Class<?> getSubClass(@NotNull Class<?> clazz, String name) {
         Class<?>[] classes = clazz.getDeclaredClasses();
         for (Class<?> subClass : classes) {
             if (subClass.getSimpleName().equals(name)) {
@@ -104,7 +106,25 @@ public class Reflection {
         return null;
     }
 
-    public static Method getMethodNullParams(Class<?> instance, Class<?> returnType) {
+    public static Method getMethod(Class<?> instance, String methodName, Class<?> returnType, Class<?>... paramTypes) {
+        for(Method m : instance.getDeclaredMethods()) {
+            m.setAccessible(true);
+            if(m.getName().equalsIgnoreCase(methodName) && m.getReturnType() == returnType && Arrays.equals(m.getParameterTypes(), paramTypes)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public static Method getSuperclassMethod(@NotNull Class<?> instance, String methodName, Class<?> returnType, Class<?>... paramTypes) {
+        return getMethod(instance.getSuperclass(), methodName, returnType, paramTypes);
+    }
+
+    public static Method getSuperclassMethod(@NotNull Class<?> instance, String name, Class<?>[] params) {
+        return getMethod(instance.getSuperclass(), name, params);
+    }
+
+    public static @Nullable Method getMethodNullParams(@NotNull Class<?> instance, Class<?> returnType) {
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
             if(method.getReturnType() == returnType && method.getParameterTypes().length == 0) return method;
@@ -112,7 +132,7 @@ public class Reflection {
         return null;
     }
 
-    public static Method getMethod(Class<?> instance, String name, Class<?>[] params, Class<?> returnType) {
+    public static @Nullable Method getMethod(@NotNull Class<?> instance, String name, Class<?>[] params, Class<?> returnType) {
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
             if(Arrays.equals(method.getParameterTypes(), params)) {
@@ -124,21 +144,7 @@ public class Reflection {
         return null;
     }
 
-    public static Method getMethod(Class<?> cls, int index, Class<?>... params) {
-        int start = 0;
-        for (final Method m : cls.getDeclaredMethods()) {
-            if ((params == null || Arrays.equals(m.getParameterTypes(), params)) && index == start++) {
-                m.setAccessible(true);
-                return m;
-            }
-        }
-        if (cls.getSuperclass() != null) {
-            return getMethod(cls.getSuperclass(), index, params);
-        }
-        return null;
-    }
-
-    public static Field getField(Class<?> instance, int index, Class<?> type) {
+    public static @NotNull Field getField(@NotNull Class<?> instance, int index, Class<?> type) {
         int start = 0;
         for(Field field : instance.getDeclaredFields()) {
             field.setAccessible(true);
@@ -157,7 +163,7 @@ public class Reflection {
         );
     }
 
-    public static <PARAM> PARAM readSuperclassField(Object instance, int index, Class<?> type) {
+    public static <PARAM> @Nullable PARAM readSuperclassField(@NotNull Object instance, int index, Class<?> type) {
         int start = 0;
         for(Field field : instance.getClass().getSuperclass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -182,7 +188,7 @@ public class Reflection {
         return null;
     }
 
-    public static <PARAM> PARAM readField(Object instance, String fieldName) {
+    public static <PARAM> PARAM readField(@NotNull Object instance, String fieldName) {
         try {
             return (PARAM) instance.getClass().getDeclaredField(fieldName).get(instance);
         } catch (IllegalAccessException | NoSuchFieldException e) {
@@ -197,7 +203,7 @@ public class Reflection {
         }
     }
 
-    public static <PARAM> PARAM readField(Object instance, int index, Class<?> type) {
+    public static <PARAM> PARAM readField(@NotNull Object instance, int index, Class<?> type) {
         int start = 0;
         for(Field field : instance.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -227,7 +233,7 @@ public class Reflection {
         );
     }
 
-    public static void writeField(Object instance, int index, Object param) {
+    public static void writeField(@NotNull Object instance, int index, Object param) {
         int start = 0;
         for(Field field : instance.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -257,7 +263,7 @@ public class Reflection {
         );
     }
 
-    public static Method getMethod(Class<?> instance, int index, Class<?> returnType) {
+    public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, Class<?> returnType) {
         int start = 0;
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
@@ -276,7 +282,7 @@ public class Reflection {
         );
     }
 
-    public static Method getMethod(Class<?> instance, int index, String methodName) {
+    public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, String methodName) {
         int start = 0;
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
@@ -295,7 +301,7 @@ public class Reflection {
         );
     }
 
-    public static <PARAM> PARAM callMethod(Object instance, Method method, Object... parameters) {
+    public static <PARAM> PARAM callMethod(Object instance, @NotNull Method method, Object... parameters) {
         try {
             method.setAccessible(true);
             return (PARAM) method.invoke(instance, parameters);
@@ -310,7 +316,7 @@ public class Reflection {
         }
     }
 
-    public static <PARAM> PARAM callFirstMethod(Object instance, Class<?> returnType, Object... parameters) {
+    public static <PARAM> PARAM callFirstMethod(@NotNull Object instance, Class<?> returnType, Object... parameters) {
         try {
             return (PARAM) getMethod(instance.getClass(), 0, returnType).invoke(instance, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -320,20 +326,6 @@ public class Reflection {
                 e
         );
         }
-    }
-
-    public static Method getMethod(Class<?> cls, Class<?> returning, int index, Class<?>... params) {
-        int start = 0;
-        for (Method m : cls.getDeclaredMethods()) {
-            if (Arrays.equals(m.getParameterTypes(), params) && (returning == null || m.getReturnType().equals(returning)) && index == start++) {
-                m.setAccessible(true);
-                return m;
-            }
-        }
-        if (cls.getSuperclass() != null) {
-            return getMethod(cls.getSuperclass(), null, index, params);
-        }
-        return null;
     }
 
     public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, Class<?> returnType) {
@@ -384,7 +376,7 @@ public class Reflection {
         }
     }
 
-    public static boolean isNullConstructorsClass(Class<?> clazz) {
+    public static boolean isNullConstructorsClass(@NotNull Class<?> clazz) {
         if(clazz.getDeclaredConstructors().length == 0) return true;
         for(Constructor<?> constructor : clazz.getDeclaredConstructors()) {
             if(constructor.getParameterTypes().length == 0) return true;
@@ -406,7 +398,7 @@ public class Reflection {
     }
 
     @Nullable
-    public static Constructor<?> getConstructor(Class<?> instance, Object... parameters) {
+    public static Constructor<?> getConstructor(Class<?> instance, Object @NotNull ... parameters) {
         List<Class<?>> params = new ArrayList<>(); for(Object obj : parameters) params.add(obj.getClass());
         for(Constructor<?> constructor : instance.getDeclaredConstructors()) {
             constructor.setAccessible(true);
@@ -417,7 +409,7 @@ public class Reflection {
         return null;
     }
 
-    public static <PARAM> PARAM classNewInstance(Class<?> clazz) {
+    public static <PARAM> @Nullable PARAM classNewInstance(@NotNull Class<?> clazz) {
         try {
             return (PARAM) clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -425,7 +417,7 @@ public class Reflection {
         }
     }
 
-    public static <PARAM> PARAM callConstructor(Constructor<?> constructor, Object... parameters) {
+    public static <PARAM> @NotNull PARAM callConstructor(Constructor<?> constructor, Object... parameters) {
         try {
             if(parameters == null) {
                 return (PARAM) constructor.newInstance();
@@ -439,7 +431,7 @@ public class Reflection {
         }
     }
 
-    public static <PARAM> PARAM callEmptyConstructor(Class<?> instance, IndexedParam<?,?>[] params) {
+    public static <PARAM> PARAM callEmptyConstructor(@NotNull Class<?> instance, IndexedParam<?,?> @NotNull [] params) {
         Constructor<?> constructor = instance.getDeclaredConstructors()[0]; constructor.setAccessible(true);
         ObjectAccessor o = new ObjectAccessor(callConstructor(constructor));
         for(IndexedParam<?, ?> p : params) {
@@ -448,7 +440,7 @@ public class Reflection {
         return (PARAM) o.getObject();
     }
 
-    public static <PARAM> PARAM getEnumValue(Class<? extends Enum<?>> clazz, int ordinal) {
+    public static <PARAM> @NotNull PARAM getEnumValue(@NotNull Class<? extends Enum<?>> clazz, int ordinal) {
         for(Enum<?> o : clazz.getEnumConstants()) {
             if(o.ordinal() == ordinal) {
                 return (PARAM) o;
@@ -457,7 +449,7 @@ public class Reflection {
         throw new RuntimeException("Failed to find enum constant with id: " + ordinal);
     }
 
-    public static int getEnumId(Object enumObject) {
+    public static int getEnumId(@NotNull Object enumObject) {
         for(Enum<?> e : ((Class<? extends Enum<?>>)enumObject.getClass()).getEnumConstants()) {
             if(e.equals(enumObject)) return e.ordinal();
         }

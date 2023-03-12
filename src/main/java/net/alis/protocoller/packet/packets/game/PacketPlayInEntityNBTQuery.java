@@ -4,20 +4,23 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayInPacket;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PacketPlayInEntityNBTQuery implements Packet {
+public class PacketPlayInEntityNBTQuery implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int transactionId;
     private int entityId;
 
-    public PacketPlayInEntityNBTQuery(PacketDataContainer packetData) {
+    public PacketPlayInEntityNBTQuery(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.transactionId = packetData.readInt(0);
         this.entityId = packetData.readInt(1);
@@ -73,12 +76,12 @@ public class PacketPlayInEntityNBTQuery implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

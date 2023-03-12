@@ -6,15 +6,17 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.entity.MainHand;
-import net.alis.protocoller.parent.entity.player.ChatVisibility;
-import net.alis.protocoller.util.annotations.NotOnAllVersions;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.entity.MainHand;
+import net.alis.protocoller.samples.entity.player.ChatVisibility;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInSettings implements Packet {
+public class PacketPlayInSettings implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private String language;
@@ -22,13 +24,14 @@ public class PacketPlayInSettings implements Packet {
     private ChatVisibility chatVisibility;
     private boolean chatColors;
     private int modelBitMask;
-    private @NotOnAllVersions MainHand mainArm;
-    private @NotOnAllVersions boolean filterText;
-    private @NotOnAllVersions boolean decodedBoolean;
+    private @Nullable MainHand mainArm;
+    private @Nullable boolean filterText;
+    private @Nullable boolean decodedBoolean;
 
     private final PacketBuilder creator = PacketBuilder.get(getPacketType());
 
-    public PacketPlayInSettings(PacketDataContainer packetData) {
+    public PacketPlayInSettings(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 this.packetData = packetData;
@@ -178,12 +181,12 @@ public class PacketPlayInSettings implements Packet {
         this.modelBitMask = modelBitMask;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public MainHand getMainArm() {
         return mainArm;
     }
 
-    public void setMainArm(@NotOnAllVersions MainHand mainArm) {
+    public void setMainArm(@Nullable MainHand mainArm) {
         if(creator.getConstructorIndicator().getLevel() >= 1) {
             this.packetData.writeEnumConstant(0, mainArm.original());
         }
@@ -218,12 +221,12 @@ public class PacketPlayInSettings implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

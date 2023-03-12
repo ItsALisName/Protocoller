@@ -1,5 +1,6 @@
 package net.alis.protocoller.bukkit.server;
 
+import net.alis.protocoller.bukkit.network.netty.injectors.PlayersInjector;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.PlayerReflection;
 import net.alis.protocoller.bukkit.util.TaskSimplifier;
@@ -22,7 +23,7 @@ public class UpdatePlayerDataRunner implements Runnable {
     @Override
     public void run() {
         for(Player player : Bukkit.getOnlinePlayers()) {
-            GlobalProvider.instance().getServer().getPlayersInjector().refreshInterceptor(player, PlayerReflection.getPlayerChannel(player));
+            ((PlayersInjector)GlobalProvider.instance().getServer().getPlayersInjector()).refreshInterceptor(player, PlayerReflection.getPlayerChannel(player));
         }
     }
 }

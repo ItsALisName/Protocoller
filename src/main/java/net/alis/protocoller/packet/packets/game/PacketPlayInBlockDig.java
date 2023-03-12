@@ -6,29 +6,35 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.util.Facing;
-import net.alis.protocoller.util.annotations.NotOnAllVersions;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.core.BlockPosition;
+import net.alis.protocoller.samples.util.Facing;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInBlockDig implements Packet {
+public class PacketPlayInBlockDig implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private PlayerDigType digType;
     private BlockPosition blockPosition;
     private Facing facing;
-    private @NotOnAllVersions int sequence;
+    private int sequence;
+    
+    private final boolean modernPacket = GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
 
-    public PacketPlayInBlockDig(PacketDataContainer packetData) {
+    public PacketPlayInBlockDig(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.digType = PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerDigTypeEnum()).ordinal());
         this.blockPosition = packetData.readBlockPosition(0);
         this.facing = Facing.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getDirectionEnum()).ordinal());
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+        if(modernPacket) {
             this.sequence = packetData.readInt(0);
         } else {
             this.sequence = 0;
@@ -72,7 +78,7 @@ public class PacketPlayInBlockDig implements Packet {
         return digType;
     }
 
-    public void setDigType(PlayerDigType digType) {
+    public void setDigType(@NotNull PlayerDigType digType) {
         this.packetData.writeEnumConstant(0, digType.original());
         this.digType = digType;
     }
@@ -82,9 +88,7 @@ public class PacketPlayInBlockDig implements Packet {
     }
 
     public void setSequence(int sequence) {
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
-            this.packetData.writeInt(0, sequence);
-        }
+        if(modernPacket) this.packetData.writeInt(0, sequence);
         this.sequence = sequence;
     }
 
@@ -92,7 +96,7 @@ public class PacketPlayInBlockDig implements Packet {
         return facing;
     }
 
-    public void setFacing(Facing facing) {
+    public void setFacing(@NotNull Facing facing) {
         this.packetData.writeEnumConstant(0, facing.original());
         this.facing = facing;
     }
@@ -112,13 +116,13 @@ public class PacketPlayInBlockDig implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 
     public enum PlayerDigType {
@@ -140,13 +144,14 @@ public class PacketPlayInBlockDig implements Packet {
             return id;
         }
 
-        public static PlayerDigType getById(int id) {
+        @Contract(pure = true)
+        public static @Nullable PlayerDigType getById(int id) {
             for(PlayerDigType s : PlayerDigType.values())
                 if(s.id == id) return s;
             return null;
         }
 
-        public Enum<?> original() {
+        public @NotNull Enum<?> original() {
             return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerDigTypeEnum(), this.id);
         }
     }

@@ -4,24 +4,29 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.resources.MinecraftKey;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.resources.MinecraftKey;
 import net.alis.protocoller.util.annotations.AddedSince;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.alis.protocoller.bukkit.enums.Version.v1_12;
 
 @AddedSince(v1_12)
-public class PacketPlayInAdvancements implements Packet {
+public class PacketPlayInAdvancements implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private Status status;
     private MinecraftKey minecraftKey;
 
-    public PacketPlayInAdvancements(PacketDataContainer packetData) {
+    public PacketPlayInAdvancements(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.status = Status.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getAdvancementsStatusEnum()).ordinal());
         this.minecraftKey = packetData.readMinecraftKey(0);
@@ -53,7 +58,7 @@ public class PacketPlayInAdvancements implements Packet {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(@NotNull Status status) {
         this.packetData.writeEnumConstant(0, status.original());
         this.status = status;
     }
@@ -73,13 +78,13 @@ public class PacketPlayInAdvancements implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 
     public enum Status {
@@ -96,13 +101,14 @@ public class PacketPlayInAdvancements implements Packet {
             return id;
         }
 
-        public static Status getById(int id) {
+        @Contract(pure = true)
+        public static @Nullable Status getById(int id) {
             for(Status s : Status.values())
                 if(s.id == id) return s;
             return null;
         }
 
-        public Enum<?> original() {
+        public @NotNull Enum<?> original() {
             return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getAdvancementsStatusEnum(), this.id);
         }
 

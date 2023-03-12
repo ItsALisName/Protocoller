@@ -1,13 +1,13 @@
 package net.alis.protocoller.packet;
 
-import net.alis.protocoller.parent.authlib.GameProfile;
-import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.entity.player.PlayerAbilities;
-import net.alis.protocoller.parent.network.MinecraftPacketDataSerializer;
-import net.alis.protocoller.parent.network.chat.ChatComponent;
-import net.alis.protocoller.parent.network.status.ServerPing;
-import net.alis.protocoller.parent.phys.BaseBlockPosition;
-import net.alis.protocoller.parent.resources.MinecraftKey;
+import net.alis.protocoller.samples.authlib.GameProfile;
+import net.alis.protocoller.samples.core.BlockPosition;
+import net.alis.protocoller.samples.entity.player.PlayerAbilities;
+import net.alis.protocoller.samples.network.MinecraftPacketDataSerializer;
+import net.alis.protocoller.samples.network.chat.ChatComponent;
+import net.alis.protocoller.samples.network.status.ServerPing;
+import net.alis.protocoller.samples.phys.BaseBlockPosition;
+import net.alis.protocoller.samples.resources.MinecraftKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -96,7 +96,13 @@ public interface PacketDataContainer {
 
     Map<Object, Object> readMap(int index);
 
+    UUID readUUID(int index);
 
+
+
+    void writeUUID(int index, UUID uuid);
+
+    void writeSpecify(int index, Class<?> type, Object param);
 
     void writeMap(int index, Map<Object, Object> map);
 

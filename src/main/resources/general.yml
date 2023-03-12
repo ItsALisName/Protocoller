@@ -5,3 +5,7 @@ banned-authors: []
 listeners-registration-notify: true
 
 api-user-registration-notify: true
+
+bstats:
+  allow-force-enable: true
+  enabled: true

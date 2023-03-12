@@ -6,24 +6,29 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.util.annotations.NotOnAllVersions;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PacketPlayInResourcePackStatus implements Packet {
+public class PacketPlayInResourcePackStatus implements PlayInPacket {
 
     private final PacketDataContainer packetData;
-    private @NotOnAllVersions String decodedString;
+    private @Nullable String decodedString;
     private ResourcePackStatus resourcePackStatus;
 
-    private final boolean legacyPack = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_11);
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_11);
 
-    public PacketPlayInResourcePackStatus(PacketDataContainer packetData) {
+    public PacketPlayInResourcePackStatus(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(legacyPack) {
+        if(legacyPacket) {
             this.decodedString = packetData.readString(0);
         } else {
             this.decodedString = "Not supported by this version";
@@ -31,7 +36,7 @@ public class PacketPlayInResourcePackStatus implements Packet {
         this.resourcePackStatus = ResourcePackStatus.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getResourcePackStatusEnum()).ordinal());
     }
 
-    public PacketPlayInResourcePackStatus(@NotOnAllVersions String decodedString, ResourcePackStatus resourcePackStatus) {
+    public PacketPlayInResourcePackStatus(@Nullable String decodedString, ResourcePackStatus resourcePackStatus) {
         PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
@@ -55,13 +60,13 @@ public class PacketPlayInResourcePackStatus implements Packet {
         this.resourcePackStatus = resourcePackStatus;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public String getDecodedString() {
         return decodedString;
     }
 
-    public void setDecodedString(@NotOnAllVersions String decodedString) {
-        if(legacyPack) this.packetData.writeString(0, decodedString);
+    public void setDecodedString(@Nullable String decodedString) {
+        if(legacyPacket) this.packetData.writeString(0, decodedString);
         this.decodedString = decodedString;
     }
 
@@ -69,7 +74,7 @@ public class PacketPlayInResourcePackStatus implements Packet {
         return resourcePackStatus;
     }
 
-    public void setResourcePackStatus(ResourcePackStatus resourcePackStatus) {
+    public void setResourcePackStatus(@NotNull ResourcePackStatus resourcePackStatus) {
         this.packetData.writeEnumConstant(0, resourcePackStatus.original());
         this.resourcePackStatus = resourcePackStatus;
     }
@@ -80,13 +85,13 @@ public class PacketPlayInResourcePackStatus implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 
     public enum ResourcePackStatus {
@@ -105,14 +110,15 @@ public class PacketPlayInResourcePackStatus implements Packet {
             return id;
         }
 
-        public static ResourcePackStatus getById(int id) {
+        @Contract(pure = true)
+        public static @Nullable ResourcePackStatus getById(int id) {
             for(ResourcePackStatus status : values()) {
                 if(status.id == id) return status;
             }
             return null;
         }
 
-        public Enum<?> original() {
+        public @NotNull Enum<?> original() {
             return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getResourcePackStatusEnum(), this.id);
         }
     }

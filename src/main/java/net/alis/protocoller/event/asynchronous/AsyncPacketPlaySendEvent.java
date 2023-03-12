@@ -3,7 +3,9 @@ package net.alis.protocoller.event.asynchronous;
 import io.netty.channel.Channel;
 import net.alis.protocoller.entity.NetworkPlayer;
 import net.alis.protocoller.event.PacketHandlerList;
+import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
+import net.alis.protocoller.packet.type.PlayOutPacket;
 import org.bukkit.entity.Player;
 
 import java.net.InetSocketAddress;
@@ -19,6 +21,10 @@ public class AsyncPacketPlaySendEvent extends AsyncPacketEvent {
         super(data, channel, address);
         this.player = player;
         this.networkPlayer = networkPlayer;
+    }
+
+    public void trySendPacket(PlayOutPacket packet) throws Exception {
+        super.trySendPacket(packet);
     }
 
     public Player getPlayer() {

@@ -7,15 +7,17 @@ import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.FastUtilLegacyAdapter;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.inventory.InventoryClickType;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.inventory.InventoryClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInWindowClick implements Packet {
+public class PacketPlayInWindowClick implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int syncId;
@@ -25,12 +27,13 @@ public class PacketPlayInWindowClick implements Packet {
     private InventoryClickType actionType;
     private ItemStack stack;
 
-    private final boolean legacy = GlobalProvider.instance().getServer().isLegacy();
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().isLegacy();
 
-    public PacketPlayInWindowClick(PacketDataContainer packetData) {
+    public PacketPlayInWindowClick(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Play.Client.WINDOW_CLICK);
         this.packetData = packetData;
         this.stack = packetData.readMinecraftItemStack(0);
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_17)) {
+        if(legacyPacket) {
             this.syncId = packetData.readShort(0);
             this.revision = packetData.readInt(0);
             this.slot = packetData.readInt(1);
@@ -98,7 +101,7 @@ public class PacketPlayInWindowClick implements Packet {
     }
 
     public void setSyncId(int syncId) {
-        if(legacy) {
+        if(legacyPacket) {
             this.packetData.writeShort(0, Integer.valueOf(syncId).shortValue());
         } else {
             this.packetData.writeInt(1, syncId);
@@ -111,7 +114,7 @@ public class PacketPlayInWindowClick implements Packet {
     }
 
     public void setRevision(int revision) {
-        if(legacy) {
+        if(legacyPacket) {
             this.packetData.writeInt(0, revision);
         } else {
             this.packetData.writeInt(2, revision);
@@ -124,7 +127,7 @@ public class PacketPlayInWindowClick implements Packet {
     }
 
     public void setSlot(int slot) {
-        if(legacy) {
+        if(legacyPacket) {
             this.packetData.writeInt(1, slot);
         } else {
             this.packetData.writeInt(3, slot);
@@ -137,7 +140,7 @@ public class PacketPlayInWindowClick implements Packet {
     }
 
     public void setButton(int button) {
-        if(legacy) {
+        if(legacyPacket) {
             this.packetData.writeInt(2, button);
         } else {
             this.packetData.writeInt(4, button);
@@ -173,12 +176,12 @@ public class PacketPlayInWindowClick implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

@@ -1,9 +1,10 @@
 package net.alis.protocoller.bukkit.config;
 
-import net.alis.protocoller.bukkit.exceptions.ConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +12,8 @@ import java.util.List;
 
 public class ConfigUtils {
 
-    public static <PARAM> PARAM getIfNotNull(FileConfiguration file, String path, Class<?> requiredType) {
+    @Nullable
+    public static <PARAM> PARAM getIfNotNull(@NotNull FileConfiguration file, String path, Class<?> requiredType) {
         if(file.get(path) != null) {
             Object response = file.get(path);
             if(requiredType == List.class || requiredType == ArrayList.class) {
@@ -19,20 +21,20 @@ public class ConfigUtils {
                     return (PARAM) response;
                 }
             }
-            if(requiredType == boolean.class || requiredType == Boolean.class) {
-                if(response.getClass() == Boolean.class || response.getClass() == boolean.class) {
+            if(requiredType == Boolean.TYPE) {
+                if(response.getClass() == Boolean.TYPE) {
                     return (PARAM) response;
                 }
             }
             if(response.getClass() == requiredType) {
                 return (PARAM) response;
             }
-            throw new ConfigurationException(file.toString(), path, new String[]{response.getClass().getSimpleName(), requiredType.getSimpleName()});
         }
-        throw new ConfigurationException(file.getName(), path);
+        return null;
     }
 
-    public static FileConfiguration getConfigurationFile(String name) {
+    @Contract("_ -> new")
+    public static @NotNull FileConfiguration getConfigurationFile(String name) {
         return YamlConfiguration.loadConfiguration(getFile(name));
     }
 

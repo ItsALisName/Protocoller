@@ -1,11 +1,11 @@
 package net.alis.protocoller.event.synchronous;
 
 import io.netty.channel.Channel;
-import net.alis.protocoller.bukkit.exceptions.PacketDeserializeException;
 import net.alis.protocoller.event.impl.CancellablePacketEvent;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
 
@@ -37,12 +37,12 @@ public class SyncPacketEvent implements CancellablePacketEvent {
         return address;
     }
 
-    public void setPacket(Packet packet) {
-        if(packet.getPacketData() != null) {
-            this.data = packet.getPacketData();
+    protected void setPacket(@NotNull Packet packet) {
+        if(packet.getData() != null) {
+            this.data = packet.getData();
             return;
         }
-        throw new PacketDeserializeException("Failed to get new packet data. Have you configure everything right?");
+        throw new RuntimeException("Failed to replace packet. Is the new packet configured correctly?");
     }
 
     @Override

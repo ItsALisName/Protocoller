@@ -3,17 +3,20 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInTrSel implements Packet {
+public class PacketPlayInTrSel implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int tradeId;
 
-    public PacketPlayInTrSel(PacketDataContainer packetData) {
+    public PacketPlayInTrSel(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.tradeId = packetData.readInt(0);
     }
@@ -53,12 +56,12 @@ public class PacketPlayInTrSel implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

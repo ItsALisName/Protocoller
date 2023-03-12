@@ -3,17 +3,21 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PacketPlayOutPosition implements Packet {
+public class PacketPlayOutPosition implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private final PacketBuilder converter = PacketBuilder.get(getPacketType());
@@ -26,7 +30,8 @@ public class PacketPlayOutPosition implements Packet {
     private int teleportId;
     private boolean shouldDismount;
 
-    public PacketPlayOutPosition(PacketDataContainer packetData) {
+    public PacketPlayOutPosition(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.x = packetData.readDouble(0);
         this.y = packetData.readDouble(1);
@@ -169,13 +174,13 @@ public class PacketPlayOutPosition implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 
     public enum PlayerTeleportFlags {
@@ -191,7 +196,8 @@ public class PacketPlayOutPosition implements Packet {
             this.shift = shift;
         }
 
-        public static PlayerTeleportFlags getById(int id) {
+        @Contract(pure = true)
+        public static @Nullable PlayerTeleportFlags getById(int id) {
             for(PlayerTeleportFlags flag : values()) {
                 if(flag.shift == id) return flag;
             }
@@ -202,7 +208,7 @@ public class PacketPlayOutPosition implements Packet {
             return shift;
         }
 
-        public Enum<?> original() {
+        public @NotNull Enum<?> original() {
             return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerTeleportFlagsEnum(), this.ordinal());
         }
     }

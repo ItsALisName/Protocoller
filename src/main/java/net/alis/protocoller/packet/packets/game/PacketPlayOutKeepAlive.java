@@ -3,20 +3,23 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayOutKeepAlive implements Packet {
+public class PacketPlayOutKeepAlive implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private long id;
-    private final boolean isVeryLegacy = GlobalProvider.instance().getServer().isVeryLegacy();
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().isVeryLegacy();
 
-    public PacketPlayOutKeepAlive(PacketDataContainer packetData) {
+    public PacketPlayOutKeepAlive(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(isVeryLegacy) {
+        if(legacyPacket) {
             this.id = packetData.readInt(0);
         } else {
             this.id = packetData.readLong(0);
@@ -25,7 +28,7 @@ public class PacketPlayOutKeepAlive implements Packet {
 
     public PacketPlayOutKeepAlive(long id) {
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        if(isVeryLegacy) {
+        if(legacyPacket) {
             this.packetData = new PacketDataSerializer(converter.buildPacket(null, Math.toIntExact(id)));
         } else {
             this.packetData = new PacketDataSerializer(converter.buildPacket(null, id));
@@ -38,7 +41,7 @@ public class PacketPlayOutKeepAlive implements Packet {
     }
 
     public void setId(long id) {
-        if(isVeryLegacy) {
+        if(legacyPacket) {
             this.packetData.writeInt(0, Math.toIntExact(id));
         } else {
             this.packetData.writeLong(0, id);
@@ -52,12 +55,12 @@ public class PacketPlayOutKeepAlive implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

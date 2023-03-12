@@ -2,6 +2,7 @@ package net.alis.protocoller.bukkit.network;
 
 import io.netty.channel.Channel;
 import net.alis.protocoller.packet.Packet;
+import net.alis.protocoller.packet.type.PlayOutPacket;
 
 public class NettyChannelManager {
 
@@ -19,7 +20,7 @@ public class NettyChannelManager {
         channel.write(rawPacket);
     }
 
-    public void writePacket(Packet packet) {
+    public void writePacket(PlayOutPacket packet) {
         channel.write(packet.getRawPacket());
     }
 
@@ -31,7 +32,7 @@ public class NettyChannelManager {
         channel.writeAndFlush(rawPacket);
     }
 
-    public void sendPacket(Packet packet) {
+    public void sendPacket(PlayOutPacket packet) {
         channel.writeAndFlush(packet.getRawPacket());
     }
 

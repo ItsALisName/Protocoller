@@ -1,7 +1,6 @@
 package net.alis.protocoller.bukkit.events;
 
 import io.netty.channel.Channel;
-import net.alis.protocoller.bukkit.exceptions.PacketEventException;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.bukkit.util.TaskSimplifier;
@@ -35,7 +34,7 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 if(parameterType == PacketPlayReceiveEvent.class || parameterType == PacketPlaySendEvent.class || parameterType == PacketLoginReceiveEvent.class || parameterType == PacketLoginSendEvent.class || parameterType == PacketHandshakeReceiveEvent.class || parameterType == PacketStatusReceiveEvent.class || parameterType == PacketStatusSendEvent.class) {
                     PacketEventHandler annotation = method.getAnnotation(PacketEventHandler.class);
                     if(annotation == null) {
-                        new PacketEventException("An unannotated method '" + method.getName() + "' was found while registering packet event listener '" + listener.getClass().getSimpleName() + "'").printStackTrace();
+                        LogsManager.get().getLogger().warn("An unannotated method '" + method.getName() + "' was found while registering packet listener '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getSimpleName() + "'");
                         continue;
                     }
                     ListenerType lt = ListenerType.fromClass(parameterType);
@@ -90,129 +89,237 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
         switch (data.getType().getState()) {
             case CLIENTBOUND: {
                 if(player == null) {
-                    throw new PacketEventException("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
+                    LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                 }
                 PacketPlaySendEvent event = new PacketPlaySendEvent(data, channel, address, player, networkPlayer);
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        }catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
             }
             case PLAY_CLIENTBOUND: {
                 if(player == null) {
-                    throw new PacketEventException("An error occurred while trying to initialize the event 'PacketPlayReceiveEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
+                    LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'PacketPlayReceiveEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                 }
                 PacketPlayReceiveEvent event = new PacketPlayReceiveEvent(data, channel, address, player, networkPlayer);
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
             }
             case PLAY_SERVERBOUND: {
                 if(player == null) {
-                    throw new PacketEventException("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
+                    LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
                 }
                 PacketPlaySendEvent event = new PacketPlaySendEvent(data, channel, address, player, networkPlayer);
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
@@ -222,37 +329,73 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 for(RegisteredPacketListener listener : PacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try{
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
@@ -262,37 +405,73 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 for(RegisteredPacketListener listener : PacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketLoginSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
@@ -302,37 +481,73 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 for(RegisteredPacketListener listener : PacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
@@ -342,37 +557,73 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 for(RegisteredPacketListener listener : PacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketStatusSendEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
@@ -382,42 +633,79 @@ public class SyncProtocollerEventManager implements SynchronousEventManager {
                 for(RegisteredPacketListener listener : PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        Reflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                        try {
+                            Reflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        } catch (Exception e) {
+                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
+                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            return null;
+                        }
                     }
                 }
                 return event;
             }
         }
-        throw new PacketEventException("An error occurred while trying to initialize the event 'SynchronousPacketEvent'! Inform the author about this: https://vk.com/alphatwo");
+        LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'SynchronousPacketEvent'! Inform the author about this: https://vk.com/alphatwo");
+        return null;
     }
 }

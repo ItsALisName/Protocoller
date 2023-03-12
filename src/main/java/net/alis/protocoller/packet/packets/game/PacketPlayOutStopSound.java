@@ -3,26 +3,29 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.resources.MinecraftKey;
-import net.alis.protocoller.parent.sounds.SoundCategory;
+import net.alis.protocoller.packet.type.PlayOutPacket;
+import net.alis.protocoller.samples.resources.MinecraftKey;
+import net.alis.protocoller.samples.sounds.SoundCategory;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayOutStopSound implements Packet {
+public class PacketPlayOutStopSound implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private MinecraftKey minecraftKey;
     private SoundCategory soundCategory;
 
-    public PacketPlayOutStopSound(PacketDataContainer packetData) {
+    public PacketPlayOutStopSound(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.minecraftKey = packetData.readMinecraftKey(0);
         this.soundCategory = SoundCategory.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getSoundCategoryEnum()).ordinal());
     }
 
-    public PacketPlayOutStopSound(MinecraftKey minecraftKey, SoundCategory soundCategory) {
+    public PacketPlayOutStopSound(@NotNull MinecraftKey minecraftKey, @NotNull SoundCategory soundCategory) {
         this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, minecraftKey.createOriginal(), soundCategory.original()));
         this.minecraftKey = minecraftKey;
         this.soundCategory = soundCategory;
@@ -41,7 +44,7 @@ public class PacketPlayOutStopSound implements Packet {
         return soundCategory;
     }
 
-    public void setSoundCategory(SoundCategory soundCategory) {
+    public void setSoundCategory(@NotNull SoundCategory soundCategory) {
         this.packetData.writeEnumConstant(0, soundCategory.original());
         this.soundCategory = soundCategory;
     }
@@ -52,12 +55,12 @@ public class PacketPlayOutStopSound implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

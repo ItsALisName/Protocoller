@@ -3,19 +3,22 @@ package net.alis.protocoller.packet.packets.login;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.network.MinecraftPacketDataSerializer;
+import net.alis.protocoller.packet.type.LoginInPacket;
+import net.alis.protocoller.samples.network.MinecraftPacketDataSerializer;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketLoginInCustomPayload implements Packet {
+public class PacketLoginInCustomPayload implements LoginInPacket {
 
     private final PacketDataContainer packetData;
     private int queryId;
     private MinecraftPacketDataSerializer originalSerializer;
 
-    public PacketLoginInCustomPayload(PacketDataContainer packetData) {
+    public PacketLoginInCustomPayload(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.queryId = packetData.readInt(0);
         this.originalSerializer = packetData.readOriginalDataSerializer(0);
@@ -42,7 +45,7 @@ public class PacketLoginInCustomPayload implements Packet {
         this.originalSerializer = originalSerializer;
     }
 
-    public PacketLoginInCustomPayload(MinecraftPacketDataSerializer serializer) {
+    public PacketLoginInCustomPayload(@NotNull MinecraftPacketDataSerializer serializer) {
         this.queryId = serializer.readVarIntFromBuffer();
         this.originalSerializer = serializer.read$0((buffer) -> {
             int i = buffer.readableBytes();
@@ -94,12 +97,12 @@ public class PacketLoginInCustomPayload implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

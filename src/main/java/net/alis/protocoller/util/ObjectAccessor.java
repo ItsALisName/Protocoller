@@ -125,7 +125,7 @@ public class ObjectAccessor {
     }
 
 
-    private <PARAM> PARAM readSuperclass(int index, Class<?> type) {
+    public <PARAM> PARAM readSuperclass(int index, Class<?> type) {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -150,7 +150,7 @@ public class ObjectAccessor {
         return null;
     }
 
-    private void writeSuperclass(int index, Object param) {
+    public void writeSuperclass(int index, Object param) {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -175,7 +175,7 @@ public class ObjectAccessor {
         }
     }
 
-    private void writeSpecifySuperclass(int index, Class<?> type, Object param) {
+    public void writeSpecifySuperclass(int index, Class<?> type, Object param) {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             field.setAccessible(true);

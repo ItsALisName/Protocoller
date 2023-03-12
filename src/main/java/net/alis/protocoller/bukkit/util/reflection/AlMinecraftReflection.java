@@ -2,11 +2,16 @@ package net.alis.protocoller.bukkit.util.reflection;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.util.ObjectAccessor;
+import org.bukkit.Chunk;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.ref.WeakReference;
 
 public class AlMinecraftReflection {
 
@@ -66,7 +71,7 @@ public class AlMinecraftReflection {
         return new ObjectAccessor(getCraftAdvancementProgress(progress)).read(0, ClassesContainer.INSTANCE.getMinecraftAdvancementProgress());
     }
 
-    public static AdvancementProgress advancementProgressFromMinecraftProgress(Advancement advancement, Player player, Object minecraftAP) {
+    public static @NotNull AdvancementProgress advancementProgressFromMinecraftProgress(Advancement advancement, Player player, Object minecraftAP) {
         ObjectAccessor entityPlayer = new ObjectAccessor(PlayerReflection.getEntityPlayer(player));
         return Reflection.callConstructor(
                 Reflection.getConstructor(ClassesContainer.INSTANCE.getCraftAdvancementProgress(), ClassesContainer.INSTANCE.getCraftAdvancementClass(), ClassesContainer.INSTANCE.getAdvancementPlayerDataClass(), ClassesContainer.INSTANCE.getMinecraftAdvancementProgress()),
@@ -76,6 +81,30 @@ public class AlMinecraftReflection {
 
     public static AdvancementProgress advancementProgressFromCraftProgress(Object craftProgress) {
         return (AdvancementProgress) craftProgress;
+    }
+
+    public static <CraftBlock> CraftBlock getCraftBlock(Block block) {
+        return (CraftBlock) ClassesContainer.INSTANCE.getCraftBlockClass().cast(block);
+    }
+
+    public static Block blockFromCraftBlock(Object craftBlock) {
+        return (Block) craftBlock;
+    }
+
+    public static Object getCraftChunk(Chunk chunk) {
+        return ClassesContainer.INSTANCE.getCraftChunkClass().cast(chunk);
+    }
+
+    public static Object getMinecraftChunk(Chunk chunk) {
+        return ((WeakReference<?>)Reflection.readField(getCraftChunk(chunk), 0, WeakReference.class)).get();
+    }
+
+    public static Chunk chunkFromMinecraftChunk(Object minecraftChunk) {
+        return Reflection.readField(minecraftChunk, 0, Chunk.class);
+    }
+
+    public static Chunk chunkFromCraftChunk(Object craftChunk) {
+        return (Chunk) craftChunk;
     }
 
 }

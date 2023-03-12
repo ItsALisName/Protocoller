@@ -3,14 +3,16 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.entity.player.PlayerAbilities;
-import net.alis.protocoller.parent.nbt.NBTTagCompound;
+import net.alis.protocoller.packet.type.PlayOutPacket;
+import net.alis.protocoller.samples.entity.player.PlayerAbilities;
+import net.alis.protocoller.samples.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayOutAbilities implements Packet {
+public class PacketPlayOutAbilities implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private boolean invulnerable;
@@ -20,7 +22,8 @@ public class PacketPlayOutAbilities implements Packet {
     private float flySpeed;
     private float walkSpeed;
 
-    public PacketPlayOutAbilities(PacketDataContainer packetData) {
+    public PacketPlayOutAbilities(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.invulnerable = packetData.readBoolean(0);
         this.flying = packetData.readBoolean(1);
@@ -41,11 +44,11 @@ public class PacketPlayOutAbilities implements Packet {
         this.walkSpeed = walkSpeed;
     }
 
-    public PacketPlayOutAbilities(PlayerAbilities abilities) {
+    public PacketPlayOutAbilities(@NotNull PlayerAbilities abilities) {
         this(abilities.isInvulnerable(), abilities.isFlying(), abilities.isCanFly(), abilities.isCanInstantlyBuild(), abilities.getFlySpeed(), abilities.getFlySpeed());
     }
 
-    public PacketPlayOutAbilities(NBTTagCompound compound) {
+    public PacketPlayOutAbilities(@NotNull NBTTagCompound compound) {
         if(compound.getCompoundTag("abilities") != null) {
             NBTTagCompound tag = compound.getCompoundTag("abilities");
             this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, new PlayerAbilities().fromNBT(compound).createOriginal()));
@@ -121,12 +124,12 @@ public class PacketPlayOutAbilities implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

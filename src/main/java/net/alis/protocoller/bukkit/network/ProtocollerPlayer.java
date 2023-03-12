@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.entity.NetworkPlayer;
 import net.alis.protocoller.packet.Packet;
+import net.alis.protocoller.packet.type.PlayOutPacket;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -44,12 +45,12 @@ public class ProtocollerPlayer implements NetworkPlayer {
     }
 
     @Override
-    public void writePacket(Packet packet) {
+    public void writePacket(PlayOutPacket packet) {
         this.channelManager.writePacket(packet);
     }
 
     @Override
-    public void sendPacket(Packet packet) {
+    public void sendPacket(PlayOutPacket packet) {
         this.channelManager.sendPacket(packet);
     }
 }

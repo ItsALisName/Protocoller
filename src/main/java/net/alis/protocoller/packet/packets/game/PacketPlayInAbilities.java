@@ -4,27 +4,29 @@ import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.entity.player.PlayerAbilities;
-import net.alis.protocoller.util.annotations.NotOnAllVersions;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.entity.player.PlayerAbilities;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInAbilities implements Packet {
+public class PacketPlayInAbilities implements PlayInPacket {
 
     private final PacketDataContainer packetData;
-    private @NotOnAllVersions boolean isInvulnerable;
+    private @Nullable boolean isInvulnerable;
     private boolean isFlying;
-    private @NotOnAllVersions boolean canFly;
-    private @NotOnAllVersions boolean canInstantlyBuild;
-    private @NotOnAllVersions float flySpeed;
-    private @NotOnAllVersions float walkSpeed;
+    private @Nullable boolean canFly;
+    private @Nullable boolean canInstantlyBuild;
+    private @Nullable float flySpeed;
+    private @Nullable float walkSpeed;
 
     private final boolean legacy = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16);
 
-    public PacketPlayInAbilities(PacketDataContainer packetData) {
+    public PacketPlayInAbilities(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(!legacy) {
             this.isFlying = packetData.readBoolean(0);
@@ -48,12 +50,12 @@ public class PacketPlayInAbilities implements Packet {
         this.walkSpeed = abilities.getWalkSpeed();
     }
 
-    @NotOnAllVersions
+    @Nullable
     public boolean isInvulnerable() {
         return isInvulnerable;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public void setInvulnerable(boolean invulnerable) {
         if(legacy) this.packetData.writeBoolean(0, invulnerable);
         isInvulnerable = invulnerable;
@@ -72,45 +74,45 @@ public class PacketPlayInAbilities implements Packet {
         isFlying = flying;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public boolean isCanFly() {
         return canFly;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public void setCanFly(boolean canFly) {
         if(legacy) this.packetData.writeBoolean(2, canFly);
         this.canFly = canFly;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public boolean isCanInstantlyBuild() {
         return canInstantlyBuild;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public void setCanInstantlyBuild(boolean canInstantlyBuild) {
         if(legacy) this.packetData.writeBoolean(3, canInstantlyBuild);
         this.canInstantlyBuild = canInstantlyBuild;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public float getFlySpeed() {
         return flySpeed;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public void setFlySpeed(float flySpeed) {
         if(legacy) this.packetData.writeFloat(0, flySpeed);
         this.flySpeed = flySpeed;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public float getWalkSpeed() {
         return walkSpeed;
     }
 
-    @NotOnAllVersions
+    @Nullable
     public void setWalkSpeed(float walkSpeed) {
         if(legacy) this.packetData.writeFloat(1, walkSpeed);
         this.walkSpeed = walkSpeed;
@@ -122,12 +124,12 @@ public class PacketPlayInAbilities implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

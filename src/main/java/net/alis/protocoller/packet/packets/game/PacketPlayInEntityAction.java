@@ -6,22 +6,25 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.entity.player.PlayerAction;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.entity.player.PlayerAction;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInEntityAction implements Packet {
+public class PacketPlayInEntityAction implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private int entityId;
     private PlayerAction action;
     private int mountJumpHeight;
 
-    public PacketPlayInEntityAction(PacketDataContainer packetData) {
+    public PacketPlayInEntityAction(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.action = PlayerAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerActionEnum()).ordinal());
@@ -101,12 +104,12 @@ public class PacketPlayInEntityAction implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

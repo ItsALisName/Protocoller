@@ -60,6 +60,7 @@ public abstract class PacketType {
         }
 
         public abstract static class Server {
+            public static MinecraftPacketType BED;
             public static MinecraftPacketType ABILITIES;
             public static MinecraftPacketType ADVANCEMENTS;
             public static MinecraftPacketType ANIMATION;

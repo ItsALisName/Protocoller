@@ -1,8 +1,8 @@
 package net.alis.protocoller.bukkit.network.packet;
 
-import net.alis.protocoller.bukkit.exceptions.MissingPacketTypeException;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,18 +31,20 @@ public class PacketTypesInitializer extends PacketType {
         public static class Server extends PacketType.Status.Server { }
     }
 
-    public static MinecraftPacketType setPacketType(Object obj) {
+    public static @Nullable MinecraftPacketType setPacketType(Object obj) {
         for(MinecraftPacketType type : packets) {
             if(obj.getClass() == type.getPacketClass()) return type;
         }
-        throw new MissingPacketTypeException(obj.getClass());
+        new RuntimeException("Failed to find packet type for \"" + obj.getClass().getSimpleName() + "\"").printStackTrace();
+        return null;
     }
 
-    public static MinecraftPacketType setPacketType(Class<?> clazz) {
+    public static @Nullable MinecraftPacketType setPacketType(Class<?> clazz) {
         for(MinecraftPacketType type : packets) {
             if(clazz == type.getPacketClass()) return type;
         }
-        throw new MissingPacketTypeException(clazz);
+        new RuntimeException("Failed to find packet type for \"" + clazz.getSimpleName() + "\"").printStackTrace();
+        return null;
     }
 
     public static void init() {
@@ -237,6 +239,7 @@ public class PacketTypesInitializer extends PacketType {
         Play.Server.SET_SIMULATION_DISTANCE_PACKET = new ProtocollerPacketType("SetSimulationDistancePacket", State.CLIENTBOUND, (byte) 38); packets.add(Play.Server.SET_SIMULATION_DISTANCE_PACKET);
         Play.Server.SYSTEM_CHAT_PACKET = new ProtocollerPacketType("SystemChatPacket", State.CLIENTBOUND, (byte) 39); packets.add(Play.Server.SYSTEM_CHAT_PACKET);
         Play.Server.UPDATE_ENABLED_FEATURES = new ProtocollerPacketType("UpdateEnabledFeatures", State.CLIENTBOUND, (byte) 40); packets.add(Play.Server.UPDATE_ENABLED_FEATURES);
+        Play.Server.BED = new ProtocollerPacketType("Bed", State.PLAY_SERVERBOUND, (byte) 41); packets.add(Play.Server.BED);
     }
     
 }

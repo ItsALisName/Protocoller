@@ -1,31 +1,33 @@
 package net.alis.protocoller.packet.packets.login;
 
-import net.alis.protocoller.bukkit.exceptions.CryptographyException;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.MinecraftEncryption;
+import net.alis.protocoller.packet.type.LoginInPacket;
+import net.alis.protocoller.samples.MinecraftEncryption;
+import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.SecretKey;
 import java.security.PublicKey;
 
-public class PacketLoginInEncryptionBegin implements Packet {
+public class PacketLoginInEncryptionBegin implements LoginInPacket {
 
     private final PacketDataContainer packetData;
     private byte[] publicKey;
     private byte[] nonce;
 
-    public PacketLoginInEncryptionBegin(PacketDataContainer packetData) {
+    public PacketLoginInEncryptionBegin(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.publicKey = packetData.readByteArray(0);
         this.nonce = packetData.readByteArray(1);
     }
 
-    public PacketLoginInEncryptionBegin(SecretKey secretKey, PublicKey publicKey, byte[] nonce) throws CryptographyException {
+    public PacketLoginInEncryptionBegin(@NotNull SecretKey secretKey, PublicKey publicKey, byte[] nonce) throws Exception {
         PacketBuilder converter = PacketBuilder.get(getPacketType());
         this.publicKey = MinecraftEncryption.readBytes(publicKey, secretKey.getEncoded());
         this.nonce = MinecraftEncryption.readBytes(publicKey, nonce);
@@ -49,7 +51,7 @@ public class PacketLoginInEncryptionBegin implements Packet {
         this.publicKey = publicKey;
     }
 
-    public void setPublicKey(SecretKey secretKey, PublicKey publicKey) throws CryptographyException {
+    public void setPublicKey(@NotNull SecretKey secretKey, PublicKey publicKey) throws Exception {
         this.publicKey = MinecraftEncryption.readBytes(publicKey, secretKey.getEncoded());
         this.packetData.writeByteArray(0, this.publicKey);
     }
@@ -63,7 +65,7 @@ public class PacketLoginInEncryptionBegin implements Packet {
         this.nonce = nonce;
     }
 
-    public void setNonce(PublicKey key, byte[] data) throws CryptographyException {
+    public void setNonce(PublicKey key, byte[] data) throws Exception {
         this.nonce = MinecraftEncryption.readBytes(key, data);
         this.packetData.writeByteArray(1, this.nonce);
     }
@@ -74,7 +76,7 @@ public class PacketLoginInEncryptionBegin implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return this.packetData;
     }
 

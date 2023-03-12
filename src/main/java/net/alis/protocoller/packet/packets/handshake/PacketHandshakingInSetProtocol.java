@@ -5,26 +5,29 @@ import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.network.ProtocolEnum;
+import net.alis.protocoller.packet.type.HandshakeInPacket;
+import net.alis.protocoller.samples.network.ProtocolEnum;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketHandshakingInSetProtocol implements Packet {
+public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
 
     private final PacketDataContainer packetData;
     public String address;
     private int protocolVersion;
     public int port;
     public ProtocolEnum intendedState;
-    private final boolean isLegacy = GlobalProvider.instance().getServer().isLegacy();
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().isLegacy();
 
-    public PacketHandshakingInSetProtocol(PacketDataContainer packetData) {
+    public PacketHandshakingInSetProtocol(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Handshake.Client.SET_PROTOCOL);
         this.packetData = packetData;
         this.address = packetData.readString(0);
         this.intendedState = ProtocolEnum.get(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getProtocolEnum()).ordinal());
-        if(isLegacy) {
+        if(legacyPacket) {
             this.protocolVersion = packetData.readInt(0);
             this.port = packetData.readInt(1);
         } else {
@@ -78,7 +81,7 @@ public class PacketHandshakingInSetProtocol implements Packet {
     }
 
     public void setProtocolVersion(int protocolVersion) {
-        if(isLegacy) {
+        if(legacyPacket) {
             this.packetData.writeInt(0, protocolVersion);
         } else {
             this.packetData.writeInt(1, protocolVersion);
@@ -87,7 +90,7 @@ public class PacketHandshakingInSetProtocol implements Packet {
     }
 
     public void setPort(int port) {
-        if(isLegacy) {
+        if(legacyPacket) {
             this.packetData.writeInt(1, port);
         } else {
             this.packetData.writeInt(2, port);
@@ -110,7 +113,7 @@ public class PacketHandshakingInSetProtocol implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return this.packetData;
     }
 

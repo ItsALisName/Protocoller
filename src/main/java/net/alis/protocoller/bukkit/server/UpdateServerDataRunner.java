@@ -25,7 +25,6 @@ public class UpdateServerDataRunner implements Runnable {
             for(Object future : ServerReflection.getServerChannelFutures()) {
                 GlobalProvider.instance().getServer().channelFutures.add((ChannelFuture) future);
             }
-            GlobalProvider.instance().getServer().getServerInjector().inject();
         } catch (Exception e)  {
             throw new RuntimeException("Failed to update server channels!", e);
         }

@@ -2,23 +2,26 @@ package net.alis.protocoller.packet.packets.login;
 
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.authlib.GameProfile;
+import net.alis.protocoller.packet.type.LoginInPacket;
+import net.alis.protocoller.samples.authlib.GameProfile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class PacketLoginInStart implements Packet {
+public class PacketLoginInStart implements LoginInPacket {
 
     private final PacketDataContainer packetData;
     private GameProfile gameProfile;
 
     private final PacketBuilder converter = PacketBuilder.get(getPacketType());
 
-    public PacketLoginInStart(PacketDataContainer packetData) {
+    public PacketLoginInStart(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(converter.getConstructorIndicator().getLevel() == 2) {
             this.gameProfile = new GameProfile(((Optional<UUID>) packetData.readOptional(0)).get(), packetData.readString(0));
@@ -65,12 +68,12 @@ public class PacketLoginInStart implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

@@ -19,7 +19,7 @@ public class ClassesContainer {
         integerSuggestionClass, suggestionProviderClass, suggestionsBuilderClass, argumentCommandNodeClass, commandNodeClass,
         literalCommandNodeClass, rootCommandNodeClass, ambiguityConsumerClass, commandClass, commandDispatcherClass,literalMessageClass,
         parseResultsClass, redirectModifierClass, resultConsumerClass, singleRedirectModifierClass, kyoriComponentClass,
-        kyoriGsonComponentSerializerClass, chatMessageTypeClass, playerConnectionClass, networkManagerClass, minecraftServerClass,
+        kyoriGsonComponentSerializerClass, chatMessageTypeEnum, playerConnectionClass, networkManagerClass, minecraftServerClass,
         serverConnectionClass, craftServerClass, dedicatedServerClass, packetDataSerializerClass, gameProfileClass, propertyClass,
         propertyMapClass, minecraftKeyClass, craftWorldClass, minecraftWorldClass, minecraftWorldServerClass, craftWorldBorderClass,
         minecraftWorldBorderClass, entityPlayerClass, serverPingClass, vibrationPathClass, playerAbilitiesClass, iRecipeClass, directionEnum,
@@ -31,7 +31,10 @@ public class ClassesContainer {
         tileEntityJigsawJointypeEnum, tileEntityStructureUpdateType, blockPropertyStructureModeEnum, blockMirrorEnum, pointOEnum, pointSEnum, blockRotationEnum,
         baseBlockPositionClass, entityUseActionEnum, movingObjectPositionBlockClass, inventoryClickTypeEnum, craftAdvancementClass, minecraftAdvancementClass,
         advancementFrameTypeEnum, advancementDisplayClass, chatFormatEnum, craftAdvancementProgress, minecraftAdvancementProgress,
-        advancementPlayerDataClass;
+        advancementPlayerDataClass, attributeOperationEnum, resourceKeyClass, instantMobEffectClass, mobEffectAbsorptionClass, mobEffectAttackDamageClass,
+        mobEffectHealthBoostClass, attributeRangedClass, recipeBookTypeEnum, minecraftBlockClass, craftBlockClass, craftMagicNumbersClass, iBlockDataClass,
+        minecraftItemClass, entityTypesClass, entityHumanClass, craftChunkClass, minecraftChunkClass, iChunkAccessClass, iBlockAccessClass,
+        bossActionEnum, bossActionInterface, barColorEnum, barStyleEnum, bossBattleClass, outCommandClassB, outCommandInterfaceE, outCommandClassA;
     ClassesContainer() {
         setSuggestionClass(Reflection.getClass("com.mojang.brigadier.suggestion.Suggestion"));
         setSuggestionsClass(Reflection.getClass("com.mojang.brigadier.suggestion.Suggestions"));
@@ -66,7 +69,7 @@ public class ClassesContainer {
         setKyoriComponentClass(Reflection.getClass("net.kyori.adventure.text.Component"));
         setKyoriGsonComponentSerializerClass(Reflection.getClass("net.kyori.adventure.text.serializer.gson.GsonComponentSerializer"));
         setCraftServerClass(Reflection.getCraftBukkitClass("CraftServer"));
-        setChatMessageTypeClass(Reflection.getNMSClass("ChatMessageType", "net.minecraft.network.chat.ChatMessageType"));
+        setChatMessageTypeEnum(Reflection.getNMSClass("ChatMessageType", "net.minecraft.network.chat.ChatMessageType"));
         setPlayerConnectionClass(Reflection.getNMSClass("PlayerConnection", "net.minecraft.server.network.PlayerConnection"));
         setNetworkManagerClass(Reflection.getNMSClass("NetworkManager", "net.minecraft.network.NetworkManager"));
         setMinecraftServerClass(Reflection.getNMSClass("MinecraftServer", "net.minecraft.server.MinecraftServer"));
@@ -118,6 +121,7 @@ public class ClassesContainer {
         } else {
             setChatVisibilityEnum(Reflection.getNMSClass("EnumChatVisibility", "net.minecraft.world.entity.player.EnumChatVisibility"));
         }
+
         setMainHandEnum(Reflection.getNMSClass("EnumMainHand", "net.minecraft.world.entity.EnumMainHand"));
         setNbtTagCompoundClass(Reflection.getNMSClass("NBTTagCompound", "net.minecraft.nbt.NBTTagCompound"));
         setVector3dClass(Reflection.getNMSClass("Vec3D", "net.minecraft.world.phys.Vec3D"));
@@ -150,5 +154,33 @@ public class ClassesContainer {
         setCraftAdvancementProgress(Reflection.getCraftBukkitClass("advancement.CraftAdvancementProgress"));
         setMinecraftAdvancementProgress(Reflection.getNMSClass("AdvancementProgress", "net.minecraft.advancements.AdvancementProgress"));
         setAdvancementPlayerDataClass(Reflection.getNMSClass("AdvancementDataPlayer", "net.minecraft.server.AdvancementDataPlayer"));
+        setAttributeOperationEnum(Reflection.getNMSClass("AttributeModifier$Operation", "net.minecraft.world.entity.ai.attributes.AttributeModifier$Operation"));
+        setResourceKeyClass(Reflection.getNMSClass("ResourceKey", "net.minecraft.resources.ResourceKey"));
+        setInstantMobEffectClass(Reflection.getNMSClass("InstantMobEffect", "net.minecraft.world.effect.InstantMobEffect"));
+        setMobEffectAbsorptionClass(Reflection.getNMSClass("MobEffectAbsorption", "net.minecraft.world.effect.MobEffectAbsorption"));
+        setMobEffectAttackDamageClass(Reflection.getNMSClass("MobEffectAttackDamage", "net.minecraft.world.effect.MobEffectAttackDamage"));
+        setMobEffectHealthBoostClass(Reflection.getNMSClass("MobEffectHealthBoost", "net.minecraft.world.effect.MobEffectHealthBoost"));
+        setAttributeRangedClass(Reflection.getNMSClass("AttributeRanged", "net.minecraft.world.entity.ai.attributes.AttributeRanged"));
+        setRecipeBookTypeEnum(Reflection.getNMSClass("RecipeBookType", "net.minecraft.world.inventory.RecipeBookType"));
+        setMinecraftBlockClass(Reflection.getNMSClass("Block", "net.minecraft.world.level.block.Block"));
+        setCraftBlockClass(Reflection.getCraftBukkitClass("block.CraftBlock"));
+        setCraftMagicNumbersClass(Reflection.getCraftBukkitClass("util.CraftMagicNumbers"));
+        setIBlockDataClass(Reflection.getNMSClass("IBlockData", "net.minecraft.world.level.block.state.IBlockData"));
+        setMinecraftItemClass(Reflection.getNMSClass("Item", "net.minecraft.world.item.Item"));
+        setEntityTypesClass(Reflection.getNMSClass("EntityTypes", "net.minecraft.world.entity.EntityTypes"));
+        setEntityHumanClass(Reflection.getNMSClass("EntityHuman", "net.minecraft.world.entity.player.EntityHuman"));
+        setCraftChunkClass(Reflection.getCraftBukkitClass("CraftChunk"));
+        setMinecraftChunkClass(Reflection.getNMSClass("Chunk", "net.minecraft.world.level.chunk.Chunk"));
+        setIChunkAccessClass(Reflection.getNMSClass("IChunkAccess", "net.minecraft.world.level.chunk.IChunkAccess"));
+        setIBlockAccessClass(Reflection.getNMSClass("IBlockAccess", "net.minecraft.world.level.IBlockAccess"));
+        setBossActionEnum(Reflection.getNMSClass("PacketPlayOutBoss$Action", "net.minecraft.network.protocol.game.PacketPlayOutBoss$d"));
+        setBossActionInterface(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutBoss$Action"));
+        setBarColorEnum(Reflection.getNMSClass("BossBattle$BarColor", "net.minecraft.world.BossBattle$BarColor"));
+        setBarStyleEnum(Reflection.getNMSClass("BossBattle$BarStyle", "net.minecraft.world.BossBattle$BarStyle"));
+        setBossBattleClass(Reflection.getNMSClass("BossBattle", "net.minecraft.world.BossBattle"));
+        setOutCommandClassA(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutCommands$a"));
+        setOutCommandClassB(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutCommands$b"));
+        setOutCommandInterfaceE(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutCommands$e"));
+
     }
 }

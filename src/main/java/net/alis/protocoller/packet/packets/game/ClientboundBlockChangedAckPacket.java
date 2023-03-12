@@ -2,17 +2,20 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
+import org.jetbrains.annotations.NotNull;
 
-public class ClientboundBlockChangedAckPacket implements Packet {
+public class ClientboundBlockChangedAckPacket implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private int decodedInt$0;
 
-    public ClientboundBlockChangedAckPacket(PacketDataContainer packetData) {
+    public ClientboundBlockChangedAckPacket(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.decodedInt$0 = packetData.readInt(0);
     }
@@ -37,12 +40,12 @@ public class ClientboundBlockChangedAckPacket implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

@@ -4,7 +4,7 @@ public interface Packet {
 
     MinecraftPacketType getPacketType();
 
-    PacketDataContainer getPacketData();
+    PacketDataContainer getData();
 
     Object getRawPacket();
 

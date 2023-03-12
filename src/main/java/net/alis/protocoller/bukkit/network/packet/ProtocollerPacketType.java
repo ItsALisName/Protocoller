@@ -3,6 +3,7 @@ package net.alis.protocoller.bukkit.network.packet;
 import net.alis.protocoller.bukkit.util.reflection.NetworkReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketType;
+import org.jetbrains.annotations.NotNull;
 
 public class ProtocollerPacketType implements MinecraftPacketType {
 
@@ -11,7 +12,7 @@ public class ProtocollerPacketType implements MinecraftPacketType {
     private final byte packetId;
     private final Class<?> packetClass;
 
-    public ProtocollerPacketType(String packetName, PacketType.State state, byte packetId) {
+    public ProtocollerPacketType(String packetName, @NotNull PacketType.State state, byte packetId) {
         this.packetState = state;
         this.packetId = packetId;
         switch (state) {
@@ -30,19 +31,23 @@ public class ProtocollerPacketType implements MinecraftPacketType {
         this.packetClass = NetworkReflection.packet$getPacketClass(this.packetName, state);
     }
 
+    @Override
     public String getPacketName() {
         if(packetName.contains("$")) return packetName.split("\\$")[1];
         return packetName;
     }
 
+    @Override
     public PacketType.State getState() {
         return packetState;
     }
 
+    @Override
     public byte getPacketId() {
         return packetId;
     }
 
+    @Override
     public Class<?> getPacketClass() {
         return packetClass;
     }
@@ -57,7 +62,7 @@ public class ProtocollerPacketType implements MinecraftPacketType {
 
     @Override
     public String toString() {
-        return "PacketType{" +
+        return "ProtocollerPacketType{" +
                 "packetName='" + packetName + '\'' +
                 ", packetState=" + packetState +
                 ", packetId=" + packetId +

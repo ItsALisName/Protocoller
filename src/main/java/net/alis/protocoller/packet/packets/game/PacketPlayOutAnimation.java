@@ -1,27 +1,31 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PacketPlayOutAnimation implements Packet {
+public class PacketPlayOutAnimation implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private int entityId;
     private int animationId;
 
-    public PacketPlayOutAnimation(PacketDataContainer packetData) {
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_17);
+
+    public PacketPlayOutAnimation(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_17)){
+        if(legacyPacket){
             this.entityId = packetData.readInt(0);
             this.animationId = packetData.readInt(1);
         } else {
@@ -71,12 +75,12 @@ public class PacketPlayOutAnimation implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

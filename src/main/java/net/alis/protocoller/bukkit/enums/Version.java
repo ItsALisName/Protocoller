@@ -2,6 +2,7 @@ package net.alis.protocoller.bukkit.enums;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public enum Version {
 
@@ -365,35 +366,35 @@ public enum Version {
         return UNKNOWN;
     }
 
-    public boolean greaterThanOrEqualTo(Version version) {
+    public boolean greaterThanOrEqualTo(@NotNull Version version) {
         return this.ordinal() >= version.ordinal();
     }
 
-    public boolean lessThanOrEqualTo(Version version) {
+    public boolean lessThanOrEqualTo(@NotNull Version version) {
         return this.ordinal() <= version.ordinal();
     }
 
-    public boolean greaterThan(Version version) {
+    public boolean greaterThan(@NotNull Version version) {
         return this.ordinal() > version.ordinal();
     }
 
-    public boolean lessThan(Version version) {
+    public boolean lessThan(@NotNull Version version) {
         return this.ordinal() < version.ordinal();
     }
 
-    public static boolean greaterThanOrEqualTo(Version original, Version version) {
+    public static boolean greaterThanOrEqualTo(@NotNull Version original, @NotNull Version version) {
         return original.ordinal() >= version.ordinal();
     }
 
-    public static boolean lessThanOrEqualTo(Version original, Version version) {
+    public static boolean lessThanOrEqualTo(@NotNull Version original, @NotNull Version version) {
         return original.ordinal() <= version.ordinal();
     }
 
-    public static boolean greaterThan(Version original, Version version) {
+    public static boolean greaterThan(@NotNull Version original, @NotNull Version version) {
         return original.ordinal() > version.ordinal();
     }
 
-    public static boolean lessThan(Version original, Version version) {
+    public static boolean lessThan(@NotNull Version original, @NotNull Version version) {
         return original.ordinal() < version.ordinal();
     }
 

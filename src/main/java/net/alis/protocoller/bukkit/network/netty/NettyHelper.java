@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
+import net.alis.protocoller.bukkit.network.netty.initializers.NettyChannelInitializer;
 import net.alis.protocoller.bukkit.network.netty.interceptors.NettyPacketInterceptor;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 
@@ -54,6 +55,24 @@ public class NettyHelper {
 
     public static void replaceInitializers(ChannelHandler bootstrapAcceptor, ChannelInitializer<?> newChannelInitializer) {
         Reflection.writeField(bootstrapAcceptor, localField$0, newChannelInitializer);
+    }
+
+    public static void ejectChannelFuture(ChannelFuture channelFuture) {
+        ChannelHandler bootstrapAcceptor = getBootstrapAcceptor(channelFuture);
+        List<String> handlersNames = channelFuture.channel().pipeline().names();
+        for (String name : handlersNames) {
+            try {
+                ChannelHandler handler = channelFuture.channel().pipeline().get(name);
+                ChannelInitializer<Channel> current = (ChannelInitializer<Channel>) localField$0.get(handler);
+                if (current instanceof NettyChannelInitializer) bootstrapAcceptor = handler;
+            } catch (Exception ignored) {}
+        }
+        try {
+            ChannelInitializer<Channel> original = (ChannelInitializer<Channel>) localField$0.get(bootstrapAcceptor);
+            if (original instanceof NettyChannelInitializer) {
+                Reflection.writeField(bootstrapAcceptor, localField$0, ((NettyChannelInitializer) original).getOriginal());
+            }
+        } catch (Exception ignored) { }
     }
 
 }

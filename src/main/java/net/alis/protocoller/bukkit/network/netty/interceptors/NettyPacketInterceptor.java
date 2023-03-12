@@ -66,6 +66,10 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
         }
         AsyncProtocollerEventManager.callListeners(data, ctx.channel(), (InetSocketAddress) ctx.channel().remoteAddress(), player, networkPlayer);
         SyncPacketEvent event = SyncProtocollerEventManager.callListeners(data, ctx.channel(), (InetSocketAddress) ctx.channel().remoteAddress(), player, networkPlayer);
+        if(event == null) {
+            super.channelRead(ctx, msg);
+            return;
+        }
         try {
             super.channelRead(ctx, event.getData().getRawPacket());
             return;
@@ -116,6 +120,10 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
         }
         AsyncProtocollerEventManager.callListeners(data, ctx.channel(), (InetSocketAddress) ctx.channel().remoteAddress(), player, networkPlayer);
         SyncPacketEvent event = SyncProtocollerEventManager.callListeners(data, ctx.channel(), (InetSocketAddress) ctx.channel().remoteAddress(), player, networkPlayer);
+        if(event == null) {
+            super.write(ctx, msg, promise);
+            return;
+        }
         try {
             super.write(ctx, event.getData().getRawPacket(), promise);
             return;

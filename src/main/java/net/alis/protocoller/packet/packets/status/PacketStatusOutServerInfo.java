@@ -3,18 +3,21 @@ package net.alis.protocoller.packet.packets.status;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.network.status.ServerPing;
+import net.alis.protocoller.packet.type.StatusOutPacket;
+import net.alis.protocoller.samples.network.status.ServerPing;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketStatusOutServerInfo implements Packet {
+public class PacketStatusOutServerInfo implements StatusOutPacket {
 
     private final PacketDataContainer packetData;
     private ServerPing metadata;
 
-    public PacketStatusOutServerInfo(PacketDataContainer packetData) {
+    public PacketStatusOutServerInfo(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.metadata = packetData.readServerPing(0);
     }
@@ -54,12 +57,12 @@ public class PacketStatusOutServerInfo implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

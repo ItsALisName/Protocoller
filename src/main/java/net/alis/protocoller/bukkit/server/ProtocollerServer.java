@@ -3,6 +3,7 @@ package net.alis.protocoller.bukkit.server;
 import com.google.common.collect.Lists;
 
 import net.alis.protocoller.bukkit.managers.LogsManager;
+import net.alis.protocoller.bukkit.network.netty.ChannelInjector;
 import net.alis.protocoller.bukkit.network.netty.interceptors.NettyPacketInterceptor;
 import net.alis.protocoller.bukkit.network.netty.injectors.PlayersInjector;
 import net.alis.protocoller.bukkit.network.netty.injectors.ServerInjector;
@@ -91,11 +92,11 @@ public class ProtocollerServer implements NetworkServer {
         return packetInterceptors;
     }
 
-    public ServerInjector getServerInjector() {
+    public ChannelInjector.ServerInjector getServerInjector() {
         return serverInjector;
     }
 
-    public PlayersInjector getPlayersInjector() {
+    public ChannelInjector.PlayerInjector getPlayersInjector() {
         return playersInjector;
     }
 

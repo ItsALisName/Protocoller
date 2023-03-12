@@ -18,10 +18,6 @@ public class LogsManager {
         return logger;
     }
 
-    public Logger getLogger(Thread thread) {
-        return LogManager.getLogger("Protocoller/" + thread.getName());
-    }
-
     public void info(String... lines) {
         getLogger().info("[*]=============================== [Protocoller] =============================[*]");
         for(String line : lines) getLogger().info("[*] " + line);
@@ -47,51 +43,47 @@ public class LogsManager {
     }
 
     public final void sendPreloadingStartMessage() {
-        Logger log = getLogger(Thread.currentThread());
         logger.log(Level.INFO, "[*]============================================================[*]");
         logger.log(Level.INFO, "[*]       Preloading has started! Collecting information...");
         logger.log(Level.INFO, "[*]============================================================[*]");
     }
 
     public final void sendPreloadingFinishedMessage(String pluginVersion) {
-        Logger log = getLogger(Thread.currentThread());
-        log.log(Level.INFO, "[*]============================================================[*]");
-        log.log(Level.INFO, "[*]      ____             __                   ____         ");
-        log.log(Level.INFO, "[*]     / __ \\_________  / /_____  _________  / / /__  _____");
-        log.log(Level.INFO, "[*]    / /_/ / ___/ __ \\/ __/ __ \\/ ___/ __ \\/ / / _ \\/ ___/");
-        log.log(Level.INFO, "[*]   / ____/ /  / /_/ / /_/ /_/ / /__/ /_/ / / /  __/ /    ");
-        log.log(Level.INFO, "[*]  /_/   /_/   \\____/\\__/\\____/\\___/\\____/_/_/\\___/_/     ");
-        log.log(Level.INFO, "[*]                            by ALis                           ");
-        log.log(Level.INFO, "[*]============================================================[*]");
-        log.log(Level.INFO, "[*]                      Preloading finished.                     ");
-        log.log(Level.INFO, "[*] Information:                                                  ");
-        log.log(Level.INFO, "[*]  * Server Version: " + GlobalProvider.instance().getServer().getVersion().asString() + "(Protocol: " + GlobalProvider.instance().getServer().getVersion().getProtocol() + ")");
-        log.log(Level.INFO, "[*]  * Plugin Version: " + pluginVersion);
-        log.log(Level.INFO, "[*]  * Java Version: " + InitialData.INSTANCE.getJavaVersion());
-        log.log(Level.INFO, "[*]  * JDK Version: " + InitialData.INSTANCE.getJdkVersion());
-        log.log(Level.INFO, "[*]  * OS Name/Architecture: " + InitialData.INSTANCE.getOsName() + " / " + InitialData.INSTANCE.getOsArchitecture());
-        log.log(Level.INFO, "[*]  * OS Version: " + InitialData.INSTANCE.getOsVersion());
-        log.log(Level.INFO, "[*]============================================================[*]");
+        logger.log(Level.INFO, "[*]============================================================[*]");
+        logger.log(Level.INFO, "[*]      ____             __                   ____         ");
+        logger.log(Level.INFO, "[*]     / __ \\_________  / /_____  _________  / / /__  _____");
+        logger.log(Level.INFO, "[*]    / /_/ / ___/ __ \\/ __/ __ \\/ ___/ __ \\/ / / _ \\/ ___/");
+        logger.log(Level.INFO, "[*]   / ____/ /  / /_/ / /_/ /_/ / /__/ /_/ / / /  __/ /    ");
+        logger.log(Level.INFO, "[*]  /_/   /_/   \\____/\\__/\\____/\\___/\\____/_/_/\\___/_/     ");
+        logger.log(Level.INFO, "[*]                            by ALis                           ");
+        logger.log(Level.INFO, "[*]============================================================[*]");
+        logger.log(Level.INFO, "[*]                      Preloading finished.                     ");
+        logger.log(Level.INFO, "[*] Information:                                                  ");
+        logger.log(Level.INFO, "[*]  * Server Version: " + GlobalProvider.instance().getServer().getVersion().asString() + "(Protocol: " + GlobalProvider.instance().getServer().getVersion().getProtocol() + ")");
+        logger.log(Level.INFO, "[*]  * Plugin Version: " + pluginVersion);
+        logger.log(Level.INFO, "[*]  * Java Version: " + InitialData.INSTANCE.getJavaVersion());
+        logger.log(Level.INFO, "[*]  * JDK Version: " + InitialData.INSTANCE.getJdkVersion());
+        logger.log(Level.INFO, "[*]  * OS Name/Architecture: " + InitialData.INSTANCE.getOsName() + " / " + InitialData.INSTANCE.getOsArchitecture());
+        logger.log(Level.INFO, "[*]  * OS Version: " + InitialData.INSTANCE.getOsVersion());
+        logger.log(Level.INFO, "[*]============================================================[*]");
     }
 
     public final void sendRegisteredListenerMessage(String user, String version, String lType) {
         if (GlobalProvider.instance().getConfig().isListenerRegistrationNotify()) {
-            Logger log = getLogger(Thread.currentThread());
-            log.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
-            log.log(Level.INFO, "[*]                 A new packet listener has been registered!");
-            log.log(Level.INFO, "[*] Who registered: " + user + "(Version: " + version + ")");
-            log.log(Level.INFO, "[*] Packet listener type: " + lType);
-            log.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
+            logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
+            logger.log(Level.INFO, "[*]                 A new packet listener has been registered!");
+            logger.log(Level.INFO, "[*] Who registered: " + user + "(Version: " + version + ")");
+            logger.log(Level.INFO, "[*] Packet listener type: " + lType);
+            logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
         }
     }
 
     public final void sendRegisteredUserNotify(String user, String version, String authors) {
         if(GlobalProvider.instance().getConfig().isApiUserRegistrationNotify()) {
-            Logger log = getLogger(Thread.currentThread());
-            log.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
-            log.log(Level.INFO, "[*]                          A new api user registered");
-            log.log(Level.INFO, "[*] Plugin: " + user + "(Version:  " + version + ", Authors: " + authors + ")");
-            log.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
+            logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
+            logger.log(Level.INFO, "[*]                          A new api user registered");
+            logger.log(Level.INFO, "[*] Plugin: " + user + "(Version:  " + version + ", Authors: " + authors + ")");
+            logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
         }
     }
 
@@ -104,6 +96,6 @@ public class LogsManager {
     }
 
     LogsManager() {
-        this.logger = LogManager.getLogger("Protocoller/" + Thread.currentThread().getName());
+        this.logger = LogManager.getLogger("Protocoller");
     }
 }

@@ -4,28 +4,31 @@ import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PacketPlayOutCollect implements Packet {
+public class PacketPlayOutCollect implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private int entityId;
     private int collectorId;
     private int stackAmount;
 
-    private final boolean is_1_9_orLower = GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_9);
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_9);
 
-    public PacketPlayOutCollect(PacketDataContainer packetData) {
+    public PacketPlayOutCollect(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.collectorId = packetData.readInt(1);
         this.stackAmount = 0;
-        if(!is_1_9_orLower) {
+        if(!legacyPacket) {
             this.stackAmount = packetData.readInt(2);
         }
     }
@@ -79,7 +82,7 @@ public class PacketPlayOutCollect implements Packet {
     }
 
     public void setStackAmount(int stackAmount) {
-        if(!is_1_9_orLower) this.packetData.writeInt(2, stackAmount);
+        if(!legacyPacket) this.packetData.writeInt(2, stackAmount);
         this.stackAmount = stackAmount;
     }
 
@@ -89,12 +92,12 @@ public class PacketPlayOutCollect implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

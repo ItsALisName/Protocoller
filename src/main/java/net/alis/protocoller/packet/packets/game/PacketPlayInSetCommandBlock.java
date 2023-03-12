@@ -4,14 +4,16 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.core.BlockPosition;
-import net.alis.protocoller.parent.entity.block.TileEntityCommandType;
+import net.alis.protocoller.packet.type.PlayInPacket;
+import net.alis.protocoller.samples.core.BlockPosition;
+import net.alis.protocoller.samples.entity.block.TileEntityCommandType;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketPlayInSetCommandBlock implements Packet {
+public class PacketPlayInSetCommandBlock implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private BlockPosition position;
@@ -21,7 +23,8 @@ public class PacketPlayInSetCommandBlock implements Packet {
     private boolean conditional;
     private boolean alwaysActive;
 
-    public PacketPlayInSetCommandBlock(PacketDataContainer packetData) {
+    public PacketPlayInSetCommandBlock(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.command = packetData.readString(0);
@@ -85,7 +88,7 @@ public class PacketPlayInSetCommandBlock implements Packet {
         return type;
     }
 
-    public void setType(TileEntityCommandType type) {
+    public void setType(@NotNull TileEntityCommandType type) {
         this.packetData.writeEnumConstant(0, type.original());
         this.type = type;
     }
@@ -123,12 +126,12 @@ public class PacketPlayInSetCommandBlock implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

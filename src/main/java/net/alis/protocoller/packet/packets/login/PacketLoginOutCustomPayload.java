@@ -3,21 +3,24 @@ package net.alis.protocoller.packet.packets.login;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.parent.network.MinecraftPacketDataSerializer;
-import net.alis.protocoller.parent.resources.MinecraftKey;
+import net.alis.protocoller.packet.type.LoginOutPacket;
+import net.alis.protocoller.samples.network.MinecraftPacketDataSerializer;
+import net.alis.protocoller.samples.resources.MinecraftKey;
+import org.jetbrains.annotations.NotNull;
 
-public class PacketLoginOutCustomPayload implements Packet {
+public class PacketLoginOutCustomPayload implements LoginOutPacket {
 
     private final PacketDataContainer packetData;
     private int queryId;
     private MinecraftKey channel;
     private MinecraftPacketDataSerializer payload;
 
-    public PacketLoginOutCustomPayload(PacketDataContainer packetData) {
+    public PacketLoginOutCustomPayload(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.channel = packetData.readMinecraftKey(0);
         this.payload = packetData.readOriginalDataSerializer(0);
@@ -80,12 +83,12 @@ public class PacketLoginOutCustomPayload implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

@@ -78,6 +78,10 @@ public class PacketBuilders {
         this.addAny(PacketType.Play.Client.ITEM_NAME, ConstructorLevelIndicator.PacketPlayInItemName_1);
         this.addAny(PacketType.Play.Client.SPECTATE, ConstructorLevelIndicator.PacketPlayInSpectate_1);
         this.addAny(PacketType.Play.Server.ABILITIES, ConstructorLevelIndicator.PacketPlayOutAbilities_1);
+        this.addAny(PacketType.Play.Server.BLOCK_ACTION, ConstructorLevelIndicator.PacketPlayOutBlockAction_1);
+        this.addAny(PacketType.Play.Server.BED, ConstructorLevelIndicator.PacketPlayOutBed_1);
+        this.addAny(PacketType.Play.Server.BLOCK_BREAK_ANIMATION, ConstructorLevelIndicator.PacketPlayOutBlockBreakAnimation_1);
+        this.addAny(PacketType.Play.Server.CAMERA, ConstructorLevelIndicator.PacketPlayOutCamera_1);
 
         this.add(PacketType.Play.Server.ATTACH_ENTITY, ConstructorLevelIndicator.PacketPlayOutAttachEntity_1, Version.v1_8);
         this.add(PacketType.Play.Server.ATTACH_ENTITY, ConstructorLevelIndicator.PacketPlayOutAttachEntity_2, Version.v1_9);
@@ -125,6 +129,7 @@ public class PacketBuilders {
         this.add(PacketType.Play.Client.TAB_COMPLETE, ConstructorLevelIndicator.PacketPlayInTabComplete_2, Version.v1_17);
         this.add(PacketType.Play.Client.BLOCK_PLACE, ConstructorLevelIndicator.PacketPlayInBlockPlace_1, Version.v1_8);
         this.add(PacketType.Play.Client.BLOCK_PLACE, ConstructorLevelIndicator.PacketPlayInBlockPlace_2, Version.v1_9);
+        this.add(PacketType.Play.Client.BLOCK_PLACE, ConstructorLevelIndicator.PacketPlayInBlockPlace_3, Version.v1_19);
         this.add(PacketType.Play.Client.ARM_ANIMATION, ConstructorLevelIndicator.PacketPlayInArmAnimation_0, Version.v1_8);
         this.add(PacketType.Play.Client.ARM_ANIMATION, ConstructorLevelIndicator.PacketPlayInArmAnimation_1, Version.v1_9);
         this.add(PacketType.Play.Server.COLLECT, ConstructorLevelIndicator.PacketPlayOutCollect_1, Version.v1_8);
@@ -179,6 +184,19 @@ public class PacketBuilders {
         this.add(PacketType.Play.Client.WINDOW_CLICK, ConstructorLevelIndicator.PacketPlayInWindowClick_0, Version.v1_8);
         this.add(PacketType.Play.Client.WINDOW_CLICK, ConstructorLevelIndicator.PacketPlayInWindowClick_1, Version.v1_17);
         this.add(PacketType.Play.Server.ADVANCEMENTS, ConstructorLevelIndicator.PacketPlayInAdvancements_1, Version.v1_13);
+        this.add(PacketType.Play.Client.RECIPE_DISPLAYED, ConstructorLevelIndicator.PacketPlayInRecipeDisplayed_1, Version.v1_12);
+        this.add(PacketType.Play.Client.RECIPE_SETTINGS, ConstructorLevelIndicator.PacketPlayInRecipeSettings_0, Version.v1_16_4n5);
+        this.add(PacketType.Play.Client.RECIPE_SETTINGS, ConstructorLevelIndicator.PacketPlayInRecipeSettings_1, Version.v1_17);
+        this.add(PacketType.Play.Server.BLOCK_BREAK, ConstructorLevelIndicator.PacketPlayOutBlockBreak_1, Version.v1_15);
+        this.add(PacketType.Play.Server.BLOCK_CHANGE, ConstructorLevelIndicator.PacketPlayOutBlockChange_1, Version.v1_8);
+        this.add(PacketType.Play.Server.BLOCK_CHANGE, ConstructorLevelIndicator.PacketPlayOutBlockChange_2, Version.v1_13);
+        this.add(PacketType.Play.Server.BLOCK_CHANGE, ConstructorLevelIndicator.PacketPlayOutBlockChange_3, Version.v1_16_4n5);
+        this.add(PacketType.Play.Server.BOSS, ConstructorLevelIndicator.PacketPlayOutBoss_1, Version.v1_9);
+        this.add(PacketType.Play.Server.BOSS, ConstructorLevelIndicator.PacketPlayOutBoss_2, Version.v1_17);
+        this.add(PacketType.Play.Server.CHAT, ConstructorLevelIndicator.PacketPlayOutChat_1, Version.v1_8);
+        this.add(PacketType.Play.Server.CHAT, ConstructorLevelIndicator.PacketPlayOutChat_2, Version.v1_12);
+        this.add(PacketType.Play.Server.CHAT, ConstructorLevelIndicator.PacketPlayOutChat_3, Version.v1_16);
+        this.add(PacketType.Play.Server.COMMANDS, ConstructorLevelIndicator.PacketPlayOutCommands_1, Version.v1_13);
         LogsManager.get().getLogger().info("[*] Packet creators loaded in " + (System.currentTimeMillis() - start) + "ms.");
     }
 

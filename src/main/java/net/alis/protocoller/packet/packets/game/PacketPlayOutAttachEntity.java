@@ -4,23 +4,27 @@ import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
-public class PacketPlayOutAttachEntity implements Packet {
+public class PacketPlayOutAttachEntity implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private int attachedEntityId;
     private int holdingEntityId;
 
+    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9);
+
     public PacketPlayOutAttachEntity(PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9)) {
+        if(legacyPacket) {
             this.attachedEntityId = packetData.readInt(1);
             this.holdingEntityId = packetData.readInt(2);
         } else {
@@ -66,7 +70,7 @@ public class PacketPlayOutAttachEntity implements Packet {
     }
 
     public void setAttachedEntityId(int attachedEntityId) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9)) {
+        if(legacyPacket) {
             this.packetData.writeInt(1, attachedEntityId);
         } else {
             this.packetData.writeInt(0, attachedEntityId);
@@ -79,7 +83,7 @@ public class PacketPlayOutAttachEntity implements Packet {
     }
 
     public void setHoldingEntityId(int holdingEntityId) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9)) {
+        if(legacyPacket) {
             this.packetData.writeInt(2, attachedEntityId);
         } else {
             this.packetData.writeInt(1, attachedEntityId);
@@ -103,12 +107,12 @@ public class PacketPlayOutAttachEntity implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

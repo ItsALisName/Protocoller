@@ -7,15 +7,12 @@ import io.netty.channel.ChannelInitializer;
 
 import net.alis.protocoller.bukkit.network.netty.ChannelInjector;
 import net.alis.protocoller.bukkit.network.netty.NettyHelper;
-import net.alis.protocoller.bukkit.network.netty.interceptors.NettyPacketInterceptor;
 import net.alis.protocoller.bukkit.network.netty.initializers.NettyChannelInitializer;
 
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +25,9 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
         List<ChannelFuture> futures = GlobalProvider.instance().getServer().getChannelFutures();
         synchronized (futures) {
             for(ChannelFuture channelFuture : futures) {
-                injectChannelFuture(channelFuture);
+                if(!injectedFutures.contains(channelFuture)) {
+                    injectChannelFuture(channelFuture);
+                }
             }
         }
         for (Channel channel : GlobalProvider.instance().getServer().getChannels()) {
@@ -40,31 +39,8 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
 
     @Override
     public void eject() {
-        Field childHandlerField = null;
         for (ChannelFuture future : injectedFutures) {
-            List<String> names = future.channel().pipeline().names();
-            ChannelHandler bootstrapAcceptor = null;
-            for (String name : names) {
-                try {
-                    ChannelHandler handler = future.channel().pipeline().get(name);
-                    if (childHandlerField == null) {
-                        childHandlerField = handler.getClass().getDeclaredField("childHandler");
-                        childHandlerField.setAccessible(true);
-                    }
-                    ChannelInitializer<Channel> oldInit = (ChannelInitializer<Channel>) childHandlerField.get(handler);
-                    if (oldInit instanceof NettyChannelInitializer) bootstrapAcceptor = handler;
-                } catch (Exception ignored) {}
-            }
-            if (bootstrapAcceptor == null) bootstrapAcceptor = future.channel().pipeline().first();
-            try {
-                ChannelInitializer<Channel> oldInit = (ChannelInitializer<Channel>) childHandlerField.get(bootstrapAcceptor);
-                if (oldInit instanceof NettyChannelInitializer) {
-                    childHandlerField.setAccessible(true);
-                    childHandlerField.set(bootstrapAcceptor, ((NettyChannelInitializer) oldInit).getOriginal());
-                }
-            } catch (Exception e) {
-                Bukkit.getConsoleSender().sendMessage("Failed to eject the injection handler! Please reboot plugin!");
-            }
+            NettyHelper.ejectChannelFuture(future);
         }
         injectedFutures.clear();
     }

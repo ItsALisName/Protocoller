@@ -2,20 +2,23 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayOutPacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 
-public class ClientboundPlayerInfoRemovePacket implements Packet {
+public class ClientboundPlayerInfoRemovePacket implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private List<UUID> playersList;
 
-    public ClientboundPlayerInfoRemovePacket(PacketDataContainer packetData) {
+    public ClientboundPlayerInfoRemovePacket(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.playersList = packetData.readList(0);
     }
@@ -40,12 +43,12 @@ public class ClientboundPlayerInfoRemovePacket implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }

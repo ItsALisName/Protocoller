@@ -2,17 +2,19 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
 import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
+import net.alis.protocoller.bukkit.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.packet.type.PlayInPacket;
 import net.alis.protocoller.util.annotations.AddedSince;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 import static net.alis.protocoller.bukkit.enums.Version.v1_9;
 
 @AddedSince(v1_9)
-public class PacketPlayInVehicleMove implements Packet {
+public class PacketPlayInVehicleMove implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private double x;
@@ -21,7 +23,8 @@ public class PacketPlayInVehicleMove implements Packet {
     private float yaw;
     private float pitch;
 
-    public PacketPlayInVehicleMove(PacketDataContainer packetData) {
+    public PacketPlayInVehicleMove(@NotNull PacketDataContainer packetData) {
+        PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.x = packetData.readDouble(0);
         this.y = packetData.readDouble(1);
@@ -39,7 +42,7 @@ public class PacketPlayInVehicleMove implements Packet {
         this.pitch = pitch;
     }
 
-    public PacketPlayInVehicleMove(Entity entity) {
+    public PacketPlayInVehicleMove(@NotNull Entity entity) {
         this(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), entity.getLocation().getYaw(), entity.getLocation().getPitch());
     }
 
@@ -94,12 +97,12 @@ public class PacketPlayInVehicleMove implements Packet {
     }
 
     @Override
-    public PacketDataContainer getPacketData() {
+    public PacketDataContainer getData() {
         return packetData;
     }
 
     @Override
     public Object getRawPacket() {
-        return getPacketData().getRawPacket();
+        return getData().getRawPacket();
     }
 }
