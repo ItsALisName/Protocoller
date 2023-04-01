@@ -6,14 +6,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectAccessor {
+public class AccessedObject {
 
     private final Object object;
     private final List<Field> fields;
 
-    public ObjectAccessor(Object object) {
+    public AccessedObject(Object object) {
         if(object == null) {
-            LogsManager.get().warning("Object cannot be null! (ObjectAccessor)");
+            LogsManager.get().warning("Object cannot be null! (AccessedObject)");
         }
         this.object = object;
         this.fields = new ArrayList<>();

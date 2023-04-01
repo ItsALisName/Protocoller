@@ -13,7 +13,7 @@ import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import net.alis.protocoller.samples.network.status.ServerPing;
 import net.alis.protocoller.samples.phys.BaseBlockPosition;
 import net.alis.protocoller.samples.resources.MinecraftKey;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.security.PublicKey;
 import java.util.*;
 
-public class PacketDataSerializer extends ObjectAccessor implements PacketDataContainer, Cloneable {
+public class PacketDataSerializer extends AccessedObject implements PacketDataContainer, Cloneable {
 
     private final MinecraftPacketType packetType;
     private @Nullable Player player;
@@ -39,7 +39,7 @@ public class PacketDataSerializer extends ObjectAccessor implements PacketDataCo
     }
 
     public PacketDataSerializer(@NotNull PacketDataSerializer serializer) {
-        super(new ObjectAccessor(serializer.getObject()).getObject());
+        super(new AccessedObject(serializer.getObject()).getObject());
         packetType = serializer.packetType;
     }
 

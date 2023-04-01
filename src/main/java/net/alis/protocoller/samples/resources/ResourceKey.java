@@ -3,13 +3,13 @@ package net.alis.protocoller.samples.resources;
 import com.google.common.collect.Maps;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class ResourceKey<T> implements CopiedObject {
+public class ResourceKey<T> implements ObjectSample {
     private static final Map<String, ResourceKey<?>> RESOURCE_KEY_MAP = Collections.synchronizedMap(Maps.newIdentityHashMap());
 
     private final MinecraftKey registry;
@@ -27,7 +27,7 @@ public class ResourceKey<T> implements CopiedObject {
     }
 
     public ResourceKey(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.registry = new MinecraftKey((Object) accessor.read(0, ClassesContainer.INSTANCE.getMinecraftKeyClass()));
         this.value = new MinecraftKey((Object) accessor.read(1, ClassesContainer.INSTANCE.getMinecraftKeyClass()));
     }

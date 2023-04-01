@@ -5,6 +5,7 @@ import net.alis.protocoller.bukkit.util.FastUtilLegacyAdapter;
 
 import javax.crypto.SecretKey;
 import java.security.PublicKey;
+import java.time.Instant;
 import java.util.*;
 
 public enum ConstructorLevelIndicator {
@@ -91,6 +92,8 @@ public enum ConstructorLevelIndicator {
     PacketPlayInBlockPlace_3((byte) 3, ClassesContainer.INSTANCE.getHandEnum(), int.class),
     PacketPlayInRecipeDisplayed_1((byte) 1, ClassesContainer.INSTANCE.getIRecipeClass()),
     PacketPlayInChat_1((byte) 1, String.class),
+    PacketPlayInChat_2((byte) 2, String.class, ClassesContainer.INSTANCE.getMessageSignatureClass(), boolean.class),
+    //PacketPlayInChat_3((byte) 3, String.class, Instant.class, long.class, ClassesContainer.INSTANCE.getMessageSignatureClass(), boolean.class, ),
     PacketPlayInUseItem_0((byte) 0),
     PacketPlayInUseItem_1((byte) 1, ClassesContainer.INSTANCE.getHandEnum(), ClassesContainer.INSTANCE.getMovingObjectPositionBlockClass()),
     PacketPlayInUseItem_2((byte) 2, ClassesContainer.INSTANCE.getHandEnum(), ClassesContainer.INSTANCE.getMovingObjectPositionBlockClass(), int.class),

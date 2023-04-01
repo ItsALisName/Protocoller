@@ -4,7 +4,7 @@ import com.google.gson.*;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.authlib.GameProfile;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.alis.protocoller.samples.util.ChatDeserializer;
@@ -25,7 +25,7 @@ public class ServerPingPlayerSample {
     }
 
     public ServerPingPlayerSample(Object pingPlayerSample) {
-        ObjectAccessor accessor = new ObjectAccessor(pingPlayerSample);
+        AccessedObject accessor = new AccessedObject(pingPlayerSample);
         this.max = accessor.read(0, int.class);
         this.online = accessor.read(1, int.class);
         Object[] profiles = accessor.read(0, Array.newInstance(ClassesContainer.INSTANCE.getGameProfileClass(), 1).getClass());
@@ -121,7 +121,7 @@ public class ServerPingPlayerSample {
             for(int i = 0; i < this.sample.length; i++) {
                 profiles[i] = ((GameProfile)this.sample[i]).createOriginal();
             }
-            ObjectAccessor accessor = new ObjectAccessor(response);
+            AccessedObject accessor = new AccessedObject(response);
             accessor.write(0, Object[].class);
             return accessor.getObject();
         }

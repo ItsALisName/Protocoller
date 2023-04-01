@@ -1,7 +1,7 @@
 package net.alis.protocoller.bukkit.util.reflection;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.bukkit.Chunk;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -20,11 +20,11 @@ public class AlMinecraftReflection {
     }
 
     public static Object getMinecraftEntity(Entity entity) {
-        return new ObjectAccessor(getCraftEntity(entity)).read(0, ClassesContainer.INSTANCE.getMinecraftEntityClass());
+        return new AccessedObject(getCraftEntity(entity)).read(0, ClassesContainer.INSTANCE.getMinecraftEntityClass());
     }
 
     public static Entity entityFromMinecraftEntity(Object minecraftEntity) {
-        return new ObjectAccessor(minecraftEntity).read(0, ClassesContainer.INSTANCE.getCraftEntityClass());
+        return new AccessedObject(minecraftEntity).read(0, ClassesContainer.INSTANCE.getCraftEntityClass());
     }
 
     public static Entity entityFromCraftEntity(Object craftEntity) {
@@ -36,11 +36,11 @@ public class AlMinecraftReflection {
     }
 
     public static Object getMinecraftItemStack(ItemStack stack) {
-        return new ObjectAccessor(getCraftItemStack(stack)).read(0, ClassesContainer.INSTANCE.getMinecraftItemStackClass());
+        return new AccessedObject(getCraftItemStack(stack)).read(0, ClassesContainer.INSTANCE.getMinecraftItemStackClass());
     }
 
     public static ItemStack itemStackFromMinecraftItemStack(Object minecraftItemStack) {
-        return new ObjectAccessor(minecraftItemStack).read(0, ClassesContainer.INSTANCE.getCraftItemStackClass());
+        return new AccessedObject(minecraftItemStack).read(0, ClassesContainer.INSTANCE.getCraftItemStackClass());
     }
 
     public static ItemStack itemStackFromCraftItemStack(Object craftItemStack) {
@@ -52,11 +52,11 @@ public class AlMinecraftReflection {
     }
 
     public static Object getMinecraftAdvancement(Advancement advancement) {
-        return new ObjectAccessor(getCraftAdvancement(advancement)).read(0, ClassesContainer.INSTANCE.getMinecraftAdvancementClass());
+        return new AccessedObject(getCraftAdvancement(advancement)).read(0, ClassesContainer.INSTANCE.getMinecraftAdvancementClass());
     }
 
     public static Advancement advancementFromMinecraftAdvancement(Object minecraftAdvancement) {
-        return new ObjectAccessor(minecraftAdvancement).read(0, Advancement.class);
+        return new AccessedObject(minecraftAdvancement).read(0, Advancement.class);
     }
 
     public static Advancement advancementFromCraftAdvancement(Object craftAdvancement) {
@@ -68,11 +68,11 @@ public class AlMinecraftReflection {
     }
 
     public static Object getMinecraftAdvancementProgress(AdvancementProgress progress) {
-        return new ObjectAccessor(getCraftAdvancementProgress(progress)).read(0, ClassesContainer.INSTANCE.getMinecraftAdvancementProgress());
+        return new AccessedObject(getCraftAdvancementProgress(progress)).read(0, ClassesContainer.INSTANCE.getMinecraftAdvancementProgress());
     }
 
     public static @NotNull AdvancementProgress advancementProgressFromMinecraftProgress(Advancement advancement, Player player, Object minecraftAP) {
-        ObjectAccessor entityPlayer = new ObjectAccessor(PlayerReflection.getEntityPlayer(player));
+        AccessedObject entityPlayer = new AccessedObject(PlayerReflection.getEntityPlayer(player));
         return Reflection.callConstructor(
                 Reflection.getConstructor(ClassesContainer.INSTANCE.getCraftAdvancementProgress(), ClassesContainer.INSTANCE.getCraftAdvancementClass(), ClassesContainer.INSTANCE.getAdvancementPlayerDataClass(), ClassesContainer.INSTANCE.getMinecraftAdvancementProgress()),
                 getCraftAdvancement(advancement), entityPlayer.read(0, ClassesContainer.INSTANCE.getAdvancementPlayerDataClass()), minecraftAP

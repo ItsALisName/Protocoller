@@ -5,11 +5,11 @@ import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerAbilities implements CopiedObject {
+public class PlayerAbilities implements ObjectSample {
 
     private boolean isInvulnerable;
     private boolean isFlying;
@@ -22,7 +22,7 @@ public class PlayerAbilities implements CopiedObject {
     public PlayerAbilities() { }
 
     public PlayerAbilities(Object abilities) {
-        ObjectAccessor accessor = new ObjectAccessor(abilities);
+        AccessedObject accessor = new AccessedObject(abilities);
         this.isInvulnerable = accessor.read(0, boolean.class);
         this.isFlying = accessor.read(1, boolean.class);
         this.canFly = accessor.read(2, boolean.class);

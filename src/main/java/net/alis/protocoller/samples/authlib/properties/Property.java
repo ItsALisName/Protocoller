@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.authlib.properties;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.codec.binary.Base64;
 
 import java.security.*;
@@ -24,7 +24,7 @@ public class Property {
     }
 
     public Property(Object property) {
-        ObjectAccessor objectAccessor = new ObjectAccessor(property);
+        AccessedObject objectAccessor = new AccessedObject(property);
         this.name = objectAccessor.read(0, String.class);
         this.value = objectAccessor.read(1, String.class);
         if(objectAccessor.read(2, String.class) != null) {

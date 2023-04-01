@@ -3,7 +3,7 @@ package net.alis.protocoller.samples.authlib;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.authlib.properties.PropertyMap;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class GameProfile {
     }
 
     public GameProfile(Object gameProfile) {
-        ObjectAccessor oa = new ObjectAccessor(gameProfile);
+        AccessedObject oa = new AccessedObject(gameProfile);
         this.id = oa.read(0, UUID.class);
         this.name = oa.read(0, String.class);
         this.properties = new PropertyMap(oa.read(0, ClassesContainer.INSTANCE.getPropertyMapClass()));

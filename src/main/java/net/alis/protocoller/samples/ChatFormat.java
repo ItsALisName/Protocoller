@@ -21,7 +21,7 @@ public enum ChatFormat {
     GRAY("GRAY", '7', 7, 11184810),
     DARK_GRAY("DARK_GRAY", '8', 8, 5592405),
     BLUE("BLUE", '9', 9, 5592575),
-    GREEN("GREEN", 'a', 10, 5635925),
+    GREEN("GREEN", 'Updater', 10, 5635925),
     AQUA("AQUA", 'b', 11, 5636095),
     RED("RED", 'c', 12, 16733525),
     LIGHT_PURPLE("LIGHT_PURPLE", 'd', 13, 16733695),

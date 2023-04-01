@@ -1,6 +1,6 @@
 package net.alis.protocoller.util;
 
-public interface CopiedObject {
+public interface ObjectSample {
 
     Object createOriginal();
 

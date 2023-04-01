@@ -1,5 +1,9 @@
 package net.alis.protocoller.samples;
 
+import net.alis.protocoller.bukkit.data.ClassesContainer;
+import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +46,7 @@ public class MinecraftEncryption {
         }
     }
 
-    private static byte[] getBytes(byte[] @NotNull ... bytes) throws Exception {
+    private static byte[] getBytes(byte @NotNull []... bytes) throws Exception {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
         byte[][] bytes1 = bytes;
         int i1 = bytes.length;
@@ -105,6 +109,47 @@ public class MinecraftEncryption {
             return cipher;
         } catch (Exception exception) {
             throw new Exception(exception);
+        }
+    }
+
+    public static class SignatureData implements ObjectSample {
+        private long l;
+
+        private byte[] bytes;
+
+        public SignatureData(Object signatureData) {
+            AccessedObject object = new AccessedObject(signatureData);
+            this.l = object.read(0, Long.TYPE);
+            this.bytes = object.read(0, byte[].class);
+        }
+
+        public SignatureData(long l, byte[] bytes) {
+            this.l = l;
+            this.bytes = bytes;
+        }
+
+        public long getL() {
+            return l;
+        }
+
+        public void setL(long l) {
+            this.l = l;
+        }
+
+        public byte[] getBytes() {
+            return bytes;
+        }
+
+        public void setBytes(byte[] bytes) {
+            this.bytes = bytes;
+        }
+
+        @Override
+        public Object createOriginal() {
+            return Reflection.callConstructor(
+                    Reflection.getConstructor(ClassesContainer.INSTANCE.getMinecraftEncryptionSignatureDataClass(), Long.TYPE, byte[].class),
+                    this.l, this.bytes
+            );
         }
     }
 

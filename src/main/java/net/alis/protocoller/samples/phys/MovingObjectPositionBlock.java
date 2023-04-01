@@ -4,10 +4,10 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.util.Facing;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 
-public class MovingObjectPositionBlock extends RayTraceResult implements CopiedObject {
+public class MovingObjectPositionBlock extends RayTraceResult implements ObjectSample {
     private boolean missed;
     private boolean insideBlock;
 
@@ -24,7 +24,7 @@ public class MovingObjectPositionBlock extends RayTraceResult implements CopiedO
     }
 
     public MovingObjectPositionBlock(Object originalObject) {
-        ObjectAccessor accessor = new ObjectAccessor(originalObject);
+        AccessedObject accessor = new AccessedObject(originalObject);
         this.vector = new Vector3D(accessor.read(0, ClassesContainer.INSTANCE.getVector3dClass()));
         this.position = new BlockPosition(new BaseBlockPosition(accessor.read(0, ClassesContainer.INSTANCE.getBlockPositionClass()), false));
         this.facing = Facing.getById(((Enum<?>)accessor.read(0, ClassesContainer.INSTANCE.getDirectionEnum())).ordinal());

@@ -3,7 +3,7 @@ package net.alis.protocoller.bukkit.util.reflection;
 import net.alis.protocoller.bukkit.data.InitialData;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -433,7 +433,7 @@ public class Reflection {
 
     public static <PARAM> PARAM callEmptyConstructor(@NotNull Class<?> instance, IndexedParam<?,?> @NotNull [] params) {
         Constructor<?> constructor = instance.getDeclaredConstructors()[0]; constructor.setAccessible(true);
-        ObjectAccessor o = new ObjectAccessor(callConstructor(constructor));
+        AccessedObject o = new AccessedObject(callConstructor(constructor));
         for(IndexedParam<?, ?> p : params) {
             o.write(p.getIndex(), p.getObject());
         }

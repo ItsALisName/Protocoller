@@ -2,10 +2,10 @@ package net.alis.protocoller.samples.attributes;
 
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 
-public class AttributeBase implements CopiedObject {
+public class AttributeBase implements ObjectSample {
     protected double fallback;
     protected boolean tracked;
     protected String translationKey;
@@ -18,7 +18,7 @@ public class AttributeBase implements CopiedObject {
     }
 
     public AttributeBase(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.fallback = accessor.read(0, double.class);
         this.tracked = accessor.read(0, boolean.class);
         this.translationKey = accessor.read(0, String.class);

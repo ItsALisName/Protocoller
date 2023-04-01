@@ -4,7 +4,7 @@ import net.alis.protocoller.bukkit.data.PacketBuilders;
 import net.alis.protocoller.bukkit.enums.Version;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -28,7 +28,7 @@ public class PacketBuilder {
         if(this.indicator.getLevel() > 0) {
             return Reflection.callConstructor(this.constructor, objects);
         } else {
-            ObjectAccessor accessor = new ObjectAccessor(Reflection.classNewInstance(this.type.getPacketClass()));
+            AccessedObject accessor = new AccessedObject(Reflection.classNewInstance(this.type.getPacketClass()));
             for(IndexedParam<?, ?> param : parameters) {
                 accessor.write(param.getIndex(), param.getObject());
             }

@@ -15,7 +15,7 @@ import net.alis.protocoller.samples.nbt.CompressedStreamTools;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     }
     
     public MinecraftPacketDataSerializer(Object originalSerializer) {
-        this.byteBuf = new ObjectAccessor(originalSerializer).read(0, ByteBuf.class);
+        this.byteBuf = new AccessedObject(originalSerializer).read(0, ByteBuf.class);
     }
 
     public static int getVarIntSize(int input) {

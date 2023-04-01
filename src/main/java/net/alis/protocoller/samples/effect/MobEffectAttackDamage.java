@@ -4,7 +4,7 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.attributes.AttributeBase;
 import net.alis.protocoller.samples.attributes.AttributeModifier;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public class MobEffectAttackDamage extends MobEffectList {
     }
 
     public MobEffectAttackDamage(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.modifier = accessor.read(0, double.class);
         Map<Object, Object> attMap = accessor.readSuperclass(0, Map.class);
         for(Map.Entry<Object, Object> en : attMap.entrySet()) {

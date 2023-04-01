@@ -4,13 +4,13 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class MobEffect implements CopiedObject {
+public class MobEffect implements ObjectSample {
     protected final MobEffectList type;
     protected int duration;
     protected int amplifier;
@@ -21,7 +21,7 @@ public class MobEffect implements CopiedObject {
     protected MobEffect hiddenEffect;
 
     public MobEffect(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.type = new MobEffectList(accessor.read(0, ClassesContainer.INSTANCE.getMobEffectListClass()));
         this.duration = accessor.read(0, int.class);
         this.ambient = accessor.read(1, int.class);

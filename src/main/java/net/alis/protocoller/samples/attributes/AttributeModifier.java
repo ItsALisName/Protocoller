@@ -4,15 +4,15 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.managers.LogsManager;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class AttributeModifier implements CopiedObject {
+public class AttributeModifier implements ObjectSample {
     private double value;
     private AttributeOperation operation;
     private Supplier<String> nameGetter;
@@ -25,7 +25,7 @@ public class AttributeModifier implements CopiedObject {
     }
 
     public AttributeModifier(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.value = accessor.read(0, double.class);
         this.operation = AttributeOperation.getById(((Enum<?>)accessor.read(0, ClassesContainer.INSTANCE.getAttributeOperationEnum())).ordinal());
         this.nameGetter = () -> ((Supplier<String>)accessor.read(0, Supplier.class)).get();

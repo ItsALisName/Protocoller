@@ -34,8 +34,12 @@ public class ClassesContainer {
         advancementPlayerDataClass, attributeOperationEnum, resourceKeyClass, instantMobEffectClass, mobEffectAbsorptionClass, mobEffectAttackDamageClass,
         mobEffectHealthBoostClass, attributeRangedClass, recipeBookTypeEnum, minecraftBlockClass, craftBlockClass, craftMagicNumbersClass, iBlockDataClass,
         minecraftItemClass, entityTypesClass, entityHumanClass, craftChunkClass, minecraftChunkClass, iChunkAccessClass, iBlockAccessClass,
-        bossActionEnum, bossActionInterface, barColorEnum, barStyleEnum, bossBattleClass, outCommandClassB, outCommandInterfaceE, outCommandClassA;
+        bossActionEnum, bossActionInterface, barColorEnum, barStyleEnum, bossBattleClass, outCommandClassB, outCommandInterfaceE, outCommandClassA,
+        messageSignatureClass, lastSeenMessagesClass, messageSignatureStorageClass, minecraftEncryptionSignatureDataClass, lastSeenMessagesCacheClass;
     ClassesContainer() {
+        setLastSeenMessagesCacheClass(Reflection.getNMSClass("LastSeenMessages$a", "net.minecraft.network.chat.LastSeenMessages$a"));
+        setLastSeenMessagesClass(Reflection.getNMSClass("LastSeenMessages", "net.minecraft.network.chat.LastSeenMessages"));
+        setMessageSignatureClass(Reflection.getNMSClass("MessageSignature", "net.minecraft.network.chat.MessageSignature"));
         setSuggestionClass(Reflection.getClass("com.mojang.brigadier.suggestion.Suggestion"));
         setSuggestionsClass(Reflection.getClass("com.mojang.brigadier.suggestion.Suggestions"));
         setStringRangeClass(Reflection.getClass("com.mojang.brigadier.context.StringRange"));
@@ -178,9 +182,10 @@ public class ClassesContainer {
         setBarColorEnum(Reflection.getNMSClass("BossBattle$BarColor", "net.minecraft.world.BossBattle$BarColor"));
         setBarStyleEnum(Reflection.getNMSClass("BossBattle$BarStyle", "net.minecraft.world.BossBattle$BarStyle"));
         setBossBattleClass(Reflection.getNMSClass("BossBattle", "net.minecraft.world.BossBattle"));
-        setOutCommandClassA(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutCommands$a"));
+        setOutCommandClassA(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutCommands$Updater"));
         setOutCommandClassB(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutCommands$b"));
         setOutCommandInterfaceE(Reflection.getClass("net.minecraft.network.protocol.game.PacketPlayOutCommands$e"));
-
+        setMessageSignatureStorageClass(Reflection.getClass("net.minecraft.network.chat.MessageSignature$a"));
+        setMinecraftEncryptionSignatureDataClass(Reflection.getClass("net.minecraft.util.MinecraftEncryption$b"));
     }
 }

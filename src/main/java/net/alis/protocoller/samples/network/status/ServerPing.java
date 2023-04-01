@@ -6,7 +6,7 @@ import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import net.alis.protocoller.samples.util.ChatDeserializer;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -26,7 +26,7 @@ public class ServerPing {
     public ServerPing() { }
     
     public ServerPing(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.description = new ChatComponent(ChatSerializer.fromComponent(accessor.read(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass())));
         this.players = new ServerPingPlayerSample(accessor.read(0, ClassesContainer.INSTANCE.getServerPingPlayerSampleClass()));
         this.version = new ServerData(accessor.read(0, ClassesContainer.INSTANCE.getServerDataClass()));
@@ -144,7 +144,7 @@ public class ServerPing {
     }
 
     public Object createOriginal() {
-        ObjectAccessor accessor = new ObjectAccessor(Reflection.callConstructor(Reflection.getConstructor(ClassesContainer.INSTANCE.getServerPingClass())));
+        AccessedObject accessor = new AccessedObject(Reflection.callConstructor(Reflection.getConstructor(ClassesContainer.INSTANCE.getServerPingClass())));
         if(this.favicon != null) accessor.write(0, this.favicon);
         if(this.description != null) accessor.writeSpecify(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass(), this.description.asIChatBaseComponent());
         if(this.version != null) accessor.write(0, this.version.createOriginal());

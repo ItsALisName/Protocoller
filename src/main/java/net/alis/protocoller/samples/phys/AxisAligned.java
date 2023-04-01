@@ -5,12 +5,12 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.util.Facing;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 
 import javax.annotation.Nullable;
 
-public class AxisAligned implements CopiedObject {
+public class AxisAligned implements ObjectSample {
     public final double minX;
     public final double minY;
     public final double minZ;
@@ -28,7 +28,7 @@ public class AxisAligned implements CopiedObject {
     }
 
     public AxisAligned(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.minX = accessor.read(0, double.class);
         this.minY = accessor.read(1, double.class);
         this.minZ = accessor.read(2, double.class);

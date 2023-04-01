@@ -3,11 +3,11 @@ package net.alis.protocoller.samples.phys;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.util.MathHelper;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 import org.jetbrains.annotations.Nullable;
 
-public class Vector3D implements CopiedObject {
+public class Vector3D implements ObjectSample {
 
     public static final Vector3D ZERO = new Vector3D(0.0D, 0.0D, 0.0D);
 
@@ -25,7 +25,7 @@ public class Vector3D implements CopiedObject {
     }
 
     public Vector3D(Object originalVec3D) {
-        ObjectAccessor accessor = new ObjectAccessor(originalVec3D);
+        AccessedObject accessor = new AccessedObject(originalVec3D);
         this.x = accessor.read(0, double.class);
         this.y = accessor.read(1, double.class);
         this.z = accessor.read(2, double.class);

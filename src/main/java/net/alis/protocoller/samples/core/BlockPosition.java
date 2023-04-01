@@ -7,7 +7,7 @@ import net.alis.protocoller.samples.phys.BaseBlockPosition;
 import net.alis.protocoller.samples.phys.Vector3D;
 import net.alis.protocoller.samples.util.Facing;
 import net.alis.protocoller.samples.util.MathHelper;
-import net.alis.protocoller.util.CopiedObject;
+import net.alis.protocoller.util.ObjectSample;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import javax.annotation.concurrent.Immutable;
 import java.util.Iterator;
 
 @Immutable
-public class BlockPosition extends BaseBlockPosition implements CopiedObject {
+public class BlockPosition extends BaseBlockPosition implements ObjectSample {
 
     public static final BlockPosition ORIGIN = new BlockPosition(0, 0, 0);
     private static final int NUM_X_BITS = 1 + MathHelper.calculateLogBaseTwo(MathHelper.roundUpToPowerOfTwo(30000000));

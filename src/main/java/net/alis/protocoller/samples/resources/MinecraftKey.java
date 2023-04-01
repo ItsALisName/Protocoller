@@ -3,7 +3,7 @@ package net.alis.protocoller.samples.resources;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.providers.GlobalProvider;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class MinecraftKey {
     }
 
     public MinecraftKey(Object originalKey) {
-        ObjectAccessor accessor = new ObjectAccessor(originalKey);
+        AccessedObject accessor = new AccessedObject(originalKey);
         if(isLegacy) {
             this.namespace = accessor.read(0, String.class);
             this.path = accessor.read(1, String.class);

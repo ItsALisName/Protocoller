@@ -3,7 +3,7 @@ package net.alis.protocoller.samples.authlib.properties;
 import com.google.common.collect.ForwardingMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -15,7 +15,7 @@ public class PropertyMap extends ForwardingMultimap<String, Property> {
     public PropertyMap() {}
 
     public PropertyMap(Object propertyMap) {
-        for(Map.Entry<?, ?> e : ((Multimap<?, ?>)new ObjectAccessor(propertyMap).read(0, Multimap.class)).asMap().entrySet()) {
+        for(Map.Entry<?, ?> e : ((Multimap<?, ?>)new AccessedObject(propertyMap).read(0, Multimap.class)).asMap().entrySet()) {
             this.properties.put((String) e.getKey(), new Property(e.getValue()));
         }
     }

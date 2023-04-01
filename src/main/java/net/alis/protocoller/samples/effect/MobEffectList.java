@@ -6,14 +6,14 @@ import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.attributes.AttributeBase;
 import net.alis.protocoller.samples.attributes.AttributeModifier;
 import net.alis.protocoller.samples.attributes.AttributeOperation;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.ObjectSample;
+import net.alis.protocoller.util.AccessedObject;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MobEffectList implements CopiedObject {
+public class MobEffectList implements ObjectSample {
     protected Map<AttributeBase, AttributeModifier> attributeModifierMap = Maps.newHashMap();
     protected MobEffectInfo category;
     protected int color;
@@ -26,7 +26,7 @@ public class MobEffectList implements CopiedObject {
     }
 
     public MobEffectList(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         Map<Object, Object> attMap = accessor.read(0, Map.class);
         for(Map.Entry<Object, Object> en : attMap.entrySet()) {
             this.attributeModifierMap.put(new AttributeBase(en.getKey()), new AttributeModifier(en.getValue()));

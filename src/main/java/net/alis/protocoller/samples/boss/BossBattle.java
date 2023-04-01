@@ -4,12 +4,12 @@ import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
-import net.alis.protocoller.util.CopiedObject;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.ObjectSample;
+import net.alis.protocoller.util.AccessedObject;
 
 import java.util.UUID;
 
-public abstract class BossBattle implements CopiedObject {
+public abstract class BossBattle implements ObjectSample {
     private final UUID uuid;
     public ChatComponent title;
     protected float progress;
@@ -28,7 +28,7 @@ public abstract class BossBattle implements CopiedObject {
     }
 
     public BossBattle(Object original) {
-        ObjectAccessor accessor = new ObjectAccessor(original);
+        AccessedObject accessor = new AccessedObject(original);
         this.uuid = accessor.read(0, UUID.class);
         this.title = new ChatComponent(ChatSerializer.fromComponent(accessor.read(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass())));
         this.progress = accessor.read(0, float.class);

@@ -4,7 +4,7 @@ import com.google.gson.*;
 import net.alis.protocoller.bukkit.data.ClassesContainer;
 import net.alis.protocoller.bukkit.util.reflection.Reflection;
 import net.alis.protocoller.samples.util.ChatDeserializer;
-import net.alis.protocoller.util.ObjectAccessor;
+import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -19,7 +19,7 @@ public class ServerData {
     }
 
     public ServerData(Object serverData) {
-        ObjectAccessor accessor = new ObjectAccessor(serverData);
+        AccessedObject accessor = new AccessedObject(serverData);
         this.gameVersion = accessor.read(0, String.class);
         this.protocolVersion = accessor.read(0, int.class);
     }
