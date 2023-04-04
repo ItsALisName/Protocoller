@@ -1,7 +1,5 @@
 package net.alis.protocoller.util;
 
-import net.alis.protocoller.bukkit.managers.LogsManager;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +10,15 @@ public class AccessedObject {
     private final List<Field> fields;
 
     public AccessedObject(Object object) {
-        if(object == null) {
-            LogsManager.get().warning("Object cannot be null! (AccessedObject)");
-        }
         this.object = object;
         this.fields = new ArrayList<>();
+        if(object == null) {
+            new IllegalArgumentException("Object cannot be null!").printStackTrace();
+            return;
+        }
         for(Field field : object.getClass().getDeclaredFields()) {
-            field.setAccessible(true); this.fields.add(field);
+            field.setAccessible(true);
+            this.fields.add(field);
         }
     }
 
@@ -32,7 +32,9 @@ public class AccessedObject {
             field.setAccessible(true);
             if(field.getType() == type) {
                 if(start == index) {
-                    try { return (PARAM) field.get(this.object); } catch (IllegalAccessException e) {
+                    try {
+                        return (PARAM) field.get(this.object);
+                    } catch (IllegalAccessException e) {
                         throw new RuntimeException("Failed to read field with type '" +
                                 type.getSimpleName() +
                                 "' numbered '" + index +
@@ -73,11 +75,17 @@ public class AccessedObject {
                         field.set(this.object, param);
                         return;
                     } catch (IllegalAccessException e) {
+                        String reason = "";
+                        if(e.getCause() != null) {
+                            reason = e.getCause().getMessage();
+                        } else {
+                            reason = "UNKNOWN REASON";
+                        }
                         throw new RuntimeException("Failed to write field with type '" +
                                 type.getSimpleName() +
                                 "' numbered '" + index +
                                 "' in object '" + this.object.getClass().getSimpleName() + "'" +
-                                "\nReason: '" + e.getCause().getMessage() + "'",
+                                " because: '" + reason + "'",
                                 e
                         );
                     }

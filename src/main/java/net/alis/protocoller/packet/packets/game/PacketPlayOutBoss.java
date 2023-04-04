@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -14,11 +14,10 @@ import net.alis.protocoller.util.annotations.AddedSince;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static net.alis.protocoller.bukkit.enums.Version.v1_9;
+import static net.alis.protocoller.plugin.enums.Version.v1_9;
 
 @AddedSince(v1_9)
 public class PacketPlayOutBoss implements PlayOutPacket {
@@ -33,11 +32,11 @@ public class PacketPlayOutBoss implements PlayOutPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(GlobalProvider.instance().getServer().isLegacy()) {
-            this.action = Action.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getBossActionEnum()).ordinal());
-            this.color = BarColor.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getBarColorEnum()).ordinal());
-            this.style = BarStyle.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getBarStyleEnum()).ordinal());
+            this.action = Action.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum()).ordinal());
+            this.color = BarColor.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBarColorEnum()).ordinal());
+            this.style = BarStyle.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBarStyleEnum()).ordinal());
         } else {
-            this.action = Action.fromModernPacket(packetData.readObject(0, ClassesContainer.INSTANCE.getBossActionInterface()));
+            this.action = Action.fromModernPacket(packetData.readObject(0, ClassesContainer.get().getBossActionInterface()));
         }
         this.uuid = packetData.readUUID(0);
     }
@@ -124,11 +123,11 @@ public class PacketPlayOutBoss implements PlayOutPacket {
         }
 
         public static Action fromModernPacket(Object action) {
-            return Action.getById(((Enum<?>)Reflection.callMethod(action, Reflection.getMethod(action.getClass(), 0, ClassesContainer.INSTANCE.getBossActionEnum()))).ordinal());
+            return Action.getById(((Enum<?>) BaseReflection.callMethod(action, BaseReflection.getMethod(action.getClass(), 0, ClassesContainer.get().getBossActionEnum()))).ordinal());
         }
 
         public @NotNull Enum<?> original() {
-            return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getBossActionEnum(), this.id);
+            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum(), this.id);
         }
 
     }

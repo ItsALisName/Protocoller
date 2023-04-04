@@ -255,9 +255,9 @@ public class MathHelper {
     }
 
     public static int rgb(int rIn, int gIn, int bIn) {
-        int lvt_3_1_ = (rIn << 8) + gIn;
-        lvt_3_1_ = (lvt_3_1_ << 8) + bIn;
-        return lvt_3_1_;
+        int i = (rIn << 8) + gIn;
+        i = (i << 8) + bIn;
+        return i;
     }
 
     public static int multiplyColor(int int1, int int2) {
@@ -342,6 +342,22 @@ public class MathHelper {
             }
             return d8;
         }
+    }
+
+    public static float square(float f) {
+        return f * f;
+    }
+
+    public static double square(double d) {
+        return d * d;
+    }
+
+    public static int square(int i) {
+        return i * i;
+    }
+
+    public static long square(long l) {
+        return l * l;
     }
 
     public static double fastInvSqrt(double doub1) {

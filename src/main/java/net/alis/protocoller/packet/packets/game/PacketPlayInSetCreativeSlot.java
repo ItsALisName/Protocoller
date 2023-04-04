@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.util.PacketUtils;
-import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -31,13 +31,13 @@ public class PacketPlayInSetCreativeSlot implements PlayInPacket {
             case 0: {
                 IndexedParam<?,?>[] params = {
                     new IndexedParam<>(slot, 0),
-                    new IndexedParam<>(AlMinecraftReflection.getMinecraftItemStack(itemStack), 0)
+                    new IndexedParam<>(MinecraftReflection.getMinecraftItemStack(itemStack), 0)
                 };
                 this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.buildPacket(null, slot, AlMinecraftReflection.getMinecraftItemStack(itemStack)));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, slot, MinecraftReflection.getMinecraftItemStack(itemStack)));
                 break;
             }
             default: {

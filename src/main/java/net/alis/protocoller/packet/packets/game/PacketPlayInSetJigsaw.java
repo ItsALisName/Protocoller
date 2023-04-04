@@ -1,12 +1,12 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -18,7 +18,7 @@ import net.alis.protocoller.util.annotations.AddedSince;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import static net.alis.protocoller.bukkit.enums.Version.v1_14;
+import static net.alis.protocoller.plugin.enums.Version.v1_14;
 
 @AddedSince(v1_14)
 public class PacketPlayInSetJigsaw implements PlayInPacket {
@@ -42,7 +42,7 @@ public class PacketPlayInSetJigsaw implements PlayInPacket {
         this.finalState = packetData.readString(0);
         if(modernPacket) {
             this.pool = packetData.readMinecraftKey(2);
-            this.jointType = TileEntityJigsawJointType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getTileEntityJigsawJointypeEnum()).ordinal());
+            this.jointType = TileEntityJigsawJointType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityJigsawJointypeEnum()).ordinal());
         } else {
             this.pool = new MinecraftKey("unsupported:old_version");
             this.jointType = TileEntityJigsawJointType.ROLLABLE;

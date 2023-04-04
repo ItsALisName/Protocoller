@@ -1,12 +1,12 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -31,7 +31,7 @@ public class PacketPlayInUpdateSign implements PlayInPacket {
         this.position = packetData.readBlockPosition(0);
         this.lines = new String[4];
         if(legacyPacket) {
-            Object[] components = packetData.readObject(0, Array.newInstance(ClassesContainer.INSTANCE.getIChatBaseComponentClass(), 1).getClass());
+            Object[] components = packetData.readObject(0, Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass());
             if(components.length > 0){
                 for (int i = 0; i < 4; i++) {
                     if(components[i] != null){

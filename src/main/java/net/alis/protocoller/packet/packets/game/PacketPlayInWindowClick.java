@@ -1,14 +1,14 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.FastUtilLegacyAdapter;
-import net.alis.protocoller.bukkit.util.PacketUtils;
-import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.FastUtilLegacyAdapter;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -41,14 +41,14 @@ public class PacketPlayInWindowClick implements PlayInPacket {
             if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9)) {
                 this.actionType = InventoryClickType.getById(packetData.readInt(3));
             } else {
-                this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getInventoryClickTypeEnum()).ordinal());
+                this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getInventoryClickTypeEnum()).ordinal());
             }
         } else {
             this.syncId = packetData.readInt(1);
             this.revision = packetData.readInt(2);
             this.slot = packetData.readInt(3);
             this.button = packetData.readInt(4);
-            this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getInventoryClickTypeEnum()).ordinal());
+            this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getInventoryClickTypeEnum()).ordinal());
         }
     }
 
@@ -64,7 +64,7 @@ public class PacketPlayInWindowClick implements PlayInPacket {
                         new IndexedParam<>(slot, 1),
                         new IndexedParam<>(button, 2),
                         new IndexedParam<>(actionType.getId(), 3),
-                        new IndexedParam<>(AlMinecraftReflection.getMinecraftItemStack(stack), 0)
+                        new IndexedParam<>(MinecraftReflection.getMinecraftItemStack(stack), 0)
                     };
                 } else {
                     params = new IndexedParam[] {
@@ -73,14 +73,14 @@ public class PacketPlayInWindowClick implements PlayInPacket {
                             new IndexedParam<>(slot, 1),
                             new IndexedParam<>(button, 2),
                             new IndexedParam<>(actionType.original(), 0),
-                            new IndexedParam<>(AlMinecraftReflection.getMinecraftItemStack(stack), 0)
+                            new IndexedParam<>(MinecraftReflection.getMinecraftItemStack(stack), 0)
                     };
                 }
                 this.packetData = new PacketDataSerializer(packetBuilder.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(packetBuilder.buildPacket(null, syncId, revision, slot, button, actionType.original(), AlMinecraftReflection.getMinecraftItemStack(stack), FastUtilLegacyAdapter.newInt2ObjectMap(new Object[]{AlMinecraftReflection.getMinecraftItemStack(stack)})));
+                this.packetData = new PacketDataSerializer(packetBuilder.buildPacket(null, syncId, revision, slot, button, actionType.original(), MinecraftReflection.getMinecraftItemStack(stack), FastUtilLegacyAdapter.newInt2ObjectMap(new Object[]{MinecraftReflection.getMinecraftItemStack(stack)})));
                 break;
             }
             default: {

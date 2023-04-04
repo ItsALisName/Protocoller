@@ -1,6 +1,6 @@
 package net.alis.protocoller.util.annotations;
 
-import net.alis.protocoller.bukkit.enums.Version;
+import net.alis.protocoller.plugin.enums.Version;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

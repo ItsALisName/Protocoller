@@ -9,9 +9,13 @@ import java.util.*;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.nbt.tags.*;
+import net.alis.protocoller.util.AccessedObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 public class NBTTagCompound extends NBTBase {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -22,13 +26,13 @@ public class NBTTagCompound extends NBTBase {
 
     public void write(DataOutput output) throws IOException {
         for (String s : this.tagMap.keySet()) {
-            NBTBase nbtbase = (NBTBase)this.tagMap.get(s);
+            NBTBase nbtbase = this.tagMap.get(s);
             writeEntry(s, nbtbase, output);
         }
         output.writeByte(0);
     }
 
-    public void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
+    public void read(DataInput input, int depth, @NotNull NBTSizeTracker sizeTracker) throws IOException {
         sizeTracker.read(384L);
         if (depth > 512) {
             throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
@@ -78,7 +82,7 @@ public class NBTTagCompound extends NBTBase {
         this.tagMap.put(key, new NBTTagLong(value));
     }
 
-    public void setUniqueId(String key, UUID value) {
+    public void setUniqueId(String key, @NotNull UUID value) {
         this.setLong(key + "Most", value.getMostSignificantBits());
         this.setLong(key + "Least", value.getLeastSignificantBits());
     }
@@ -182,19 +186,12 @@ public class NBTTagCompound extends NBTBase {
         return 0L;
     }
 
-    /**
-     * Retrieves Loot float value using the specified key, or 0 if no such key was stored.
-     */
     public float getFloat(String key) {
-        try
-        {
-            if (this.hasKey(key, 99))
-            {
+        try {
+            if (this.hasKey(key, 99)) {
                 return ((NBTPrimitive)this.tagMap.get(key)).getFloat();
             }
-        }
-        catch (ClassCastException ignored) {}
-
+        } catch (ClassCastException ignored) {}
         return 0.0F;
     }
 
@@ -203,8 +200,7 @@ public class NBTTagCompound extends NBTBase {
             if (this.hasKey(key, 99)) {
                 return ((NBTPrimitive)this.tagMap.get(key)).getDouble();
             }
-        }
-        catch (ClassCastException ignored) {}
+        } catch (ClassCastException ignored) {}
         return 0.0D;
     }
 
@@ -328,7 +324,7 @@ public class NBTTagCompound extends NBTBase {
         return input.readUTF();
     }
 
-    static NBTBase readNBT(byte id, String key, DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
+    static @NotNull NBTBase readNBT(byte id, String key, DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         NBTBase nbtbase = createNewByType(id);
         try {
             nbtbase.read(input, depth, sizeTracker);
@@ -338,9 +334,9 @@ public class NBTTagCompound extends NBTBase {
         }
     }
 
-    public void merge(NBTTagCompound other) {
+    public void merge(@NotNull NBTTagCompound other) {
         for (String s : other.tagMap.keySet()) {
-            NBTBase nbtbase = (NBTBase)other.tagMap.get(s);
+            NBTBase nbtbase = other.tagMap.get(s);
             if (nbtbase.getId() == 10) {
                 if (this.hasKey(s, 10)) {
                     NBTTagCompound nbttagcompound = this.getCompoundTag(s);
@@ -354,7 +350,35 @@ public class NBTTagCompound extends NBTBase {
         }
     }
 
+    public void merge(Object nbtTagCompound) {
+        AccessedObject nbt = new AccessedObject(nbtTagCompound);
+        Map<String, Object> nbtMap = nbt.read(0, Map.class);
+        for(String s : nbtMap.keySet()) {
+            Object nbtBase = nbtMap.get(s);
+            int nbtTypeId = BaseReflection.callMethod(nbtBase, BaseReflection.getMethod(nbtBase.getClass(), 0, Integer.TYPE));
+            if(nbtTypeId == 10){
+                if (this.hasKey(s, 10)) {
+                    NBTTagCompound nbttagcompound = this.getCompoundTag(s);
+                    nbttagcompound.merge(nbtBase);
+                } else {
+                    this.setTag(s, NBTUtil.readOriginalBase(nbtBase));
+                }
+            } else {
+                this.setTag(s, NBTUtil.readOriginalBase(nbtBase));
+            }
+        }
+    }
+
     protected static String findKey(String s) {
-        return COMPILE.matcher(s).matches() ? s : NBTTagString.func_193588_a(s);
+        return COMPILE.matcher(s).matches() ? s : NBTTagString.buildString(s);
+    }
+
+    @Override
+    public Object toOriginal() {
+        AccessedObject object = new AccessedObject(BaseReflection.classNewInstance(ClassesContainer.get().getNbtTagCompoundClass()));
+        Map<String, Object> nbtMap = new HashMap<>();
+        for(Map.Entry<String, NBTBase> e : this.tagMap.entrySet()) nbtMap.put(e.getKey(), e.getValue().toOriginal());
+        object.writeSpecify(0, Map.class, nbtMap);
+        return object.getObject();
     }
 }

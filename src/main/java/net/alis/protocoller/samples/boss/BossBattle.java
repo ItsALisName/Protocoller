@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.boss;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import net.alis.protocoller.util.ObjectSample;
@@ -30,10 +30,10 @@ public abstract class BossBattle implements ObjectSample {
     public BossBattle(Object original) {
         AccessedObject accessor = new AccessedObject(original);
         this.uuid = accessor.read(0, UUID.class);
-        this.title = new ChatComponent(ChatSerializer.fromComponent(accessor.read(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass())));
+        this.title = new ChatComponent(ChatSerializer.fromComponent(accessor.read(0, ClassesContainer.get().getIChatBaseComponentClass())));
         this.progress = accessor.read(0, float.class);
-        this.color = BarColor.getById(((Enum<?>)accessor.read(0, ClassesContainer.INSTANCE.getBarColorEnum())).ordinal());
-        this.style = BarStyle.getById(((Enum<?>)accessor.read(0, ClassesContainer.INSTANCE.getBarStyleEnum())).ordinal());
+        this.color = BarColor.getById(((Enum<?>)accessor.read(0, ClassesContainer.get().getBarColorEnum())).ordinal());
+        this.style = BarStyle.getById(((Enum<?>)accessor.read(0, ClassesContainer.get().getBarStyleEnum())).ordinal());
         this.darkenSky = accessor.read(0, boolean.class);
         this.playMusic = accessor.read(1, boolean.class);
         this.createFog = accessor.read(2, boolean.class);
@@ -104,8 +104,8 @@ public abstract class BossBattle implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return Reflection.callConstructor(
-                Reflection.getConstructor(ClassesContainer.INSTANCE.getBossBattleClass(), UUID.class, ClassesContainer.INSTANCE.getIChatBaseComponentClass(), ClassesContainer.INSTANCE.getBarColorEnum(), ClassesContainer.INSTANCE.getBarStyleEnum()),
+        return BaseReflection.callConstructor(
+                BaseReflection.getConstructor(ClassesContainer.get().getBossBattleClass(), UUID.class, ClassesContainer.get().getIChatBaseComponentClass(), ClassesContainer.get().getBarColorEnum(), ClassesContainer.get().getBarStyleEnum()),
                 this.uuid, this.title.asIChatBaseComponent(), this.color.original(), this.style.original()
         );
     }

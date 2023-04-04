@@ -1,8 +1,7 @@
 package net.alis.protocoller.packet.packets.game;
 
 import com.google.common.annotations.VisibleForTesting;
-import net.alis.protocoller.bukkit.managers.LogsManager;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static net.alis.protocoller.bukkit.enums.Version.v1_13;
+import static net.alis.protocoller.plugin.enums.Version.v1_13;
 
 @AddedSince(v1_13)
 @VisibleForTesting

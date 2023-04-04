@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.entity.block.properties;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +44,7 @@ public enum BlockPropertyStructureMode {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getBlockPropertyStructureModeEnum(), this.id);
+        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockPropertyStructureModeEnum(), this.id);
     }
 
 }

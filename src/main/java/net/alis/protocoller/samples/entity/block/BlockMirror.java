@@ -1,9 +1,9 @@
 package net.alis.protocoller.samples.entity.block;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.util.Axis;
-import net.alis.protocoller.samples.util.Facing;
+import net.alis.protocoller.samples.util.Direction;
 import net.alis.protocoller.samples.util.DirectionTransformationO;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +33,8 @@ public enum BlockMirror {
     }
 
     @Contract(pure = true)
-    public BlockRotation rotationFromFacing(@NotNull Facing facing) {
-        Axis var1 = facing.getAxis();
+    public BlockRotation rotationFromFacing(@NotNull Direction direction) {
+        Axis var1 = direction.getAxis();
         return ((this == LEFT_RIGHT && var1 == Axis.Z) || (this == FRONT_BACK && var1 == Axis.X)) ? BlockRotation.CLOCKWISE_180 : BlockRotation.NONE;
     }
 
@@ -51,7 +51,7 @@ public enum BlockMirror {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getBlockMirrorEnum(), this.id);
+        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockMirrorEnum(), this.id);
     }
 }
 

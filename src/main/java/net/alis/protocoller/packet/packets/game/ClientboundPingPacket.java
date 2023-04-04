@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -12,26 +12,26 @@ import org.jetbrains.annotations.NotNull;
 public class ClientboundPingPacket implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
-    private int parameter;
+    private int id;
 
     public ClientboundPingPacket(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.parameter = packetData.readInt(0);
+        this.id = packetData.readInt(0);
     }
 
-    public ClientboundPingPacket(int parameter) {
-        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, parameter));
-        this.parameter = parameter;
+    public ClientboundPingPacket(int id) {
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, id));
+        this.id = id;
     }
 
-    public int getParameter() {
-        return parameter;
+    public int getId() {
+        return id;
     }
 
-    public void setParameter(int parameter) {
-        this.packetData.writeInt(0, parameter);
-        this.parameter = parameter;
+    public void setId(int id) {
+        this.packetData.writeInt(0, id);
+        this.id = id;
     }
 
     @Override

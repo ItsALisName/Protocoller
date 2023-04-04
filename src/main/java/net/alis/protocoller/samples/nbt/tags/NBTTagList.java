@@ -4,12 +4,17 @@ import com.google.common.collect.Lists;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.nbt.NBTBase;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
+import net.alis.protocoller.samples.nbt.NBTUtil;
+import net.alis.protocoller.util.AccessedObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +23,16 @@ public class NBTTagList extends NBTBase {
     private List<NBTBase> tagList = Lists.newArrayList();
 
     private byte tagType = 0;
+
+    public NBTTagList() {}
+
+    public NBTTagList(List<?> tagList, boolean original) {
+        if(!original){
+            this.tagList = (List<NBTBase>) tagList;
+        } else {
+            for(Object o : tagList) this.tagList.add(NBTUtil.readOriginalBase(o));
+        }
+    }
 
     public void write(DataOutput output) throws IOException {
         if (this.tagList.isEmpty()) {
@@ -198,5 +213,14 @@ public class NBTTagList extends NBTBase {
 
     public int getTagType() {
         return this.tagType;
+    }
+
+    @Override
+    public Object toOriginal() {
+        AccessedObject object = new AccessedObject(BaseReflection.classNewInstance(ClassesContainer.get().getNbtTagListClass()));
+        List<Object> tagL = new ArrayList<>();
+        for(NBTBase base : this.tagList) tagL.add(NBTUtil.readOriginalBase(base));
+        object.writeSpecify(0, List.class, tagL);
+        return object.getObject();
     }
 }

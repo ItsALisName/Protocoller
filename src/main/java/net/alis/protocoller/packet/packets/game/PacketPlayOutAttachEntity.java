@@ -1,11 +1,11 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
-import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -39,15 +39,15 @@ public class PacketPlayOutAttachEntity implements PlayOutPacket {
             case 1: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null,
                         1,
-                        AlMinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(attachedEntityId)),
-                        AlMinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(holdingEntityId))
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(attachedEntityId)),
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(holdingEntityId))
                 ));
                 break;
             }
             case 2: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null,
-                        AlMinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(attachedEntityId)),
-                        AlMinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(holdingEntityId))
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(attachedEntityId)),
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(holdingEntityId))
                 ));
                 break;
             }

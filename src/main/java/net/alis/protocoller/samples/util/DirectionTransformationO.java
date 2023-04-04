@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.util;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 
 public enum DirectionTransformationO {
     IDENTITY("identity", DirectionTransformationS.P123, false, false, false),
@@ -95,6 +95,6 @@ public enum DirectionTransformationO {
     }
 
     public Enum<?> original() {
-        return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPointOEnum(), this.ordinal());
+        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPointOEnum(), this.ordinal());
     }
 }

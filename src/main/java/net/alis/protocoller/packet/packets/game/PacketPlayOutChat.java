@@ -1,11 +1,11 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -30,7 +30,7 @@ public class PacketPlayOutChat implements PlayOutPacket {
         this.packetData = packetData;
         this.message = new ChatComponent(ChatSerializer.fromComponent(packetData.readIChatBaseComponent(0)));
         if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)){
-            this.messageType = ChatMessageType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getChatMessageTypeEnum()).ordinal());
+            this.messageType = ChatMessageType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getChatMessageTypeEnum()).ordinal());
         } else {
             this.messageType = ChatMessageType.getById(packetData.readInt(0));
         }

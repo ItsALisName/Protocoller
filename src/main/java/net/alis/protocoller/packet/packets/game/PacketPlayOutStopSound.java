@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -22,7 +22,7 @@ public class PacketPlayOutStopSound implements PlayOutPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.minecraftKey = packetData.readMinecraftKey(0);
-        this.soundCategory = SoundCategory.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getSoundCategoryEnum()).ordinal());
+        this.soundCategory = SoundCategory.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getSoundCategoryEnum()).ordinal());
     }
 
     public PacketPlayOutStopSound(@NotNull MinecraftKey minecraftKey, @NotNull SoundCategory soundCategory) {

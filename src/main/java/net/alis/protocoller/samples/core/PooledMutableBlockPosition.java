@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.core;
 
 import com.google.common.collect.Lists;
 import net.alis.protocoller.samples.phys.BaseBlockPosition;
-import net.alis.protocoller.samples.util.Facing;
+import net.alis.protocoller.samples.util.Direction;
 import net.alis.protocoller.samples.util.MathHelper;
 import org.bukkit.Bukkit;
 
@@ -71,11 +71,11 @@ public final class PooledMutableBlockPosition extends MutableBlockPosition {
         return (PooledMutableBlockPosition)super.setPos(vec);
     }
 
-    public PooledMutableBlockPosition move(Facing facing) {
-        return (PooledMutableBlockPosition)super.move(facing);
+    public PooledMutableBlockPosition move(Direction direction) {
+        return (PooledMutableBlockPosition)super.move(direction);
     }
 
-    public PooledMutableBlockPosition move(Facing facing, int i) {
-        return (PooledMutableBlockPosition)super.move(facing, i);
+    public PooledMutableBlockPosition move(Direction direction, int i) {
+        return (PooledMutableBlockPosition)super.move(direction, i);
     }
 }

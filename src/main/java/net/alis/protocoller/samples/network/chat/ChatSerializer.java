@@ -2,8 +2,8 @@ package net.alis.protocoller.samples.network.chat;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.util.ChatDeserializer;
 
 import javax.annotation.Nullable;
@@ -18,11 +18,11 @@ public class ChatSerializer {
     }
 
     public static Object[] fromString(String s, boolean keepNewLines) {
-        return Reflection.callMethod(null, fromString$1, s, keepNewLines);
+        return BaseReflection.callMethod(null, fromString$1, s, keepNewLines);
     }
 
     public static Object[] fromString(String s, boolean keepNewLines, boolean plain) {
-        if(fromString$2 != null) return Reflection.callMethod(null, fromString$2, s, keepNewLines, plain);
+        if(fromString$2 != null) return BaseReflection.callMethod(null, fromString$2, s, keepNewLines, plain);
         return fromString(s, keepNewLines);
     }
 
@@ -44,7 +44,7 @@ public class ChatSerializer {
 
     @Nullable
     public static Object fromJSON(String json) {
-        return ChatDeserializer.objectFromJsonString(gson, json, ClassesContainer.INSTANCE.getIChatMutableComponent(), false);
+        return ChatDeserializer.objectFromJsonString(gson, json, ClassesContainer.get().getIChatMutableComponent(), false);
     }
 
     @Nullable
@@ -130,14 +130,14 @@ public class ChatSerializer {
     }
 
     public static String fromComponent(Object iChatBaseComponent) {
-        return Reflection.callMethod(null, fromComponent, iChatBaseComponent);
+        return BaseReflection.callMethod(null, fromComponent, iChatBaseComponent);
     }
 
     public static void init() {
         gson = new Gson();
-        fromString$1 = Reflection.getMethod(ClassesContainer.INSTANCE.getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.INSTANCE.getIChatBaseComponentClass(), 1).getClass(), String.class, Boolean.TYPE);
-        fromString$2 = Reflection.getMethod(ClassesContainer.INSTANCE.getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.INSTANCE.getIChatBaseComponentClass(), 1).getClass(), String.class, Boolean.TYPE, Boolean.TYPE);
-        fromComponent = Reflection.getMethod(ClassesContainer.INSTANCE.getCraftChatMessageClass(), "fromComponent", String.class, ClassesContainer.INSTANCE.getIChatBaseComponentClass());
+        fromString$1 = BaseReflection.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass(), String.class, Boolean.TYPE);
+        fromString$2 = BaseReflection.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass(), String.class, Boolean.TYPE, Boolean.TYPE);
+        fromComponent = BaseReflection.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromComponent", String.class, ClassesContainer.get().getIChatBaseComponentClass());
     }
 
     private static Method fromString$1, fromString$2, fromComponent;

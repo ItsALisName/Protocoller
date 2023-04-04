@@ -1,10 +1,10 @@
 package net.alis.protocoller.samples.network.chat;
 
 import com.google.common.base.Preconditions;
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.MinecraftEncryption;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -46,7 +46,7 @@ public class MessageSignature implements ObjectSample {
         } else {
             this.uuid = accessor.read(0, UUID.class);
             this.instant = accessor.read(0, Instant.class);
-            this.signatureData = new MinecraftEncryption.SignatureData(accessor.read(0, ClassesContainer.INSTANCE.getMinecraftEncryptionSignatureDataClass()));
+            this.signatureData = new MinecraftEncryption.SignatureData(accessor.read(0, ClassesContainer.get().getMinecraftEncryptionSignatureDataClass()));
         }
     }
 
@@ -85,13 +85,13 @@ public class MessageSignature implements ObjectSample {
     public Object createOriginal() {
         Object response = null;
         if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
-            response = Reflection.callConstructor(
-                    Reflection.getConstructor(ClassesContainer.INSTANCE.getMessageSignatureClass(), byte[].class),
+            response = BaseReflection.callConstructor(
+                    BaseReflection.getConstructor(ClassesContainer.get().getMessageSignatureClass(), byte[].class),
                     (Object) this.bytes
             );
         } else {
-            response = Reflection.callConstructor(
-                    Reflection.getConstructor(ClassesContainer.INSTANCE.getMessageSignatureClass(), UUID.class, Instant.class, ClassesContainer.INSTANCE.getMinecraftEncryptionSignatureDataClass()),
+            response = BaseReflection.callConstructor(
+                    BaseReflection.getConstructor(ClassesContainer.get().getMessageSignatureClass(), UUID.class, Instant.class, ClassesContainer.get().getMinecraftEncryptionSignatureDataClass()),
                     this.uuid, this.instant, this.signatureData.createOriginal()
             );
         }
@@ -106,7 +106,7 @@ public class MessageSignature implements ObjectSample {
         public Storage(Object storage) {
             AccessedObject object = new AccessedObject(storage);
             this.id = object.read(0, Integer.TYPE);
-            this.fullSignature = new MessageSignature((Object) object.read(0, ClassesContainer.INSTANCE.getMessageSignatureClass()));
+            this.fullSignature = new MessageSignature((Object) object.read(0, ClassesContainer.get().getMessageSignatureClass()));
         }
 
         public Storage(int id, @Nullable MessageSignature fullSignature) {
@@ -132,8 +132,8 @@ public class MessageSignature implements ObjectSample {
 
         @Override
         public Object createOriginal() {
-            return Reflection.callConstructor(
-                    Reflection.getConstructor(ClassesContainer.INSTANCE.getMessageSignatureStorageClass(), Integer.TYPE, ClassesContainer.INSTANCE.getMessageSignatureClass()),
+            return BaseReflection.callConstructor(
+                    BaseReflection.getConstructor(ClassesContainer.get().getMessageSignatureStorageClass(), Integer.TYPE, ClassesContainer.get().getMessageSignatureClass()),
                     this.id, this.fullSignature.createOriginal()
             );
         }

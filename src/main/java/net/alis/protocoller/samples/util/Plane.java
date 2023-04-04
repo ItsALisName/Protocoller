@@ -8,36 +8,36 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public enum Plane implements Predicate<Facing>, Iterable<Facing> {
+public enum Plane implements Predicate<Direction>, Iterable<Direction> {
     HORIZONTAL,
     VERTICAL;
 
-    public Facing[] facings() {
+    public Direction[] facings() {
         switch (this) {
             case HORIZONTAL:
-                return new Facing[] {Facing.NORTH, Facing.EAST, Facing.SOUTH, Facing.WEST};
+                return new Direction[] {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
             case VERTICAL:
-                return new Facing[] {Facing.UP, Facing.DOWN};
+                return new Direction[] {Direction.UP, Direction.DOWN};
             default:
                 throw new Error("Someone\'s been tampering with the universe!");
         }
     }
 
-    public Facing random(Random rand) {
-        Facing[] aFacing = this.facings();
-        return aFacing[rand.nextInt(aFacing.length)];
+    public Direction random(Random rand) {
+        Direction[] aDirection = this.facings();
+        return aDirection[rand.nextInt(aDirection.length)];
     }
 
-    public boolean apply(@Nullable Facing f) {
+    public boolean apply(@Nullable Direction f) {
         return f != null && f.getAxis().getPlane() == this;
     }
 
-    public @NotNull Iterator<Facing> iterator() {
+    public @NotNull Iterator<Direction> iterator() {
         return Iterators.forArray(this.facings());
     }
 
     @Override
-    public boolean test(Facing facing) {
+    public boolean test(Direction direction) {
         return false;
     }
 }

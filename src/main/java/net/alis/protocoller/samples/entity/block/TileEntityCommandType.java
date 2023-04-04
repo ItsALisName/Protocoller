@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.entity.block;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 
 public enum TileEntityCommandType {
     SEQUENCE(0),
@@ -26,6 +26,6 @@ public enum TileEntityCommandType {
     }
 
     public Enum<?> original() {
-        return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getTileEntityCommandTypeEnum(), this.id);
+        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityCommandTypeEnum(), this.id);
     }
 }

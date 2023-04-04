@@ -1,8 +1,8 @@
 package net.alis.protocoller.samples.effect;
 
 import com.google.common.collect.Maps;
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.attributes.AttributeBase;
 import net.alis.protocoller.samples.attributes.AttributeModifier;
 import net.alis.protocoller.samples.attributes.AttributeOperation;
@@ -31,7 +31,7 @@ public class MobEffectList implements ObjectSample {
         for(Map.Entry<Object, Object> en : attMap.entrySet()) {
             this.attributeModifierMap.put(new AttributeBase(en.getKey()), new AttributeModifier(en.getValue()));
         }
-        this.category = MobEffectInfo.getById(((Enum<?>)accessor.read(0, ClassesContainer.INSTANCE.getMobEffectInfoEnum())).ordinal());
+        this.category = MobEffectInfo.getById(((Enum<?>)accessor.read(0, ClassesContainer.get().getMobEffectInfoEnum())).ordinal());
         this.color = accessor.read(0, int.class);
     }
 
@@ -71,13 +71,13 @@ public class MobEffectList implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        Object original = Reflection.callConstructor(Reflection.getConstructor(ClassesContainer.INSTANCE.getMobEffectListClass(), ClassesContainer.INSTANCE.getMobEffectInfoEnum(), int.class), this.category.original(), this.color);
+        Object original = BaseReflection.callConstructor(BaseReflection.getConstructor(ClassesContainer.get().getMobEffectListClass(), ClassesContainer.get().getMobEffectInfoEnum(), int.class), this.category.original(), this.color);
         if(this.attributeModifierMap.size() > 0) {
             Map<Object, Object> atrMap = new HashMap<>();
             for(Map.Entry<AttributeBase, AttributeModifier> e : this.attributeModifierMap.entrySet()) {
                 atrMap.put(e.getKey().createOriginal(), e.getValue().createOriginal());
             }
-            Reflection.writeField(original, Reflection.getField(original.getClass(), 0, Map.class), atrMap);
+            BaseReflection.writeField(original, BaseReflection.getField(original.getClass(), 0, Map.class), atrMap);
         }
         return original;
     }

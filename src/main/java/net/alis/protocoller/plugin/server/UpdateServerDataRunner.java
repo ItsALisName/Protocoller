@@ -1,0 +1,31 @@
+package net.alis.protocoller.plugin.server;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.ServerReflection;
+import net.alis.protocoller.plugin.util.TaskSimplifier;
+
+public class UpdateServerDataRunner implements Runnable {
+
+    public static void start() {
+        TaskSimplifier.INSTANCE.preformAsyncTimerTask(new UpdateServerDataRunner(), 0L, 20L);
+    }
+
+    @Override
+    public void run() {
+        try {
+            GlobalProvider.instance().getServer().channels.clear();
+            for(Object networkManager : ServerReflection.getServerNetworkManagers()) {
+                GlobalProvider.instance().getServer().channels.add(BaseReflection.readField(networkManager, 0, Channel.class));
+            }
+            GlobalProvider.instance().getServer().channelFutures.clear();
+            for(Object future : ServerReflection.getServerChannelFutures()) {
+                GlobalProvider.instance().getServer().channelFutures.add((ChannelFuture) future);
+            }
+        } catch (Exception e)  {
+            throw new RuntimeException("Failed to update server channels!", e);
+        }
+    }
+}

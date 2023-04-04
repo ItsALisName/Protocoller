@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.util.PacketUtils;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -21,7 +21,7 @@ public class PacketPlayInClientCommand implements PlayInPacket {
     public PacketPlayInClientCommand(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.mode = ClientCommand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getClientCommandEnum()).ordinal());
+        this.mode = ClientCommand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getClientCommandEnum()).ordinal());
     }
 
     public PacketPlayInClientCommand(@NotNull ClientCommand mode) {
@@ -76,7 +76,7 @@ public class PacketPlayInClientCommand implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getClientCommandEnum(), this.id);
+            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getClientCommandEnum(), this.id);
         }
     }
 }

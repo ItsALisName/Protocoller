@@ -1,8 +1,8 @@
 package net.alis.protocoller.samples.network.status;
 
 import com.google.gson.*;
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.authlib.GameProfile;
 import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public class ServerPingPlayerSample {
         AccessedObject accessor = new AccessedObject(pingPlayerSample);
         this.max = accessor.read(0, int.class);
         this.online = accessor.read(1, int.class);
-        Object[] profiles = accessor.read(0, Array.newInstance(ClassesContainer.INSTANCE.getGameProfileClass(), 1).getClass());
+        Object[] profiles = accessor.read(0, Array.newInstance(ClassesContainer.get().getGameProfileClass(), 1).getClass());
         if(profiles != null && profiles.length > 0) {
             this.sample = new GameProfile[profiles.length];
             for(int i = 0; i < profiles.length; i++) {
@@ -112,8 +112,8 @@ public class ServerPingPlayerSample {
     }
 
     public Object createOriginal() {
-        Object response = Reflection.callConstructor(
-                Reflection.getConstructor(ClassesContainer.INSTANCE.getServerPingPlayerSampleClass(), int.class, int.class),
+        Object response = BaseReflection.callConstructor(
+                BaseReflection.getConstructor(ClassesContainer.get().getServerPingPlayerSampleClass(), int.class, int.class),
                 this.max, this.online
         );
         if(this.sample != null && this.sample.length > 0) {

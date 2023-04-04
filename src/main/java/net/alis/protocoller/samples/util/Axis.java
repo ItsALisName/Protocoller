@@ -1,66 +1,79 @@
 package net.alis.protocoller.samples.util;
 
-import com.google.common.collect.Maps;
-import org.jetbrains.annotations.Nullable;
+public enum Axis {
 
-import java.util.Map;
-import java.util.function.Predicate;
+    X("x") {
+        public int choose(int x, int y, int z) {
+            return x;
+        }
 
-public enum Axis implements Predicate<Facing> {
-    X("x", Plane.HORIZONTAL),
-    Y("y", Plane.VERTICAL),
-    Z("z", Plane.HORIZONTAL);
+        public double choose(double x, double y, double z) {
+            return x;
+        }
+    },
+    Y("y") {
+        public int choose(int x, int y, int z) {
+            return y;
+        }
 
-    private static final Map<String, Axis> NAME_LOOKUP = Maps.newHashMap();
+        public double choose(double x, double y, double z) {
+            return y;
+        }
+    },
+    Z("z") {
+        public int choose(int x, int y, int z) {
+            return z;
+        }
+
+        public double choose(double x, double y, double z) {
+            return z;
+        }
+    };
+
+    public static final Axis[] VALUES = values();
     private final String name;
-    private final Plane plane;
 
-    Axis(String name, Plane plane) {
+    Axis(String name) {
         this.name = name;
-        this.plane = plane;
-    }
-
-    @Nullable
-    public static Axis byName(String name) {
-        return name == null ? null : NAME_LOOKUP.get(name.toLowerCase());
-    }
-
-    public String getName2() {
-        return this.name;
-    }
-
-    public boolean isVertical() {
-        return this.plane == Plane.VERTICAL;
-    }
-
-    public boolean isHorizontal() {
-        return this.plane == Plane.HORIZONTAL;
-    }
-
-    public String toString() {
-        return this.name;
-    }
-
-    public boolean apply(@Nullable Facing facing) {
-        return facing != null && facing.getAxis() == this;
-    }
-
-    public Plane getPlane() {
-        return this.plane;
     }
 
     public String getName() {
         return this.name;
     }
 
-    static {
-        for (Axis Facing$axis : values()) {
-            NAME_LOOKUP.put(Facing$axis.getName2().toLowerCase(), Facing$axis);
-        }
+    public boolean isVertical() {
+        return this == Y;
     }
 
-    @Override
-    public boolean test(Facing facing) {
-        return facing.getAxis().equals(this);
+    public boolean isHorizontal() {
+        return this == X || this == Z;
     }
+
+    public String toString() {
+        return this.name;
+    }
+
+    public Plane getPlane() {
+        Plane direction$plane;
+        switch (this) {
+            case X:
+            case Z:
+                direction$plane = Plane.HORIZONTAL;
+                break;
+            case Y:
+                direction$plane = Plane.VERTICAL;
+                break;
+            default:
+                throw new IncompatibleClassChangeError();
+        }
+        return direction$plane;
+    }
+
+    public String getSerializedName() {
+        return this.name;
+    }
+
+    public abstract int choose(int x, int y, int z);
+
+    public abstract double choose(double x, double y, double z);
 }

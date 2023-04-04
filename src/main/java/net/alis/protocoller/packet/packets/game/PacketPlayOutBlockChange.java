@@ -1,7 +1,7 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -21,7 +21,7 @@ public class PacketPlayOutBlockChange implements PlayOutPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
-        this.state = MagicNumbersSample.getMaterialFromBlockData(packetData.readObject(0, ClassesContainer.INSTANCE.getIBlockDataClass()));
+        this.state = MagicNumbersSample.getMaterialFromBlockData(packetData.readObject(0, ClassesContainer.get().getIBlockDataClass()));
     }
 
     public BlockPosition getPosition() {

@@ -1,19 +1,19 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayInPacket;
 import net.alis.protocoller.samples.core.BlockPosition;
-import net.alis.protocoller.samples.util.Facing;
+import net.alis.protocoller.samples.util.Direction;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class PacketPlayInBlockDig implements PlayInPacket {
     private final PacketDataContainer packetData;
     private PlayerDigType digType;
     private BlockPosition blockPosition;
-    private Facing facing;
+    private Direction direction;
     private int sequence;
     
     private final boolean modernPacket = GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
@@ -31,9 +31,9 @@ public class PacketPlayInBlockDig implements PlayInPacket {
     public PacketPlayInBlockDig(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.digType = PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerDigTypeEnum()).ordinal());
+        this.digType = PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getPlayerDigTypeEnum()).ordinal());
         this.blockPosition = packetData.readBlockPosition(0);
-        this.facing = Facing.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getDirectionEnum()).ordinal());
+        this.direction = Direction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getDirectionEnum()).ordinal());
         if(modernPacket) {
             this.sequence = packetData.readInt(0);
         } else {
@@ -41,24 +41,24 @@ public class PacketPlayInBlockDig implements PlayInPacket {
         }
     }
 
-    public PacketPlayInBlockDig(PlayerDigType digType, BlockPosition blockPosition, Facing facing, int sequence) {
+    public PacketPlayInBlockDig(PlayerDigType digType, BlockPosition blockPosition, Direction direction, int sequence) {
         PacketBuilder creator = PacketBuilder.get(getPacketType());
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                         new IndexedParam<>(blockPosition.createOriginal(), 0),
-                        new IndexedParam<>(facing.original(), 0),
+                        new IndexedParam<>(direction.original(), 0),
                         new IndexedParam<>(digType.original(), 0)
                 };
                 this.packetData = new PacketDataSerializer(creator.buildPacket(params));
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.buildPacket(null, digType.original(), blockPosition.createOriginal(), facing.original()));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, digType.original(), blockPosition.createOriginal(), direction.original()));
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(creator.buildPacket(null, digType.original(), blockPosition.createOriginal(), facing.original(), sequence));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, digType.original(), blockPosition.createOriginal(), direction.original(), sequence));
                 break;
             }
             default: {
@@ -68,7 +68,7 @@ public class PacketPlayInBlockDig implements PlayInPacket {
         }
         this.digType = digType;
         this.blockPosition = blockPosition;
-        this.facing = facing;
+        this.direction = direction;
         this.sequence = sequence;
     }
 
@@ -92,13 +92,13 @@ public class PacketPlayInBlockDig implements PlayInPacket {
         this.sequence = sequence;
     }
 
-    public Facing getFacing() {
-        return facing;
+    public Direction getFacing() {
+        return direction;
     }
 
-    public void setFacing(@NotNull Facing facing) {
-        this.packetData.writeEnumConstant(0, facing.original());
-        this.facing = facing;
+    public void setFacing(@NotNull Direction direction) {
+        this.packetData.writeEnumConstant(0, direction.original());
+        this.direction = direction;
     }
 
     public BlockPosition getBlockPosition() {
@@ -152,7 +152,7 @@ public class PacketPlayInBlockDig implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getPlayerDigTypeEnum(), this.id);
+            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerDigTypeEnum(), this.id);
         }
     }
 

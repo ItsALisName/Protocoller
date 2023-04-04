@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
 import org.jetbrains.annotations.Contract;
@@ -146,8 +146,8 @@ public class MinecraftEncryption {
 
         @Override
         public Object createOriginal() {
-            return Reflection.callConstructor(
-                    Reflection.getConstructor(ClassesContainer.INSTANCE.getMinecraftEncryptionSignatureDataClass(), Long.TYPE, byte[].class),
+            return BaseReflection.callConstructor(
+                    BaseReflection.getConstructor(ClassesContainer.get().getMinecraftEncryptionSignatureDataClass(), Long.TYPE, byte[].class),
                     this.l, this.bytes
             );
         }

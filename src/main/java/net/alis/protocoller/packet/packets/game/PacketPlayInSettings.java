@@ -1,12 +1,12 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -37,11 +37,11 @@ public class PacketPlayInSettings implements PlayInPacket {
                 this.packetData = packetData;
                 this.language = packetData.readString(0);
                 this.viewDistance = packetData.readInt(0);
-                this.chatVisibility = ChatVisibility.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getChatVisibilityEnum()).ordinal());
+                this.chatVisibility = ChatVisibility.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getChatVisibilityEnum()).ordinal());
                 this.chatColors = packetData.readBoolean(0);
                 this.modelBitMask = packetData.readInt(1);
                 if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
-                    this.mainArm = MainHand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getMainHandEnum()).ordinal());
+                    this.mainArm = MainHand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getMainHandEnum()).ordinal());
                 } else {
                     this.mainArm = MainHand.RIGHT;
                 }
@@ -53,10 +53,10 @@ public class PacketPlayInSettings implements PlayInPacket {
                 this.packetData = packetData;
                 this.language = packetData.readString(0);
                 this.viewDistance = packetData.readInt(1);
-                this.chatVisibility = ChatVisibility.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getChatVisibilityEnum()).ordinal());
+                this.chatVisibility = ChatVisibility.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getChatVisibilityEnum()).ordinal());
                 this.chatColors = packetData.readBoolean(0);
                 this.modelBitMask = packetData.readInt(2);
-                this.mainArm = MainHand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getMainHandEnum()).ordinal());
+                this.mainArm = MainHand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getMainHandEnum()).ordinal());
                 this.filterText = packetData.readBoolean(1);
                 this.decodedBoolean = false;
                 break;
@@ -65,10 +65,10 @@ public class PacketPlayInSettings implements PlayInPacket {
                 this.packetData = packetData;
                 this.language = packetData.readString(0);
                 this.viewDistance = packetData.readInt(0);
-                this.chatVisibility = ChatVisibility.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getChatVisibilityEnum()).ordinal());
+                this.chatVisibility = ChatVisibility.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getChatVisibilityEnum()).ordinal());
                 this.chatColors = packetData.readBoolean(0);
                 this.modelBitMask = packetData.readInt(1);
-                this.mainArm = MainHand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getMainHandEnum()).ordinal());
+                this.mainArm = MainHand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getMainHandEnum()).ordinal());
                 this.filterText = packetData.readBoolean(1);
                 this.decodedBoolean = packetData.readBoolean(2);
                 break;

@@ -1,8 +1,8 @@
 package net.alis.protocoller.samples.attributes;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.managers.LogsManager;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -27,7 +27,7 @@ public class AttributeModifier implements ObjectSample {
     public AttributeModifier(Object original) {
         AccessedObject accessor = new AccessedObject(original);
         this.value = accessor.read(0, double.class);
-        this.operation = AttributeOperation.getById(((Enum<?>)accessor.read(0, ClassesContainer.INSTANCE.getAttributeOperationEnum())).ordinal());
+        this.operation = AttributeOperation.getById(((Enum<?>)accessor.read(0, ClassesContainer.get().getAttributeOperationEnum())).ordinal());
         this.nameGetter = () -> ((Supplier<String>)accessor.read(0, Supplier.class)).get();
         this.uuid = accessor.read(0, UUID.class);
     }
@@ -111,8 +111,8 @@ public class AttributeModifier implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return Reflection.callConstructor(
-                Reflection.getConstructor(ClassesContainer.INSTANCE.getAttributeModifierClass(), UUID.class, Supplier.class, double.class, ClassesContainer.INSTANCE.getAttributeOperationEnum()),
+        return BaseReflection.callConstructor(
+                BaseReflection.getConstructor(ClassesContainer.get().getAttributeModifierClass(), UUID.class, Supplier.class, double.class, ClassesContainer.get().getAttributeOperationEnum()),
                 this.uuid, this.nameGetter, this.value, this.operation.original()
         );
     }

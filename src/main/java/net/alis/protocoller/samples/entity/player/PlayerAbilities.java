@@ -1,9 +1,9 @@
 package net.alis.protocoller.samples.entity.player;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.managers.LogsManager;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -137,6 +137,6 @@ public class PlayerAbilities implements ObjectSample {
                 new IndexedParam<>(this.flySpeed, 0),
                 new IndexedParam<>(this.walkSpeed, 1)
         };
-        return Reflection.callEmptyConstructor(ClassesContainer.INSTANCE.getPlayerAbilitiesClass(), params);
+        return BaseReflection.callEmptyConstructor(ClassesContainer.get().getPlayerAbilitiesClass(), params);
     }
 }

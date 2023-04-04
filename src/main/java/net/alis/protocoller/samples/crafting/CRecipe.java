@@ -1,8 +1,8 @@
 package net.alis.protocoller.samples.crafting;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.resources.MinecraftKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -45,15 +45,15 @@ public class CRecipe implements Recipe {
 
         private static Method getKeyMethod, getItemStackMethod;
         public static void init() {
-            getKeyMethod = Reflection.getMethodNullParams(ClassesContainer.INSTANCE.getIRecipeClass(), ClassesContainer.INSTANCE.getMinecraftKeyClass());
-            getItemStackMethod = Reflection.getMethodNullParams(ClassesContainer.INSTANCE.getIRecipeClass(), ClassesContainer.INSTANCE.getMinecraftItemStackClass());
+            getKeyMethod = BaseReflection.getMethodNullParams(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftKeyClass());
+            getItemStackMethod = BaseReflection.getMethodNullParams(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftItemStackClass());
         }
 
         public static CRecipe fromIRecipe(Object iRecipe) {
             CRecipe recipe = new CRecipe();
-            recipe.setResult(AlMinecraftReflection.itemStackFromMinecraftItemStack(Reflection.callMethod(null, getItemStackMethod)));
+            recipe.setResult(MinecraftReflection.itemStackFromMinecraftItemStack(BaseReflection.callMethod(null, getItemStackMethod)));
             if(getKeyMethod != null){
-                recipe.setMinecraftKey(new MinecraftKey((Object) Reflection.callMethod(null, getKeyMethod)));
+                recipe.setMinecraftKey(new MinecraftKey((Object) BaseReflection.callMethod(null, getKeyMethod)));
             }
             return recipe;
         }

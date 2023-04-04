@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.core;
 
 import net.alis.protocoller.samples.phys.BaseBlockPosition;
-import net.alis.protocoller.samples.util.Facing;
+import net.alis.protocoller.samples.util.Direction;
 import net.alis.protocoller.samples.util.MathHelper;
 
 public class MutableBlockPosition extends BlockPosition {
@@ -55,12 +55,12 @@ public class MutableBlockPosition extends BlockPosition {
         return this.setPos(vec.getX(), vec.getY(), vec.getZ());
     }
 
-    public MutableBlockPosition move(Facing facing) {
-        return this.move(facing, 1);
+    public MutableBlockPosition move(Direction direction) {
+        return this.move(direction, 1);
     }
 
-    public MutableBlockPosition move(Facing facing, int p_189534_2_) {
-        return this.setPos(this.x + facing.getFrontOffsetX() * p_189534_2_, this.y + facing.getFrontOffsetY() * p_189534_2_, this.z + facing.getFrontOffsetZ() * p_189534_2_);
+    public MutableBlockPosition move(Direction direction, int i) {
+        return this.setPos(this.x + direction.getStepX() * i, this.y + direction.getStepY() * i, this.z + direction.getStepZ() * i);
     }
 
     public void setY(int yIn) {

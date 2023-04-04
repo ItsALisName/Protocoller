@@ -1,14 +1,14 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
-import net.alis.protocoller.bukkit.util.reflection.AlMinecraftReflection;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PacketPlayInUseEntity implements PlayInPacket {
 
@@ -37,11 +36,11 @@ public class PacketPlayInUseEntity implements PlayInPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
-        this.entityUseAction = EntityUseAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getEntityUseActionEnum()).ordinal());
+        this.entityUseAction = EntityUseAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getEntityUseActionEnum()).ordinal());
         if(creator.getConstructorIndicator().getLevel() < 2) {
-            this.vector = new Vector3D(packetData.readObject(0, ClassesContainer.INSTANCE.getVector3dClass()));
+            this.vector = new Vector3D(packetData.readObject(0, ClassesContainer.get().getVector3dClass()));
             if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
-                this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getHandEnum()).ordinal());
+                this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getHandEnum()).ordinal());
                 if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
                     this.sneaking = packetData.readBoolean(0);
                 }
@@ -78,7 +77,7 @@ public class PacketPlayInUseEntity implements PlayInPacket {
                 break;
             }
             case 1: {
-                this.packetData = new PacketDataSerializer(creator.buildPacket(null, AlMinecraftReflection.getMinecraftEntity(entity)));
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null, MinecraftReflection.getMinecraftEntity(entity)));
                 break;
             }
             case 2: {
@@ -209,7 +208,7 @@ public class PacketPlayInUseEntity implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return Reflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getEntityUseActionEnum(), this.id);
+            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getEntityUseActionEnum(), this.id);
         }
     }
 

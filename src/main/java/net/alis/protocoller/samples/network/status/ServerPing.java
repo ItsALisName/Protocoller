@@ -1,8 +1,8 @@
 package net.alis.protocoller.samples.network.status;
 
 import com.google.gson.*;
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import net.alis.protocoller.samples.util.ChatDeserializer;
@@ -27,9 +27,9 @@ public class ServerPing {
     
     public ServerPing(Object original) {
         AccessedObject accessor = new AccessedObject(original);
-        this.description = new ChatComponent(ChatSerializer.fromComponent(accessor.read(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass())));
-        this.players = new ServerPingPlayerSample(accessor.read(0, ClassesContainer.INSTANCE.getServerPingPlayerSampleClass()));
-        this.version = new ServerData(accessor.read(0, ClassesContainer.INSTANCE.getServerDataClass()));
+        this.description = new ChatComponent(ChatSerializer.fromComponent(accessor.read(0, ClassesContainer.get().getIChatBaseComponentClass())));
+        this.players = new ServerPingPlayerSample(accessor.read(0, ClassesContainer.get().getServerPingPlayerSampleClass()));
+        this.version = new ServerData(accessor.read(0, ClassesContainer.get().getServerDataClass()));
         this.favicon = accessor.read(0, String.class);
     }
 
@@ -86,7 +86,7 @@ public class ServerPing {
             JsonObject jsonObject = ChatDeserializer.elementAsJsonObject(jsonElement, "status");
             ServerPing serverStatus = new ServerPing();
             if (jsonObject.has("description")) {
-                serverStatus.setDescription(new ChatComponent(ChatSerializer.fromComponent(jsonDeserializationContext.deserialize(jsonObject.get("description"), ClassesContainer.INSTANCE.getIChatBaseComponentClass()))));
+                serverStatus.setDescription(new ChatComponent(ChatSerializer.fromComponent(jsonDeserializationContext.deserialize(jsonObject.get("description"), ClassesContainer.get().getIChatBaseComponentClass()))));
             }
 
             if (jsonObject.has("players")) {
@@ -144,9 +144,9 @@ public class ServerPing {
     }
 
     public Object createOriginal() {
-        AccessedObject accessor = new AccessedObject(Reflection.callConstructor(Reflection.getConstructor(ClassesContainer.INSTANCE.getServerPingClass())));
+        AccessedObject accessor = new AccessedObject(BaseReflection.callConstructor(BaseReflection.getConstructor(ClassesContainer.get().getServerPingClass())));
         if(this.favicon != null) accessor.write(0, this.favicon);
-        if(this.description != null) accessor.writeSpecify(0, ClassesContainer.INSTANCE.getIChatBaseComponentClass(), this.description.asIChatBaseComponent());
+        if(this.description != null) accessor.writeSpecify(0, ClassesContainer.get().getIChatBaseComponentClass(), this.description.asIChatBaseComponent());
         if(this.version != null) accessor.write(0, this.version.createOriginal());
         if(this.players != null) accessor.write(0, this.players.createOriginal());
         return accessor.getObject();

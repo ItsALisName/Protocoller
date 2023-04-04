@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static net.alis.protocoller.bukkit.util.Utils.setColors;
+import static net.alis.protocoller.plugin.util.Utils.setColors;
 
 public class ChatComponent {
 

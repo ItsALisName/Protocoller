@@ -1,7 +1,10 @@
 package net.alis.protocoller.samples.nbt.tags;
 
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.nbt.NBTBase;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -36,7 +39,7 @@ public class NBTTagString extends NBTBase {
     }
 
     public String toString() {
-        return func_193588_a(this.data);
+        return buildString(this.data);
     }
 
     public NBTTagString copy() {
@@ -64,15 +67,23 @@ public class NBTTagString extends NBTBase {
         return this.data;
     }
 
-    public static String func_193588_a(String p_193588_0_) {
+    public static @NotNull String buildString(@NotNull String in) {
         StringBuilder stringbuilder = new StringBuilder("\"");
-        for (int i = 0; i < p_193588_0_.length(); ++i) {
-            char c0 = p_193588_0_.charAt(i);
+        for (int i = 0; i < in.length(); ++i) {
+            char c0 = in.charAt(i);
             if (c0 == '\\' || c0 == '"') {
                 stringbuilder.append('\\');
             }
             stringbuilder.append(c0);
         }
         return stringbuilder.append('"').toString();
+    }
+
+    @Override
+    public Object toOriginal() {
+        return BaseReflection.callConstructor(
+                BaseReflection.getConstructor(ClassesContainer.get().getNbtTagStringClass(), String.class),
+                this.data
+        );
     }
 }

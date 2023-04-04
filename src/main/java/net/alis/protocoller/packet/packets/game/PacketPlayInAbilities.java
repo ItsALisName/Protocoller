@@ -1,34 +1,31 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.bukkit.enums.Version;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayInPacket;
 import net.alis.protocoller.samples.entity.player.PlayerAbilities;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 public class PacketPlayInAbilities implements PlayInPacket {
 
     private final PacketDataContainer packetData;
-    private @Nullable boolean isInvulnerable;
+    private boolean isInvulnerable;
     private boolean isFlying;
-    private @Nullable boolean canFly;
-    private @Nullable boolean canInstantlyBuild;
-    private @Nullable float flySpeed;
-    private @Nullable float walkSpeed;
-
-    private final boolean legacy = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16);
+    private boolean canFly;
+    private boolean canInstantlyBuild;
+    private float flySpeed;
+    private float walkSpeed;
 
     public PacketPlayInAbilities(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(!legacy) {
+        if(!GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) {
             this.isFlying = packetData.readBoolean(0);
         } else {
             this.isInvulnerable = packetData.readBoolean(0);
@@ -50,14 +47,12 @@ public class PacketPlayInAbilities implements PlayInPacket {
         this.walkSpeed = abilities.getWalkSpeed();
     }
 
-    @Nullable
     public boolean isInvulnerable() {
         return isInvulnerable;
     }
 
-    @Nullable
     public void setInvulnerable(boolean invulnerable) {
-        if(legacy) this.packetData.writeBoolean(0, invulnerable);
+        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(0, invulnerable);
         isInvulnerable = invulnerable;
     }
 
@@ -66,7 +61,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     }
 
     public void setFlying(boolean flying) {
-        if(legacy) {
+        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) {
             this.packetData.writeBoolean(1, flying);
         } else {
             this.packetData.writeBoolean(0, flying);
@@ -74,47 +69,39 @@ public class PacketPlayInAbilities implements PlayInPacket {
         isFlying = flying;
     }
 
-    @Nullable
     public boolean isCanFly() {
         return canFly;
     }
 
-    @Nullable
     public void setCanFly(boolean canFly) {
-        if(legacy) this.packetData.writeBoolean(2, canFly);
+        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(2, canFly);
         this.canFly = canFly;
     }
 
-    @Nullable
     public boolean isCanInstantlyBuild() {
         return canInstantlyBuild;
     }
 
-    @Nullable
     public void setCanInstantlyBuild(boolean canInstantlyBuild) {
-        if(legacy) this.packetData.writeBoolean(3, canInstantlyBuild);
+        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(3, canInstantlyBuild);
         this.canInstantlyBuild = canInstantlyBuild;
     }
 
-    @Nullable
     public float getFlySpeed() {
         return flySpeed;
     }
 
-    @Nullable
     public void setFlySpeed(float flySpeed) {
-        if(legacy) this.packetData.writeFloat(0, flySpeed);
+        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeFloat(0, flySpeed);
         this.flySpeed = flySpeed;
     }
 
-    @Nullable
     public float getWalkSpeed() {
         return walkSpeed;
     }
 
-    @Nullable
     public void setWalkSpeed(float walkSpeed) {
-        if(legacy) this.packetData.writeFloat(1, walkSpeed);
+        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeFloat(1, walkSpeed);
         this.walkSpeed = walkSpeed;
     }
 

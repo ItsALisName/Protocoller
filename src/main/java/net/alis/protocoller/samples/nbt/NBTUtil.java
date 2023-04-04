@@ -1,22 +1,26 @@
 package net.alis.protocoller.samples.nbt;
 
 import com.google.common.annotations.VisibleForTesting;
+
+import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import com.mysql.cj.util.StringUtils;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.authlib.GameProfile;
 import net.alis.protocoller.samples.authlib.properties.Property;
 import net.alis.protocoller.samples.core.BlockPosition;
-import net.alis.protocoller.samples.nbt.tags.NBTTagList;
+import net.alis.protocoller.samples.nbt.tags.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class NBTUtil {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Nullable
-    public static GameProfile readGameProfileFromNBT(NBTTagCompound compound) {
+    public static GameProfile readGameProfileFromNBT(@NotNull NBTTagCompound compound) {
         String s = null;
         String s1 = null;
         if (compound.hasKey("Name", 8)) {
@@ -150,5 +154,53 @@ public final class NBTUtil {
         nbttagcompound.setInteger("Y", pos.getY());
         nbttagcompound.setInteger("Z", pos.getZ());
         return nbttagcompound;
+    }
+
+    public static @Nullable NBTBase readOriginalBase(Object nbtBase) {
+        int nbtTypeId = BaseReflection.callMethod(nbtBase, BaseReflection.getMethod(nbtBase.getClass(), 0, Integer.TYPE));
+        switch (nbtTypeId) {
+            case 0: {
+                return new NBTTagEnd();
+            }
+            case 1: {
+                return new NBTTagByte(BaseReflection.readField(nbtBase, 0, Byte.TYPE));
+            }
+            case 2: {
+                return new NBTTagShort(BaseReflection.readField(nbtBase, 0, Short.TYPE));
+            }
+            case 3: {
+                return new NBTTagInt(BaseReflection.readField(nbtBase, 0, Integer.TYPE));
+            }
+            case 4: {
+                return new NBTTagLong(BaseReflection.readField(nbtBase, 0, Long.TYPE));
+            }
+            case 5: {
+                return new NBTTagFloat(BaseReflection.readField(nbtBase, 0, Float.TYPE));
+            }
+            case 6: {
+                return new NBTTagDouble(BaseReflection.readField(nbtBase, 0, Double.TYPE));
+            }
+            case 7: {
+                return new NBTTagByteArray((byte[]) BaseReflection.readField(nbtBase, 0, byte[].class));
+            }
+            case 8: {
+                return new NBTTagString(BaseReflection.readField(nbtBase, 0, String.class));
+            }
+            case 9: {
+                return new NBTTagList(BaseReflection.readField(nbtBase, 0, List.class), true);
+            }
+            case 10: {
+                NBTTagCompound nbt = new NBTTagCompound();
+                nbt.merge(nbtBase);
+                return nbt;
+            }
+            case 11: {
+                return new NBTTagIntArray((int[]) BaseReflection.readField(nbtBase, 0, int[].class));
+            }
+            case 12: {
+                return new NBTTagLongArray((long[]) BaseReflection.readField(nbtBase, 0, long[].class));
+            }
+            default: return null;
+        }
     }
 }

@@ -1,11 +1,11 @@
 package net.alis.protocoller.packet.packets.handshake;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.network.packet.IndexedParam;
-import net.alis.protocoller.bukkit.network.packet.PacketBuilder;
-import net.alis.protocoller.bukkit.network.packet.PacketDataSerializer;
-import net.alis.protocoller.bukkit.providers.GlobalProvider;
-import net.alis.protocoller.bukkit.util.PacketUtils;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.plugin.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -26,7 +26,7 @@ public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Handshake.Client.SET_PROTOCOL);
         this.packetData = packetData;
         this.address = packetData.readString(0);
-        this.intendedState = ProtocolEnum.get(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.INSTANCE.getProtocolEnum()).ordinal());
+        this.intendedState = ProtocolEnum.get(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getProtocolEnum()).ordinal());
         if(legacyPacket) {
             this.protocolVersion = packetData.readInt(0);
             this.port = packetData.readInt(1);

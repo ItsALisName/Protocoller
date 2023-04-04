@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.authlib;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.authlib.properties.PropertyMap;
 import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +28,7 @@ public class GameProfile {
         AccessedObject oa = new AccessedObject(gameProfile);
         this.id = oa.read(0, UUID.class);
         this.name = oa.read(0, String.class);
-        this.properties = new PropertyMap(oa.read(0, ClassesContainer.INSTANCE.getPropertyMapClass()));
+        this.properties = new PropertyMap(oa.read(0, ClassesContainer.get().getPropertyMapClass()));
     }
 
     public UUID getId() {
@@ -89,8 +89,8 @@ public class GameProfile {
     }
 
     public Object createOriginal() {
-        return Reflection.callConstructor(
-            Reflection.getConstructor(ClassesContainer.INSTANCE.getGameProfileClass(), UUID.class, String.class),
+        return BaseReflection.callConstructor(
+            BaseReflection.getConstructor(ClassesContainer.get().getGameProfileClass(), UUID.class, String.class),
             this.id, this.name
         );
     }

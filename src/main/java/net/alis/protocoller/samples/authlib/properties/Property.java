@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.authlib.properties;
 
-import net.alis.protocoller.bukkit.data.ClassesContainer;
-import net.alis.protocoller.bukkit.util.reflection.Reflection;
+import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.codec.binary.Base64;
 
@@ -64,8 +64,8 @@ public class Property {
     }
 
     public Object create() {
-        return Reflection.callConstructor(
-                Reflection.getConstructor(ClassesContainer.INSTANCE.getPropertyClass(), String.class, String.class, String.class),
+        return BaseReflection.callConstructor(
+                BaseReflection.getConstructor(ClassesContainer.get().getPropertyClass(), String.class, String.class, String.class),
                 this.name, this.value, this.signature
         );
     }

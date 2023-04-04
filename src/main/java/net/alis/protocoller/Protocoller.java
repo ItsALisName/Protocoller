@@ -1,6 +1,6 @@
 package net.alis.protocoller;
 
-import net.alis.protocoller.bukkit.api.ProtocollerApiUser;
+import net.alis.protocoller.plugin.api.ProtocollerApiUser;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

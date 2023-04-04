@@ -1,13 +1,15 @@
 package net.alis.protocoller.samples.nbt;
 
 import net.alis.protocoller.samples.nbt.tags.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 public abstract class NBTBase {
-    public static final String[] NBT_TYPES = new String[] {"END", "BYTE", "SHORT", "INT", "LONG", "FLOAT", "DOUBLE", "BYTE[]", "STRING", "LIST", "COMPOUND", "INT[]", "LONG[]"};
 
     public abstract void write(DataOutput output) throws IOException;
 
@@ -17,7 +19,7 @@ public abstract class NBTBase {
 
     public abstract byte getId();
 
-    protected static NBTBase createNewByType(byte id) {
+    public static @Nullable NBTBase createNewByType(byte id) {
         switch (id) {
             case 0:
                 return new NBTTagEnd();
@@ -50,7 +52,8 @@ public abstract class NBTBase {
         }
     }
 
-    public static String tagStringById(int id) {
+    @Contract(pure = true)
+    public static @NotNull String tagNameById(int id) {
         switch (id) {
             case 0:
                 return "TAG_End";
@@ -102,4 +105,6 @@ public abstract class NBTBase {
     public String getString() {
         return this.toString();
     }
+
+    public abstract Object toOriginal();
 }
