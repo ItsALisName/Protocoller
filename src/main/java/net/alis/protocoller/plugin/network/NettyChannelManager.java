@@ -2,6 +2,7 @@ package net.alis.protocoller.plugin.network;
 
 import io.netty.channel.Channel;
 import net.alis.protocoller.packet.type.PlayOutPacket;
+import org.jetbrains.annotations.NotNull;
 
 public class NettyChannelManager {
 
@@ -31,7 +32,7 @@ public class NettyChannelManager {
         channel.writeAndFlush(rawPacket);
     }
 
-    public void sendPacket(PlayOutPacket packet) {
+    public void sendPacket(@NotNull PlayOutPacket packet) {
         channel.writeAndFlush(packet.getRawPacket());
     }
 

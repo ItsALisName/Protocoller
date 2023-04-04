@@ -2,10 +2,11 @@ package net.alis.protocoller.plugin.events;
 
 import io.netty.channel.Channel;
 import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.providers.ApiProvider;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import net.alis.protocoller.ApiUser;
-import net.alis.protocoller.entity.NetworkPlayer;
+import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.event.RegisteredPacketListener;
 import net.alis.protocoller.event.impl.PacketEventHandler;
 import net.alis.protocoller.event.impl.PacketEventPriority;
@@ -46,6 +47,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         case HRE: PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
                     }
                     LogsManager.get().sendRegisteredListenerMessage(user.getName(), user.getVersion(), lt.inName);
+                    ((ApiProvider)user).addListenerCount();
                     methodsCount += 1;
 
                 }

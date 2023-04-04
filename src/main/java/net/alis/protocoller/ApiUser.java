@@ -1,8 +1,15 @@
 package net.alis.protocoller;
 
+import net.alis.protocoller.event.PacketEventsManager;
+import net.alis.protocoller.server.NetworkServer;
+
 public interface ApiUser {
 
-    ProtocollerApi api();
+    int registeredListeners();
+
+    NetworkServer getServer();
+
+    PacketEventsManager getEventManager();
 
     String getName();
 

@@ -6,7 +6,7 @@ import net.alis.protocoller.plugin.network.netty.ChannelInjector;
 import net.alis.protocoller.plugin.network.netty.interceptors.NettyPacketInterceptor;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.PlayerReflection;
-import net.alis.protocoller.entity.NetworkPlayer;
+import net.alis.protocoller.NetworkPlayer;
 import org.bukkit.entity.Player;
 
 public class PlayersInjector implements ChannelInjector.PlayerInjector {

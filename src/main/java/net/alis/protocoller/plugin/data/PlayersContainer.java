@@ -1,6 +1,6 @@
 package net.alis.protocoller.plugin.data;
 
-import net.alis.protocoller.entity.NetworkPlayer;
+import net.alis.protocoller.NetworkPlayer;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

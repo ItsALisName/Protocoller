@@ -1,9 +1,8 @@
 package net.alis.protocoller.event.asynchronous;
 
 import io.netty.channel.Channel;
-import net.alis.protocoller.entity.NetworkPlayer;
+import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.event.PacketHandlerList;
-import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import org.bukkit.entity.Player;

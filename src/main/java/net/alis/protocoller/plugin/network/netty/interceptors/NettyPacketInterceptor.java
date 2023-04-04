@@ -5,11 +5,12 @@ import io.netty.channel.*;
 import net.alis.protocoller.plugin.events.AsyncPacketEventManager;
 import net.alis.protocoller.plugin.events.SyncPacketEventManager;
 import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.network.ProtocollerPlayer;
 import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
-import net.alis.protocoller.entity.NetworkPlayer;
+import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.event.synchronous.SyncPacketEvent;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -32,6 +33,7 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if(networkPlayer != null) ((ProtocollerPlayer)networkPlayer).addSentPacket();
         if(msg.getClass().getSimpleName().length() < 5) {
             super.channelRead(ctx, msg);
             return;
@@ -90,6 +92,7 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
 
     @Override
     public void write(ChannelHandlerContext ctx, @NotNull Object msg, ChannelPromise promise) throws Exception {
+        if(networkPlayer != null) ((ProtocollerPlayer)networkPlayer).addReceivedPacket();
         if(msg.getClass().getSimpleName().length() < 5) {
             super.write(ctx, msg, promise);
             return;

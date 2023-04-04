@@ -1,4 +1,4 @@
-package net.alis.protocoller.entity;
+package net.alis.protocoller;
 
 import io.netty.channel.Channel;
 import net.alis.protocoller.packet.Packet;
@@ -17,8 +17,10 @@ public interface NetworkPlayer {
 
     Channel getChannel();
 
-    void writePacket(PlayOutPacket packet);
-
     void sendPacket(PlayOutPacket packet);
+
+    int getPacketsSentCount();
+
+    int getPacketsReceivedCount();
 
 }

@@ -10,7 +10,7 @@ import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.plugin.util.reflection.ServerReflection;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.entity.NetworkPlayer;
+import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.server.NetworkServer;
 
 import java.util.ArrayList;

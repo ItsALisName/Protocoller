@@ -1,6 +1,6 @@
 package net.alis.protocoller.plugin.network.netty;
 
-import net.alis.protocoller.entity.NetworkPlayer;
+import net.alis.protocoller.NetworkPlayer;
 import org.bukkit.entity.Player;
 
 public class ChannelInjector {
