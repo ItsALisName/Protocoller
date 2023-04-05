@@ -13,7 +13,7 @@ import net.alis.protocoller.samples.network.status.ServerData;
 import net.alis.protocoller.samples.network.status.ServerPing;
 import net.alis.protocoller.samples.network.status.ServerPingPlayerSample;
 
-public class ExampleListener implements PacketListener {
+public class ExampleSyncListener implements PacketListener {
 
     @PacketEventHandler(eventPriority = PacketEventPriority.HIGH, ignoreCancelled = true)
     public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
