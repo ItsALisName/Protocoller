@@ -17,9 +17,9 @@ public class ConfigUtils {
             if(requiredType.isAssignableFrom(response.getClass())) {
                 return (PARAM) response;
             }
-            return new ExceptionBuilder().getConfigExceptions().wrongType(file.getName(), path, requiredType, response.getClass()).throwException();
+            return new ExceptionBuilder().getConfigExceptions().wrongType(file.getCurrentPath(), path, requiredType, response.getClass()).throwException();
         }
-        return new ExceptionBuilder().showStackTrace(false).getConfigExceptions().unknownPath(file.getName(), path).throwException();
+        return new ExceptionBuilder().showStackTrace(false).getConfigExceptions().unknownPath(file.getCurrentPath(), path).throwException();
     }
 
     @Contract("_ -> new")

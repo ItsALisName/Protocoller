@@ -2,6 +2,7 @@ package net.alis.protocoller.plugin.network.packet;
 
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.plugin.util.PacketUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class ProtocollerPacketType implements MinecraftPacketType {

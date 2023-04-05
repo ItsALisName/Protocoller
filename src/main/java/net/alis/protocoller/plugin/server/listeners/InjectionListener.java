@@ -5,6 +5,7 @@ import net.alis.protocoller.plugin.network.ProtocollerPlayer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

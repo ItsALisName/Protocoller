@@ -29,6 +29,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
 
 import lombok.SneakyThrows;
+import net.alis.protocoller.plugin.config.ProtocollerConfig;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -81,7 +82,7 @@ public class Metrics {
                         enabled,
                         this::appendPlatformData,
                         this::appendServiceData,
-                        TaskSimplifier.INSTANCE::preformSync,
+                        TaskSimplifier.get()::preformSync,
                         plugin::isEnabled,
                         (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                         (message) -> this.plugin.getLogger().log(Level.INFO, message),

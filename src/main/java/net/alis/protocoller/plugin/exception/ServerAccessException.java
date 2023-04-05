@@ -12,10 +12,12 @@ public class ServerAccessException extends RuntimeException {
     public static class Builder {
 
         private final boolean showStackTrace;
+        private final boolean ignore;
         private @Nullable String definedReason = "";
 
-        protected Builder(boolean showStackTrace) {
+        protected Builder(boolean showStackTrace, boolean ignore) {
             this.showStackTrace = showStackTrace;
+            this.ignore = ignore;
         }
 
         public Builder defineReason(@NotNull Throwable throwable) {
@@ -24,11 +26,11 @@ public class ServerAccessException extends RuntimeException {
         }
 
         public CompletedException networkManagersError() {
-            return new CompletedException(new ServerAccessException("Failed to get server network managers!" + definedReason), showStackTrace);
+            return new CompletedException(new ServerAccessException("Failed to get server network managers!" + definedReason), showStackTrace, ignore);
         }
 
         public CompletedException channelFuturesError() {
-            return new CompletedException(new ServerAccessException("Failed to get server channels futures!" + definedReason), showStackTrace);
+            return new CompletedException(new ServerAccessException("Failed to get server channels futures!" + definedReason), showStackTrace, ignore);
         }
 
     }

@@ -23,25 +23,29 @@ public class PacketUtils {
             case PLAY_CLIENTBOUND:
                 return BaseReflection.getClassOr(
                         InitialData.INSTANCE.getPacketsPackage() + ".game." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName
+                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        true
                 );
             case LOGIN_SERVERBOUND:
             case LOGIN_CLIENTBOUND:
                 return BaseReflection.getClassOr(
                         InitialData.INSTANCE.getPacketsPackage() + ".login." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName
+                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        true
                 );
             case HANDSHAKE_CLIENTBOUND:
             case HANDSHAKE_SERVERBOUND:
                 return BaseReflection.getClassOr(
                         InitialData.INSTANCE.getPacketsPackage() + ".handshake." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName
+                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        true
                 );
             case STATUS_CLIENTBOUND:
             case STATUS_SERVERBOUND:
                 return BaseReflection.getClassOr(
                         InitialData.INSTANCE.getPacketsPackage() + ".status." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName
+                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        true
                 );
             default: return null;
         }

@@ -126,11 +126,11 @@ public class MinecraftReflection {
 
     public static Object getEntityPlayer(Player player) {
         Object craftPlayer = getCraftPlayer(player);
-        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle"), craftPlayer);
+        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle", new Class[]{}), craftPlayer);
     }
 
     public static Object getEntityPlayer(Object craftPlayer) {
-        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle"), craftPlayer);
+        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle", new Class[]{}), craftPlayer);
     }
 
     public static Object getPlayerConnection(@NotNull Player player) {
@@ -176,9 +176,9 @@ public class MinecraftReflection {
     public static int getServerProtocolVersion() {
         Class<?> sharedConstants; int protocol = 0;
         if(InitialData.INSTANCE.isLegacyServer()) {
-            sharedConstants = BaseReflection.getLegacyNMSClass("SharedConstants");
+            sharedConstants = BaseReflection.getLegacyNMSClass("SharedConstants", false);
         } else {
-            sharedConstants = BaseReflection.getNMClass("SharedConstants");
+            sharedConstants = BaseReflection.getNMClass("SharedConstants", false);
         }
         try {
             protocol = BaseReflection.callInterfaceMethod(sharedConstants, 0, int.class);

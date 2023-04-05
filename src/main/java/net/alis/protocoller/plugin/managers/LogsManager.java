@@ -1,5 +1,6 @@
 package net.alis.protocoller.plugin.managers;
 
+import net.alis.protocoller.plugin.config.ProtocollerConfig;
 import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import org.apache.logging.log4j.Level;

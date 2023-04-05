@@ -20,11 +20,11 @@ import java.util.List;
 public class BaseReflection {
 
     @Nullable
-    public static Class<?> getClass(@NotNull String clazz) {
+    public static Class<?> getClass(@NotNull String clazz, boolean ignoreException) {
         try {
             return Class.forName(clazz);
         } catch (ClassNotFoundException e) {
-            return new ExceptionBuilder().getReflectionExceptions().classNotFound(clazz).throwException();
+            return new ExceptionBuilder().ignore(ignoreException).getReflectionExceptions().classNotFound(clazz).throwException();
         }
     }
 
@@ -34,7 +34,7 @@ public class BaseReflection {
             field.setAccessible(true);
             if(field.getName().equalsIgnoreCase(fieldName)) return field;
         }
-        return null;
+        return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(instance, fieldName).throwException();
     }
 
     public static void writeField(Object instance, @NotNull Field field, Object param) {
@@ -42,7 +42,7 @@ public class BaseReflection {
         try {
             field.set(instance, param);
         } catch (IllegalAccessException e) {
-            LogsManager.get().getLogger().error("Failed to read field '" + field.getName() + "' in class '" + instance.getClass().getSimpleName() + "'!", e);
+            new ExceptionBuilder().getReflectionExceptions().defineReason(e).writeFieldError(instance.getClass(), field).throwException();
         }
     }
 
@@ -52,49 +52,49 @@ public class BaseReflection {
         try {
             return (PARAM) field.get(instance);
         } catch (IllegalAccessException accessException) {
-            return null;
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(accessException).readFieldError(instance.getClass(), field).throwException();
         }
     }
 
-    public static @Nullable Class<?> getSubClass(@NotNull Class<?> clazz, String name) {
+    public static @Nullable Class<?> getSubClass(@NotNull Class<?> clazz, String name, boolean ignoreException) {
         for (Class<?> subClass : clazz.getDeclaredClasses()) {
             if (subClass.getSimpleName().equalsIgnoreCase(name)) {
                 return subClass;
             }
         }
-        return null;
+        return new ExceptionBuilder().ignore(ignoreException).getReflectionExceptions().subClassNotFound(name, clazz.getName()).throwException();
     }
 
     @Nullable
-    public static Class<?> getClassOr(@NotNull String clazz, @NotNull String clazz$1) {
-        Class<?> response = getClass(clazz);
-        return response == null ? getClass(clazz$1) : response;
+    public static Class<?> getClassOr(@NotNull String clazz, @NotNull String clazz$1, boolean ignoreException) {
+        Class<?> response = getClass(clazz, ignoreException);
+        return response == null ? getClass(clazz$1, ignoreException) : response;
     }
 
     @Nullable
-    public static Class<?> getCraftBukkitClass(String clazz) {
-        return getClass(InitialData.INSTANCE.getCraftBukkitPackage() + "." + clazz);
+    public static Class<?> getCraftBukkitClass(String clazz, boolean ignoreException) {
+        return getClass(InitialData.INSTANCE.getCraftBukkitPackage() + "." + clazz, ignoreException);
     }
 
     @Nullable
-    public static Class<?> getNMClass(String clazz) {
-        return getClass("net.minecraft." + clazz);
+    public static Class<?> getNMClass(String clazz, boolean ignoreException) {
+        return getClass("net.minecraft." + clazz, ignoreException);
     }
 
     @Nullable
-    public static Class<?> getLegacyNMSClass(String clazz) {
-        return getClass("net.minecraft.server." + InitialData.INSTANCE.getPackageVersion() + "." + clazz);
+    public static Class<?> getLegacyNMSClass(String clazz, boolean ignoreException) {
+        return getClass("net.minecraft.server." + InitialData.INSTANCE.getPackageVersion() + "." + clazz, ignoreException);
     }
 
-    public static Class<?> getNMSClass(String clazzName, @Nullable String clazzPathWithName) {
+    public static Class<?> getNMSClass(String clazzName, @Nullable String clazzPathWithName, boolean ignoreException) {
         if(InitialData.INSTANCE.isLegacyServer()) {
-            return getLegacyNMSClass(clazzName);
+            return getLegacyNMSClass(clazzName, ignoreException);
         } else {
-            return getClass(clazzPathWithName);
+            return getClass(clazzPathWithName, ignoreException);
         }
     }
 
-    public static Method getMethod(Class<?> instance, String name, Class<?>... params) {
+    public static @Nullable Method getMethod(@NotNull Class<?> instance, String name, Class<?>[] params) {
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
             if(Arrays.equals(method.getParameterTypes(), params)) {
@@ -106,7 +106,7 @@ public class BaseReflection {
         return null;
     }
 
-    public static Method getMethod(Class<?> instance, String methodName, Class<?> returnType, Class<?>... paramTypes) {
+    public static @Nullable Method getMethod(@NotNull Class<?> instance, String methodName, Class<?> returnType, Class<?>... paramTypes) {
         for(Method m : instance.getDeclaredMethods()) {
             m.setAccessible(true);
             if(m.getName().equalsIgnoreCase(methodName) && m.getReturnType() == returnType && Arrays.equals(m.getParameterTypes(), paramTypes)) {

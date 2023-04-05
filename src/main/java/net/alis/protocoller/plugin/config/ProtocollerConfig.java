@@ -17,24 +17,24 @@ public class ProtocollerConfig {
     private static @Getter boolean saveErrors;
 
     public static void load(FileConfiguration file) {
-        listenerRegistrationNotify = ConfigUtils.getIfNotNull(file, "listeners-registration-notify", Boolean.TYPE);
+        listenerRegistrationNotify = ConfigUtils.getIfNotNull(file, "listeners-registration-notify", Boolean.class);
         bannedPlugin.addAll(ConfigUtils.getIfNotNull(file, "banned-plugins", List.class));
         bannedAuthors.addAll(ConfigUtils.getIfNotNull(file, "banned-authors", List.class));
-        apiUserRegistrationNotify = ConfigUtils.getIfNotNull(file, "api-user-registration-notify", Boolean.TYPE);
-        forceBStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.allow-force-enable", Boolean.TYPE);
-        bStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.enabled", Boolean.TYPE);
-        saveErrors = ConfigUtils.getIfNotNull(file, "save-errors", Boolean.TYPE);
+        apiUserRegistrationNotify = ConfigUtils.getIfNotNull(file, "api-user-registration-notify", Boolean.class);
+        forceBStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.allow-force-enable", Boolean.class);
+        bStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.enabled", Boolean.class);
+        saveErrors = ConfigUtils.getIfNotNull(file, "save-errors", Boolean.class);
     }
 
     public static void reload(FileConfiguration file) {
         bannedPlugin.clear(); bannedAuthors.clear();
         bannedPlugin.addAll(ConfigUtils.getIfNotNull(file, "banned-plugins", List.class));
         bannedAuthors.addAll(ConfigUtils.getIfNotNull(file, "banned-authors", List.class));
-        listenerRegistrationNotify = ConfigUtils.getIfNotNull(file, "listeners-registration-notify", Boolean.TYPE);
-        apiUserRegistrationNotify = ConfigUtils.getIfNotNull(file, "api-user-registration-notify", Boolean.TYPE);
-        forceBStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.allow-force-enable", Boolean.TYPE);
-        bStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.enabled", Boolean.TYPE);
-        saveErrors = ConfigUtils.getIfNotNull(file, "save-errors", Boolean.TYPE);
+        listenerRegistrationNotify = ConfigUtils.getIfNotNull(file, "listeners-registration-notify", Boolean.class);
+        apiUserRegistrationNotify = ConfigUtils.getIfNotNull(file, "api-user-registration-notify", Boolean.class);
+        forceBStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.allow-force-enable", Boolean.class);
+        bStatsEnabled = ConfigUtils.getIfNotNull(file, "bstats.enabled", Boolean.class);
+        saveErrors = ConfigUtils.getIfNotNull(file, "save-errors", Boolean.class);
     }
 
 }

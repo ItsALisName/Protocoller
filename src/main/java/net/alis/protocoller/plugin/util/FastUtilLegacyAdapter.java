@@ -20,7 +20,7 @@ public class FastUtilLegacyAdapter {
 
 
         public static void init() {
-            Int2ObjectMap  = BaseReflection.getClass("it.unimi.dsi.fastutil.ints.Int2ObjectMap");
+            Int2ObjectMap  = BaseReflection.getClass("it.unimi.dsi.fastutil.ints.Int2ObjectMap", true);
         }
     }
 

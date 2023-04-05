@@ -47,10 +47,12 @@ public class ProtocollerInitializer {
         PacketTypesInitializer.init();
         CRecipe.RecipeSerializer.init();
         GlobalProvider.init();
-        Protocoller.protocoller.setProtocoller$provider(new ProtocollerApi());
-        PacketBuilders.init();
-        Metrics.forceBStatsEnable();
-        LogsManager.get().sendPreloadingFinishedMessage(this.plugin.getDescription().getVersion());
+        if(GlobalProvider.instance() != null){
+            Protocoller.protocoller.setProtocoller$provider(new ProtocollerApi());
+            PacketBuilders.init();
+            Metrics.forceBStatsEnable();
+            LogsManager.get().sendPreloadingFinishedMessage(this.plugin.getDescription().getVersion());
+        }
     }
 
     protected void asyncPreLoad() {
@@ -62,6 +64,10 @@ public class ProtocollerInitializer {
             try {
                 Bukkit.getLogger().info("[Protocoller] For some unknown reason Protocoller hasn't loaded yet... Please wait!");
                 Thread.sleep(5000L);
+                if(GlobalProvider.instance() == null) {
+                    Bukkit.getPluginManager().disablePlugin(this.plugin);
+                    return;
+                }
             } catch (InterruptedException e) {
                 Bukkit.getLogger().info("[Protocoller] Failed to pause server thread for Protocoller loading! Disabling...");
                 Bukkit.getLogger().info("[Protocoller] Please, report about that!");

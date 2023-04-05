@@ -6,6 +6,7 @@ import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 
 public class UpdateServerDataRunner implements Runnable {
 
