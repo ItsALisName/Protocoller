@@ -5,37 +5,40 @@ import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.server.NetworkServer;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ApiProvider implements ApiUser {
 
     private final String name;
     private final String version;
-    private final String[] authors;
+    private final List<String> authors;
     private int registeredPacketListeners;
 
-    public ApiProvider(ApiUser user) {
+    public ApiProvider(Plugin user) {
         if(GlobalProvider.instance().getConfig().getBannedPlugin().contains(user.getName())) {
             this.name = "NONE";
             this.version = "NONE";
-            this.authors = new String[]{"NONE"};
+            this.authors = new ArrayList<>();
             LogsManager.get().getLogger().warn("The banned plugin(Name: \"" + user.getName() + "\") tried to use the API");
             return;
         }
-        if(Utils.findSimilar(GlobalProvider.instance().getConfig().getBannedAuthors(), Arrays.asList(user.getAuthors())).size() > 0) {
+        if(Utils.findSimilar(GlobalProvider.instance().getConfig().getBannedAuthors(), user.getDescription().getAuthors()).size() > 0) {
             this.name = "NONE";
             this.version = "NONE";
-            this.authors = new String[]{"NONE"};
+            this.authors = new ArrayList<>();
             LogsManager.get().getLogger().warn("The plugin(Name: \"" + user.getName() + "\") from banned author tried to use the API");
             return;
         }
-        GlobalProvider.instance().getData().getUsersContainer().getRegisteredUsers().add(user);
-        LogsManager.get().sendRegisteredUserNotify(user.getName(), user.getVersion(), String.join(", ", user.getAuthors()));
+        GlobalProvider.instance().getData().getUsersContainer().getRegisteredUsers().add(this);
+        LogsManager.get().sendRegisteredUserNotify(user.getName(), user.getDescription().getVersion(), String.join(", ", user.getDescription().getAuthors()));
         this.name = user.getName();
-        this.version = user.getVersion();
-        this.authors = user.getAuthors();
+        this.version = user.getDescription().getVersion();
+        this.authors = user.getDescription().getAuthors();
         this.registeredPacketListeners = 0;
     }
 
@@ -65,7 +68,7 @@ public class ApiProvider implements ApiUser {
     }
 
     @Override
-    public String[] getAuthors() {
+    public List<String> getAuthors() {
         return authors;
     }
 
