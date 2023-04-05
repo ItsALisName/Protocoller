@@ -32,6 +32,6 @@ public enum TileEntityJigsawJointType {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityJigsawJointypeEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityJigsawJointypeEnum(), this.id);
     }
 }

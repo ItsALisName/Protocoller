@@ -360,6 +360,6 @@ public enum Direction {
     }
 
     public @NotNull Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getDirectionEnum(), this.ordinal());
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getDirectionEnum(), this.ordinal());
     }
 }

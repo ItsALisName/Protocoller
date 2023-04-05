@@ -127,7 +127,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum(), this.id);
+            return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum(), this.id);
         }
 
     }

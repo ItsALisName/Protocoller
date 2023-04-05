@@ -38,4 +38,24 @@ public class ExceptionBuilder {
         return new ReflectionException.Builder(showStacktrace, ignore);
     }
 
+    public PacketException.Builder getPacketExceptions() {
+        return new PacketException.Builder(showStacktrace, ignore);
+    }
+
+    public PacketEventException.Builder getEventsExceptions() {
+        return new PacketEventException.Builder(showStacktrace, ignore);
+    }
+
+    public InjectionException.Builder getInjectExceptions() {
+        return new InjectionException.Builder(showStacktrace, ignore);
+    }
+
+    public CryptographyException.Builder getCryptographyExceptions() {
+        return new CryptographyException.Builder(showStacktrace, ignore);
+    }
+
+    public MinecraftKeyException.Builder getMinecraftKeyExceptions() {
+        return new MinecraftKeyException.Builder(showStacktrace, ignore);
+    }
+
 }

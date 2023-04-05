@@ -42,7 +42,7 @@ public enum SoundCategory {
     }
 
     public @NotNull Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getSoundCategoryEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getSoundCategoryEnum(), this.id);
     }
 
 }

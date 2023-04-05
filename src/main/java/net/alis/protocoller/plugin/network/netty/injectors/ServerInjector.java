@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.network.netty.ChannelInjector;
 import net.alis.protocoller.plugin.network.netty.NettyHelper;
 import net.alis.protocoller.plugin.network.netty.initializers.NettyChannelInitializer;
@@ -56,9 +57,9 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
             ClassLoader loader = bootstrapAcceptor.getClass().getClassLoader();
             if (loader.getClass().getName().equalsIgnoreCase("org.bukkit.plugin.java.PluginClassLoader")) {
                 PluginDescriptionFile errorSourceDescription = BaseReflection.readField(loader, "description");
-                throw new RuntimeException("Failed to inject to ChannelFuture. Source of the error: \"" + bootstrapAcceptor.getClass().getSimpleName() + "\". Try to start the server without using: \"" + errorSourceDescription.getName() + "\"");
+                new ExceptionBuilder().getInjectExceptions().defineReason(e).failedChannelFutureInject(errorSourceDescription).throwException();
             } else {
-                throw new IllegalStateException("Failed to inject to ChannelFuture. Source of the error: \"" + bootstrapAcceptor.getClass().getSimpleName() + "\"");
+                new ExceptionBuilder().getInjectExceptions().failedChannelFutureInject().throwException();
             }
         }
 

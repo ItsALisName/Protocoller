@@ -44,7 +44,7 @@ public enum BlockPropertyStructureMode {
     }
 
     public @NotNull Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockPropertyStructureModeEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockPropertyStructureModeEnum(), this.id);
     }
 
 }

@@ -44,6 +44,6 @@ public enum BlockRotation {
     }
 
     public @NotNull Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockRotationEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockRotationEnum(), this.id);
     }
 }

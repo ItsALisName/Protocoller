@@ -43,7 +43,7 @@ public enum BarColor {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBarColorEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBarColorEnum(), this.id);
     }
 
 }

@@ -26,7 +26,7 @@ public enum AttributeOperation {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAttributeOperationEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAttributeOperationEnum(), this.id);
     }
 
 }

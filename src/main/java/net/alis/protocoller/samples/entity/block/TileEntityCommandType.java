@@ -26,6 +26,6 @@ public enum TileEntityCommandType {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityCommandTypeEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityCommandTypeEnum(), this.id);
     }
 }

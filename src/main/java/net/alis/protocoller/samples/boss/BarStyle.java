@@ -34,6 +34,6 @@ public enum BarStyle {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBarStyleEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBarStyleEnum(), this.id);
     }
 }

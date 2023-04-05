@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.resources;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.util.AccessedObject;
@@ -12,7 +13,6 @@ import java.util.function.UnaryOperator;
 
 public class MinecraftKey {
 
-    private final boolean isLegacy = GlobalProvider.instance().getServer().isLegacy();
     private final String namespace;
     private final String path;
 
@@ -27,7 +27,7 @@ public class MinecraftKey {
 
     public MinecraftKey(Object originalKey) {
         AccessedObject accessor = new AccessedObject(originalKey);
-        if(isLegacy) {
+        if(GlobalProvider.instance().getServer().isLegacy()) {
             this.namespace = accessor.read(0, String.class);
             this.path = accessor.read(1, String.class);
         } else {
@@ -77,7 +77,7 @@ public class MinecraftKey {
     public static String verifyAndBuildNamespace(String namespace, String path) {
         if (!verifyNamespace(namespace)) {
             String normalizedSpace = StringUtils.normalizeSpace(namespace);
-            throw new RuntimeException("Non [Skip$1-z0-9_.-] character in namespace of location: " + normalizedSpace + ":" + StringUtils.normalizeSpace(path));
+            return new ExceptionBuilder().getMinecraftKeyExceptions().verifyError(normalizedSpace, StringUtils.normalizeSpace(path)).throwException();
         } else {
             return namespace;
         }
@@ -85,7 +85,7 @@ public class MinecraftKey {
 
     public static String verifyAndBuildPath(String namespace, String path) {
         if (!verifyPath(path)) {
-            throw new RuntimeException("Non [Skip$1-z0-9/._-] character in path of location: " + namespace + ":" + StringUtils.normalizeSpace(path));
+            return new ExceptionBuilder().getMinecraftKeyExceptions().verifyError(namespace, StringUtils.normalizeSpace(path)).throwException();
         } else {
             return path;
         }

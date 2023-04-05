@@ -49,6 +49,6 @@ public enum Difficulty {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getDifficultyEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getDifficultyEnum(), this.id);
     }
 }

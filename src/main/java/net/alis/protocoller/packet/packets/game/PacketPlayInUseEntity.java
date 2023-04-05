@@ -208,7 +208,7 @@ public class PacketPlayInUseEntity implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getEntityUseActionEnum(), this.id);
+            return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getEntityUseActionEnum(), this.id);
         }
     }
 

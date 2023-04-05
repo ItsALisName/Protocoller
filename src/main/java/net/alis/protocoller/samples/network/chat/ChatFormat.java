@@ -165,7 +165,7 @@ public enum ChatFormat {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getChatFormatEnum(), this.ordinal());
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getChatFormatEnum(), this.ordinal());
     }
 
     public String asString() {

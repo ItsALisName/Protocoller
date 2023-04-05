@@ -1,6 +1,7 @@
 package net.alis.protocoller.plugin.network.packet;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -33,7 +34,7 @@ public class PacketDataSerializer extends AccessedObject implements PacketDataCo
         this.player = player;
         this.packetType = PacketTypesInitializer.setPacketType(rawPacket);
         if(this.packetType == null) {
-            throw new RuntimeException("Failed to find packet type for \"" + rawPacket.getClass().getSimpleName() + "\" packet...");
+            new ExceptionBuilder().getPacketExceptions().missingPacketType(rawPacket.getClass()).throwException();
         }
     }
 

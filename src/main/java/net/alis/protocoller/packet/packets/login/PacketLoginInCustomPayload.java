@@ -1,5 +1,6 @@
 package net.alis.protocoller.packet.packets.login;
 
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.network.packet.IndexedParam;
 import net.alis.protocoller.plugin.network.packet.PacketBuilder;
 import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
@@ -52,8 +53,9 @@ public class PacketLoginInCustomPayload implements LoginInPacket {
             if (i >= 0 && i <= 1048576) {
                 return new MinecraftPacketDataSerializer(buffer.readBytes(i));
             } else {
-                throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+                new ExceptionBuilder().getPacketExceptions().overPayload().throwException();
             }
+            return buffer;
         });
         PacketBuilder converter = PacketBuilder.get(getPacketType());
         switch (converter.getConstructorIndicator().getLevel()) {

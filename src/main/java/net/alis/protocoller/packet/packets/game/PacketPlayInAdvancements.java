@@ -106,7 +106,7 @@ public class PacketPlayInAdvancements implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAdvancementsStatusEnum(), this.id);
+            return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAdvancementsStatusEnum(), this.id);
         }
 
     }

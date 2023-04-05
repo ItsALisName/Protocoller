@@ -51,7 +51,7 @@ public enum BlockMirror {
     }
 
     public @NotNull Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockMirrorEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockMirrorEnum(), this.id);
     }
 }
 

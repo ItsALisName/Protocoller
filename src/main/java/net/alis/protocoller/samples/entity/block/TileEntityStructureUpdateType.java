@@ -32,6 +32,6 @@ public enum TileEntityStructureUpdateType {
     }
 
     public @NotNull Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityStructureUpdateType(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityStructureUpdateType(), this.id);
     }
 }

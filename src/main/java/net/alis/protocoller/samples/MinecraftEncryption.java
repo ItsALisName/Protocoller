@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -24,7 +25,7 @@ public class MinecraftEncryption {
             keyGenerator.init(128);
             return keyGenerator.generateKey();
         } catch (Exception exception) {
-            throw new Exception(exception);
+            return new ExceptionBuilder().getCryptographyExceptions().defineReason(exception).standard().throwException();
         }
     }
 
@@ -34,7 +35,7 @@ public class MinecraftEncryption {
             keyPairGenerator.initialize(1024);
             return keyPairGenerator.generateKeyPair();
         } catch (Exception exception) {
-            throw new Exception(exception);
+            return new ExceptionBuilder().getCryptographyExceptions().defineReason(exception).standard().throwException();
         }
     }
 
@@ -42,7 +43,7 @@ public class MinecraftEncryption {
         try {
             return getBytes(s.getBytes("ISO_8859_1"), secretKey.getEncoded(), publicKey.getEncoded());
         } catch (Exception exception) {
-            throw new Exception(exception);
+            return new ExceptionBuilder().getCryptographyExceptions().defineReason(exception).standard().throwException();
         }
     }
 
@@ -65,7 +66,7 @@ public class MinecraftEncryption {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(encodedKeySpec);
         } catch (Exception exception) {
-            throw new Exception(exception);
+            return new ExceptionBuilder().getCryptographyExceptions().defineReason(exception).standard().throwException();
         }
     }
 
@@ -76,7 +77,7 @@ public class MinecraftEncryption {
         try {
             return new SecretKeySpec(bytes1, "AES");
         } catch (Exception exception) {
-            throw new Exception(exception);
+            return new ExceptionBuilder().getCryptographyExceptions().defineReason(exception).standard().throwException();
         }
     }
 
@@ -92,7 +93,7 @@ public class MinecraftEncryption {
         try {
             return getCipher(i, key.getAlgorithm(), key).doFinal(bytes);
         } catch (Exception exception) {
-            throw new Exception(exception);
+            return new ExceptionBuilder().getCryptographyExceptions().defineReason(exception).standard().throwException();
         }
     }
 
@@ -108,7 +109,7 @@ public class MinecraftEncryption {
             cipher.init(i, key, new IvParameterSpec(key.getEncoded()));
             return cipher;
         } catch (Exception exception) {
-            throw new Exception(exception);
+            return new ExceptionBuilder().getCryptographyExceptions().defineReason(exception).standard().throwException();
         }
     }
 

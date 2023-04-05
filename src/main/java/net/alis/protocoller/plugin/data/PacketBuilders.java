@@ -13,12 +13,6 @@ import java.util.Set;
 
 public class PacketBuilders {
 
-    public static PacketBuilders INSTANCE;
-    public static void init() {
-        INSTANCE = new PacketBuilders();
-        INSTANCE.setup();
-    }
-
     private final Set<PacketBuilder> packetBuilders;
 
     private PacketBuilders() {
@@ -222,5 +216,15 @@ public class PacketBuilders {
 
     void addAny(MinecraftPacketType type, ConstructorLevelIndicator indicator) {
         this.packetBuilders.add(new PacketBuilder(type, indicator, Version.ANY));
+    }
+
+    private static PacketBuilders INSTANCE;
+    public static void init() {
+        INSTANCE = new PacketBuilders();
+        INSTANCE.setup();
+    }
+
+    public static PacketBuilders get() {
+        return INSTANCE;
     }
 }

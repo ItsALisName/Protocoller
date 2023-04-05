@@ -2,6 +2,7 @@ package net.alis.protocoller.plugin.network.packet;
 
 import net.alis.protocoller.plugin.data.PacketBuilders;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.util.AccessedObject;
@@ -54,12 +55,12 @@ public class PacketBuilder {
     }
 
     public static @NotNull PacketBuilder get(MinecraftPacketType type) {
-        for(PacketBuilder converter : PacketBuilders.INSTANCE.getPacketCreators()) {
+        for(PacketBuilder converter : PacketBuilders.get().getPacketCreators()) {
             if(converter.getType().getPacketId() == type.getPacketId()) {
                 return converter;
             }
         }
-        throw new RuntimeException("Failed to find PacketBuilder for packet: '" + type.getPacketName() + "'!");
+        return new ExceptionBuilder().getPacketExceptions().missingPacketBuilder(type).throwException();
     }
 
     @Override

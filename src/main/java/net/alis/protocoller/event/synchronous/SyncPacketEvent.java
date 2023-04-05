@@ -5,6 +5,7 @@ import net.alis.protocoller.event.impl.CancellablePacketEvent;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.PacketDataContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
@@ -42,7 +43,7 @@ public class SyncPacketEvent implements CancellablePacketEvent {
             this.data = packet.getData();
             return;
         }
-        throw new RuntimeException("Failed to replace packet. Is the new packet configured correctly?");
+        new ExceptionBuilder().getEventsExceptions().unknownPacketData().throwException();
     }
 
     @Override

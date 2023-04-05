@@ -37,6 +37,6 @@ public enum InventoryClickType {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getInventoryClickTypeEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getInventoryClickTypeEnum(), this.id);
     }
 }

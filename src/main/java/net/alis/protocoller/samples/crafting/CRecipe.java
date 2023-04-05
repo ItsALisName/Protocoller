@@ -45,8 +45,8 @@ public class CRecipe implements Recipe {
 
         private static Method getKeyMethod, getItemStackMethod;
         public static void init() {
-            getKeyMethod = BaseReflection.getMethodNullParams(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftKeyClass());
-            getItemStackMethod = BaseReflection.getMethodNullParams(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftItemStackClass());
+            getKeyMethod = BaseReflection.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftKeyClass());
+            getItemStackMethod = BaseReflection.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftItemStackClass());
         }
 
         public static CRecipe fromIRecipe(Object iRecipe) {

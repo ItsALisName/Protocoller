@@ -155,7 +155,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
         while (true) {
             byte b0 = this.readByte();
             i |= (b0 & 127) << j++ * 7;
-            if (j > 5) throw new RuntimeException("VarInt too big");
+            if (j > 5) throw new DecoderException("VarInt too big");
             if ((b0 & 128) != 128) break;
         }
         return i;
@@ -166,7 +166,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
         while (true) {
             byte b0 = this.readByte();
             i |= (long)(b0 & 127) << j++ * 7;
-            if (j > 10) throw new RuntimeException("VarLong too big");
+            if (j > 10) throw new DecoderException("VarLong too big");
             if ((b0 & 128) != 128) break;
         }
 

@@ -209,7 +209,7 @@ public class PacketPlayOutPosition implements PlayOutPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerTeleportFlagsEnum(), this.ordinal());
+            return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerTeleportFlagsEnum(), this.ordinal());
         }
     }
 }

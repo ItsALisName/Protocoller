@@ -29,6 +29,6 @@ public enum DirectionTransformationS {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPointSEnum(), this.ordinal());
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPointSEnum(), this.ordinal());
     }
 }

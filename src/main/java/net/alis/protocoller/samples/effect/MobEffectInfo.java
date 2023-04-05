@@ -33,7 +33,7 @@ public enum MobEffectInfo {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getMobEffectInfoEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getMobEffectInfoEnum(), this.id);
     }
 }
 

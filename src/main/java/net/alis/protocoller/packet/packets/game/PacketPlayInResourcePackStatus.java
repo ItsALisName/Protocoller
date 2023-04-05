@@ -118,7 +118,7 @@ public class PacketPlayInResourcePackStatus implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getResourcePackStatusEnum(), this.id);
+            return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getResourcePackStatusEnum(), this.id);
         }
     }
 }

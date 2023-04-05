@@ -33,7 +33,7 @@ public enum PlayerAction {
     }
 
     public Enum<?> original() {
-        return BaseReflection.getEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerActionEnum(), this.id);
+        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerActionEnum(), this.id);
     }
 
 }

@@ -3,6 +3,7 @@ package net.alis.protocoller.plugin.util;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.plugin.data.InitialData;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +12,7 @@ public class PacketUtils {
 
     public static void checkPacketCompatibility(@NotNull MinecraftPacketType input, @NotNull MinecraftPacketType required) {
         if (input.getPacketId() != required.getPacketId()) {
-            throw new UnsupportedOperationException("Packet \"" + required.getPacketName() + "\" cannot be cast to \"" + input.getPacketName() + "\"!");
+            new ExceptionBuilder().getPacketExceptions().illegalPacketCast(required.getPacketClass(), input.getPacketClass()).throwException();
         }
     }
 

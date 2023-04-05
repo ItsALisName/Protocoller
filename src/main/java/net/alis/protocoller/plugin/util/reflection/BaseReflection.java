@@ -2,7 +2,6 @@ package net.alis.protocoller.plugin.util.reflection;
 
 import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.network.packet.IndexedParam;
 import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.Contract;
@@ -16,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BaseReflection {
 
@@ -103,7 +103,7 @@ public class BaseReflection {
                 }
             }
         }
-        return null;
+        return new ExceptionBuilder().getReflectionExceptions().methodNotFound(instance, name, params).throwException();
     }
 
     public static @Nullable Method getMethod(@NotNull Class<?> instance, String methodName, Class<?> returnType, Class<?>... paramTypes) {
@@ -113,7 +113,25 @@ public class BaseReflection {
                 return m;
             }
         }
-        return null;
+        return new ExceptionBuilder().getReflectionExceptions().methodNotFound(instance, methodName, returnType, paramTypes).throwException();
+    }
+
+    public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, Class<?> returnType) {
+        int start = 0;
+        for(Method method : instance.getDeclaredMethods()) {
+            method.setAccessible(true);
+            if(method.getReturnType() == returnType || method.getReturnType().isAssignableFrom(returnType)) {
+                if(index == start) {
+                    return method;
+                }
+                start += 1;
+            }
+        }
+        return new ExceptionBuilder().getReflectionExceptions().methodNotFound(instance, index, returnType).throwException();
+    }
+
+    public static @NotNull Method getMethod(Class<?> instance, Class<?> returnType) {
+        return getMethod(instance, 0, returnType);
     }
 
     public static Method getSuperclassMethod(@NotNull Class<?> instance, String methodName, Class<?> returnType, Class<?>... paramTypes) {
@@ -122,26 +140,6 @@ public class BaseReflection {
 
     public static Method getSuperclassMethod(@NotNull Class<?> instance, String name, Class<?>[] params) {
         return getMethod(instance.getSuperclass(), name, params);
-    }
-
-    public static @Nullable Method getMethodNullParams(@NotNull Class<?> instance, Class<?> returnType) {
-        for(Method method : instance.getDeclaredMethods()) {
-            method.setAccessible(true);
-            if(method.getReturnType() == returnType && method.getParameterTypes().length == 0) return method;
-        }
-        return null;
-    }
-
-    public static @Nullable Method getMethod(@NotNull Class<?> instance, String name, Class<?>[] params, Class<?> returnType) {
-        for(Method method : instance.getDeclaredMethods()) {
-            method.setAccessible(true);
-            if(Arrays.equals(method.getParameterTypes(), params)) {
-                if (method.getName().equalsIgnoreCase(name)) {
-                    return method;
-                }
-            }
-        }
-        return null;
     }
 
     public static @NotNull Field getField(@NotNull Class<?> instance, int index, Class<?> type) {
@@ -167,34 +165,20 @@ public class BaseReflection {
                     try {
                         return (PARAM) field.get(instance);
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException(
-                                "Failed to read field from object!\n" +
-                                        "\n[Protocoller] Details: " +
-                                        "\n[Protocoller] From object: '" + instance.toString() + "'" +
-                                        "\n[Protocoller] Requested field type: '" + type.getSimpleName() + "'" +
-                                        "\n[Protocoller] Requested field index: '" + index + "'",
-                                e
-                        );
+                        return new ExceptionBuilder().getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), index, field).throwException();
                     }
                 }
                 start += 1;
             }
         }
-        return null;
+        return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, instance.getClass()).throwException();
     }
 
     public static <PARAM> PARAM readField(@NotNull Object instance, String fieldName) {
         try {
             return (PARAM) instance.getClass().getDeclaredField(fieldName).get(instance);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(
-                    "Failed to read field from object!\n" +
-                            "\n[Protocoller] Details: " +
-                            "\n[Protocoller] From object: '" + instance.toString() + "'" +
-                            "\n[Protocoller] Requested field type: '???'" +
-                            "\n[Protocoller] Requested field index: '???'",
-                    e
-            );
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), fieldName).throwException();
         }
     }
 
@@ -207,25 +191,13 @@ public class BaseReflection {
                     try {
                         return (PARAM) field.get(instance);
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException(
-                                "Failed to read field from object!\n" +
-                                        "\n[Protocoller] Details: " +
-                                        "\n[Protocoller] From object: '" + instance.toString() + "'" +
-                                        "\n[Protocoller] Requested field type: '" + type.getSimpleName() + "'" +
-                                        "\n[Protocoller] Requested field index: '" + index + "'",
-                                e
-                        );
+                        return new ExceptionBuilder().getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), index, field).throwException();
                     }
                 }
                 start += 1;
             }
         }
-        throw new RuntimeException("Failed to find field in object!\n" +
-                "\n[Protocoller] Details: " +
-                "\n[Protocoller] From object: '" + instance.toString() + "'" +
-                "\n[Protocoller] Requested field type: '" + type.getSimpleName() + "'" +
-                "\n[Protocoller] Requested field index: '" + index + "'"
-        );
+        return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, instance.getClass()).throwException();
     }
 
     public static void writeField(@NotNull Object instance, int index, Object param) {
@@ -237,44 +209,13 @@ public class BaseReflection {
                     try {
                         field.set(instance, param); break;
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException(
-                                "Failed to write field in object!\n" +
-                                        "\n[Protocoller] Details: " +
-                                        "\n[Protocoller] In object: '" + instance.toString() + "'" +
-                                        "\n[Protocoller] Requested field type: '" + param.getClass().getSimpleName() + "'" +
-                                        "\n[Protocoller] Requested field index: '" + index + "'",
-                                e
-                        );
+                        new ExceptionBuilder().getReflectionExceptions().defineReason(e).writeFieldError(instance.getClass(), index, field).throwException();
                     }
                 }
                 start += 1;
             }
         }
-        throw new RuntimeException("Failed to find field in object!\n" +
-                "\n[Protocoller] Details: " +
-                "\n[Protocoller] In object: '" + instance.toString() + "'" +
-                "\n[Protocoller] Requested field type: '" + param.getClass().getSimpleName() + "'" +
-                "\n[Protocoller] Requested field index: '" + index + "'"
-        );
-    }
-
-    public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, Class<?> returnType) {
-        int start = 0;
-        for(Method method : instance.getDeclaredMethods()) {
-            method.setAccessible(true);
-            if(method.getReturnType() == returnType || method.getReturnType().isAssignableFrom(returnType)) {
-                if(index == start) {
-                    return method;
-                }
-                start += 1;
-            }
-        }
-        throw new RuntimeException("Failed to find method in class!\n" +
-                "\n[Protocoller] Details: " +
-                "\n[Protocoller] From class: '" + instance.getSimpleName() + "'" +
-                "\n[Protocoller] Requested method return type: '" + returnType.getSimpleName() + "'" +
-                "\n[Protocoller] Requested method index: '" + index + "'"
-        );
+        new ExceptionBuilder().getReflectionExceptions().fieldNotFound(param.getClass(), index, instance.getClass()).throwException();
     }
 
     public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, String methodName) {
@@ -288,12 +229,7 @@ public class BaseReflection {
                 start += 1;
             }
         }
-        throw new RuntimeException("Failed to find method in class!\n" +
-                "\n[Protocoller] Details: " +
-                "\n[Protocoller] From class: '" + instance.getSimpleName() + "'" +
-                "\n[Protocoller] Requested method return type: '???'" +
-                "\n[Protocoller] Requested method index: '" + index + "'"
-        );
+        return new ExceptionBuilder().getReflectionExceptions().methodNotFound(instance, index, methodName).throwException();
     }
 
     public static <PARAM> PARAM callMethod(Object instance, @NotNull Method method, Object... parameters) {
@@ -301,25 +237,7 @@ public class BaseReflection {
             method.setAccessible(true);
             return (PARAM) method.invoke(instance, parameters);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to call method from object!" +
-                    "\n[Protocoller] Details: " +
-                    "\n[Protocoller] From object: '" + instance.toString() + "'" +
-                    "\n[Protocoller] Requested method: '" + method.getName() + "'" +
-                    "\n[Protocoller] Reason: '" + e.getCause().getMessage() + "'",
-                    e
-            );
-        }
-    }
-
-    public static <PARAM> PARAM callFirstMethod(@NotNull Object instance, Class<?> returnType, Object... parameters) {
-        try {
-            return (PARAM) getMethod(instance.getClass(), 0, returnType).invoke(instance, parameters);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to call method from object!" +
-                "\n[Protocoller] Details: " +
-                "\n[Protocoller] From object: '" + instance.getClass().getSimpleName() + "'",
-                e
-        );
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callMethodError(instance.getClass(), method).throwException();
         }
     }
 
@@ -327,11 +245,7 @@ public class BaseReflection {
         try {
             return (PARAM) getMethod(instance, index, returnType).invoke(null);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to call method from object!" +
-                    "\n[Protocoller] Details: " +
-                    "\n[Protocoller] From object: '" + instance.getSimpleName() + "'",
-                    e
-            );
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, returnType).throwException();
         }
     }
 
@@ -339,11 +253,7 @@ public class BaseReflection {
         try {
             return (PARAM) getMethod(instance, index, returnType).invoke(null, objects);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to call method from object!" +
-                    "\n[Protocoller] Details: " +
-                    "\n[Protocoller] From object: '" + instance.getSimpleName() + "'",
-                    e
-            );
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, returnType).throwException();
         }
     }
 
@@ -351,11 +261,7 @@ public class BaseReflection {
         try {
             return (PARAM) getMethod(instance, index, methodName).invoke(null);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to call method from object!" +
-                    "\n[Protocoller] Details: " +
-                    "\n[Protocoller] From object: '" + instance.getSimpleName() + "'",
-                    e
-            );
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, methodName).throwException();
         }
     }
 
@@ -363,20 +269,8 @@ public class BaseReflection {
         try {
             return (PARAM) getMethod(instance, index, methodName).invoke(null,objects);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to call method from object!" +
-                    "\n[Protocoller] Details: " +
-                    "\n[Protocoller] From object: '" + instance.getSimpleName() + "'",
-                    e
-            );
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, methodName).throwException();
         }
-    }
-
-    public static boolean isNullConstructorsClass(@NotNull Class<?> clazz) {
-        if(clazz.getDeclaredConstructors().length == 0) return true;
-        for(Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-            if(constructor.getParameterTypes().length == 0) return true;
-        }
-        return false;
     }
 
     @Nullable
@@ -389,7 +283,7 @@ public class BaseReflection {
                 }
             }
         }
-        return null;
+        return new ExceptionBuilder().getReflectionExceptions().constructorNotFound(instance, parameters).throwException();
     }
 
     @Nullable
@@ -401,14 +295,14 @@ public class BaseReflection {
                 return constructor;
             }
         }
-        return null;
+        return new ExceptionBuilder().getReflectionExceptions().constructorNotFound(instance, params.toArray(new Class[0])).throwException();
     }
 
     public static <PARAM> @Nullable PARAM classNewInstance(@NotNull Class<?> clazz) {
         try {
             return (PARAM) clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            return null;
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).classNewInstanceError(clazz).throwException();
         }
     }
 
@@ -422,7 +316,8 @@ public class BaseReflection {
             }
             return (PARAM) constructor.newInstance(parameters);
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new RuntimeException("Failed to call constructor with name: '" + constructor.getName() + "'", e);
+            List<Class<?>> params = Arrays.stream(parameters).map(Object::getClass).collect(Collectors.toList());
+            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callConstructorError(constructor, params.toArray(new Class[0])).throwException();
         }
     }
 
@@ -435,13 +330,13 @@ public class BaseReflection {
         return (PARAM) o.getObject();
     }
 
-    public static <PARAM> @NotNull PARAM getEnumValue(@NotNull Class<? extends Enum<?>> clazz, int ordinal) {
+    public static <PARAM> @NotNull PARAM readEnumValue(@NotNull Class<? extends Enum<?>> clazz, int ordinal) {
         for(Enum<?> o : clazz.getEnumConstants()) {
             if(o.ordinal() == ordinal) {
                 return (PARAM) o;
             }
         }
-        throw new RuntimeException("Failed to find enum constant with id: " + ordinal);
+        return new ExceptionBuilder().getReflectionExceptions().findEnumConstantError(clazz, ordinal).throwException();
     }
 
     public static int getEnumId(@NotNull Object enumObject) {
