@@ -4,7 +4,6 @@ import net.alis.protocoller.plugin.network.NettyChannelManager;
 import net.alis.protocoller.plugin.network.ProtocollerPlayer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.Utils;
-import net.alis.protocoller.plugin.util.reflection.PlayerReflection;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,9 +26,9 @@ public class InjectionListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        new ProtocollerPlayer(new NettyChannelManager(PlayerReflection.getPlayerChannel(player)), player.getName(), player.getUniqueId(), player.getAddress());
+        new ProtocollerPlayer(new NettyChannelManager(MinecraftReflection.getPlayerChannel(player)), player.getName(), player.getUniqueId(), player.getAddress());
         GlobalProvider.instance().getServer().getPlayersInjector().inject(player);
-        TaskSimplifier.INSTANCE.preformAsync(() -> {
+        TaskSimplifier.get().preformAsync(() -> {
             Thread.currentThread().setName("ProtocollerUtilThread-" + Utils.generateRandomInt(5));
             GlobalProvider.instance().getData().getEntitiesContainer().addEntity(player.getEntityId(), player);
         });
@@ -38,7 +37,7 @@ public class InjectionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        TaskSimplifier.INSTANCE.preformAsync(() -> {
+        TaskSimplifier.get().preformAsync(() -> {
             Thread.currentThread().setName("ProtocollerUtilThread-" + Utils.generateRandomInt(5));
             GlobalProvider.instance().getServer().getPlayersInjector().eject(player);
             GlobalProvider.instance().getData().getPlayersContainer().removePlayer(player.getUniqueId());

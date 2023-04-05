@@ -1,6 +1,8 @@
 package net.alis.protocoller.plugin;
 
-import net.alis.protocoller.plugin.config.FileManager;
+import net.alis.protocoller.Protocoller;
+import net.alis.protocoller.plugin.config.ConfigUtils;
+import net.alis.protocoller.plugin.config.ProtocollerConfig;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.data.PacketBuilders;
@@ -40,10 +42,12 @@ public class ProtocollerInitializer {
         ClassesContainer.init();
         MagicNumbersSample.init();
         ChatSerializer.init();
-        FileManager.createFiles(this.plugin);
+        ConfigUtils.createFiles(this.plugin);
+        ProtocollerConfig.load(ConfigUtils.getConfigurationFile("general.yml"));
         PacketTypesInitializer.init();
         CRecipe.RecipeSerializer.init();
         GlobalProvider.init();
+        Protocoller.protocoller.setProtocoller$provider(new ProtocollerApi());
         PacketBuilders.init();
         Metrics.forceBStatsEnable();
         LogsManager.get().sendPreloadingFinishedMessage(this.plugin.getDescription().getVersion());
@@ -69,10 +73,10 @@ public class ProtocollerInitializer {
         UpdateServerDataRunner.start();
         UpdatePlayerDataRunner.start();
         Bukkit.getPluginManager().registerEvents(new InjectionListener(), this.plugin);
-        if(GlobalProvider.instance().getConfig().isForceBStatsEnabled()) {
+        if(ProtocollerConfig.isForceBStatsEnabled()) {
             new Metrics((JavaPlugin) this.plugin, 17877);
         } else {
-            if(GlobalProvider.instance().getConfig().isBStatsEnabled()) {
+            if(ProtocollerConfig.isBStatsEnabled()) {
                 new Metrics((JavaPlugin) this.plugin, 17877);
             }
         }

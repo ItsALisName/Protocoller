@@ -67,7 +67,7 @@ public class LogsManager {
     }
 
     public final void sendRegisteredListenerMessage(String user, String version, String lType) {
-        if (GlobalProvider.instance().getConfig().isListenerRegistrationNotify()) {
+        if (ProtocollerConfig.isListenerRegistrationNotify()) {
             logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
             logger.log(Level.INFO, "[*]                 A new packet listener has been registered!");
             logger.log(Level.INFO, "[*] Who registered: " + user + "(Version: " + version + ")");
@@ -77,7 +77,7 @@ public class LogsManager {
     }
 
     public final void sendRegisteredUserNotify(String user, String version, String authors) {
-        if(GlobalProvider.instance().getConfig().isApiUserRegistrationNotify()) {
+        if(ProtocollerConfig.isApiUserRegistrationNotify()) {
             logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
             logger.log(Level.INFO, "[*]                          A new api user registered");
             logger.log(Level.INFO, "[*] Plugin: " + user + "(Version:  " + version + ", Authors: " + authors + ")");

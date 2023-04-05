@@ -666,7 +666,7 @@ public class Metrics {
 
     @SneakyThrows
     public static void forceBStatsEnable() {
-        if(GlobalProvider.instance().getConfig().isForceBStatsEnabled()) {
+        if(ProtocollerConfig.isForceBStatsEnabled()) {
             File bstatsFile = new File("plugins/bStats/", "config.yml");
             if(bstatsFile.exists()) {
                 FileConfiguration bstatsConfig = YamlConfiguration.loadConfiguration(bstatsFile);

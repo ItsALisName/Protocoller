@@ -24,7 +24,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
 
     @Override
     public void registerListener(ApiUser user, PacketListener listener) {
-        TaskSimplifier.INSTANCE.preformAsync(() -> {
+        TaskSimplifier.get().preformAsync(() -> {
             int methodsCount = 0;
             for(Method method : listener.getClass().getDeclaredMethods()) {
                 method.setAccessible(true);
@@ -91,7 +91,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
     }
     
     public static void callListeners(PacketDataContainer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
-        TaskSimplifier.INSTANCE.preformAsync(() -> {
+        TaskSimplifier.get().preformAsync(() -> {
             switch (data.getType().getState()) {
                 case CLIENTBOUND: {
                     if(player == null) {

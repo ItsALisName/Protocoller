@@ -2,30 +2,34 @@ package net.alis.protocoller.plugin.server;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
-import net.alis.protocoller.plugin.util.reflection.ServerReflection;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 
 public class UpdateServerDataRunner implements Runnable {
 
     public static void start() {
-        TaskSimplifier.INSTANCE.preformAsyncTimerTask(new UpdateServerDataRunner(), 0L, 20L);
+        TaskSimplifier.get().preformAsyncTimerTask(new UpdateServerDataRunner(), 0L, 20L);
     }
 
     @Override
     public void run() {
+        GlobalProvider.instance().getServer().channels.clear();
         try {
-            GlobalProvider.instance().getServer().channels.clear();
-            for(Object networkManager : ServerReflection.getServerNetworkManagers()) {
+            for (Object networkManager : MinecraftReflection.getServerNetworkManagers()) {
                 GlobalProvider.instance().getServer().channels.add(BaseReflection.readField(networkManager, 0, Channel.class));
             }
-            GlobalProvider.instance().getServer().channelFutures.clear();
-            for(Object future : ServerReflection.getServerChannelFutures()) {
+        } catch (Exception ex) {
+            new ExceptionBuilder().getServerExceptions().defineReason(ex).networkManagersError().throwException();
+        }
+        GlobalProvider.instance().getServer().channelFutures.clear();
+        try {
+            for (Object future : MinecraftReflection.getServerChannelFutures()) {
                 GlobalProvider.instance().getServer().channelFutures.add((ChannelFuture) future);
             }
-        } catch (Exception e)  {
-            throw new RuntimeException("Failed to update server channels!", e);
+        } catch (Exception ex) {
+            new ExceptionBuilder().getServerExceptions().defineReason(ex).channelFuturesError().throwException();
         }
     }
 }

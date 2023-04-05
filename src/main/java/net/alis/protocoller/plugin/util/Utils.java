@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,6 +28,20 @@ public class Utils {
     @Contract(pure = true)
     public static @NotNull String setColors(@NotNull String input) {
         return input.replace("&", "§");
+    }
+
+    public static @NotNull String getCurrentDate(boolean isDetail) {
+        SimpleDateFormat format;
+        if(isDetail) {
+            format = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        } else {
+            format = new SimpleDateFormat("dd/MM/yyyy");
+        }
+        return format.format(new Date());
+    }
+
+    public static @NotNull String getCurrentTime() {
+        return new SimpleDateFormat("HH:mm:ss").format(new Date());
     }
 
 }

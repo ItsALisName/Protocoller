@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandler;
 import net.alis.protocoller.plugin.network.netty.ChannelInjector;
 import net.alis.protocoller.plugin.network.netty.interceptors.NettyPacketInterceptor;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.util.reflection.PlayerReflection;
 import net.alis.protocoller.NetworkPlayer;
 import org.bukkit.entity.Player;
 
@@ -13,12 +12,12 @@ public class PlayersInjector implements ChannelInjector.PlayerInjector {
 
     @Override
     public void inject(Player player) {
-        this.refreshInterceptor(player, PlayerReflection.getPlayerChannel(player));
+        this.refreshInterceptor(player, MinecraftReflection.getPlayerChannel(player));
     }
 
     @Override
     public void eject(Player player) {
-        Channel channel = PlayerReflection.getPlayerChannel(player);
+        Channel channel = MinecraftReflection.getPlayerChannel(player);
         if (channel != null) {
             try {
                 channel.pipeline().remove("protocoller_handler");
@@ -38,7 +37,7 @@ public class PlayersInjector implements ChannelInjector.PlayerInjector {
         if(networkPlayer != null) {
             channel = networkPlayer.getChannel();
         } else {
-            channel = PlayerReflection.getPlayerChannel(player);
+            channel = MinecraftReflection.getPlayerChannel(player);
         }
         return channel.pipeline().get("protocoller_handler") != null;
     }

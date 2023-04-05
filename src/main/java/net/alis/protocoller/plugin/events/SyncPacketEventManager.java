@@ -24,7 +24,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
 
     @Override
     public void registerListener(ApiUser user, PacketListener listener) {
-        TaskSimplifier.INSTANCE.preformAsync(() -> {
+        TaskSimplifier.get().preformAsync(() -> {
             int methodsCount = 0;
             for(Method method : listener.getClass().getDeclaredMethods()) {
                 method.setAccessible(true);

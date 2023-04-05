@@ -11,7 +11,7 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        apiUser = Protocoller.registerUser((Plugin) this);
+        apiUser = Protocoller.get().registerUser((Plugin) this);
         apiUser.getEventManager().getSynchronousManager().registerListener(apiUser, new ExampleSyncListener());
         apiUser.getEventManager().getAsynchronousManager().registerListener(apiUser, new ExampleAsyncListener());
         Bukkit.getPluginManager().registerEvents(this, this);

@@ -8,7 +8,6 @@ import net.alis.protocoller.plugin.network.netty.injectors.PlayersInjector;
 import net.alis.protocoller.plugin.network.netty.injectors.ServerInjector;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
-import net.alis.protocoller.plugin.util.reflection.ServerReflection;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.server.NetworkServer;
@@ -36,18 +35,18 @@ public class ProtocollerServer implements NetworkServer {
 
     public ProtocollerServer(Server server) {
         this.server = server;
-        this.version = Version.fromProtocol(ServerReflection.getProtocolVersion());
+        this.version = Version.fromProtocol(MinecraftReflection.getServerProtocolVersion());
         this.isLegacy = this.version.ordinal() < Version.v1_17.ordinal();
         this.isVeryLegacy = isLegacy && this.version.ordinal() < Version.v1_13.ordinal();
         this.channels = new ArrayList<>();
         this.channelFutures = Collections.synchronizedList(Lists.newArrayList());
-        List<Object> networkManagers = ServerReflection.getServerNetworkManagers();
+        List<Object> networkManagers = MinecraftReflection.getServerNetworkManagers();
         synchronized (networkManagers) {
             for(Object networkManager : networkManagers) {
                 this.channels.add(BaseReflection.readField(networkManager, 0, Channel.class));
             }
         }
-        for(Object future : ServerReflection.getServerChannelFutures()) {
+        for(Object future : MinecraftReflection.getServerChannelFutures()) {
             this.channelFutures.add((ChannelFuture) future);
         }
         this.packetInterceptors = new ArrayList<>();

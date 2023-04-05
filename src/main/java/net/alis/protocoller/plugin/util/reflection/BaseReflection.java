@@ -1,6 +1,7 @@
 package net.alis.protocoller.plugin.util.reflection;
 
 import net.alis.protocoller.plugin.data.InitialData;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.network.packet.IndexedParam;
 import net.alis.protocoller.util.AccessedObject;
@@ -23,7 +24,7 @@ public class BaseReflection {
         try {
             return Class.forName(clazz);
         } catch (ClassNotFoundException e) {
-            return null;
+            return new ExceptionBuilder().getReflectionExceptions().classNotFound(clazz).throwException();
         }
     }
 
@@ -93,7 +94,7 @@ public class BaseReflection {
         }
     }
 
-    public static Method getMethod(Class<?> instance, String name, Class<?>[] params) {
+    public static Method getMethod(Class<?> instance, String name, Class<?>... params) {
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
             if(Arrays.equals(method.getParameterTypes(), params)) {
@@ -154,12 +155,7 @@ public class BaseReflection {
                 start += 1;
             }
         }
-        throw new RuntimeException("Failed to find field in class!\n" +
-                "\n[Protocoller] Details: " +
-                "\n[Protocoller] From class: '" + instance.getSimpleName() + "'" +
-                "\n[Protocoller] Requested field type: '" + type.getSimpleName() + "'" +
-                "\n[Protocoller] Requested field index: '" + index + "'"
-        );
+        return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, instance).throwException();
     }
 
     public static <PARAM> @Nullable PARAM readSuperclassField(@NotNull Object instance, int index, Class<?> type) {

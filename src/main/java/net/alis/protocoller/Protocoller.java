@@ -1,20 +1,21 @@
 package net.alis.protocoller;
 
-import net.alis.protocoller.plugin.providers.ApiProvider;
+import lombok.Setter;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public class Protocoller {
+public interface Protocoller {
 
-    @Contract("_ -> new")
-    public static @NotNull ApiUser registerUser(Plugin plugin) {
-        return new ApiProvider(plugin);
+    static Protocoller get() {
+        return protocoller.protocoller$provider;
     }
 
-    @Contract(pure = true)
-    public static @NotNull String getVersion() {
-        return "0.0.1";
-    }
+    @NotNull ApiUser registerUser(Plugin plugin);
+
+    @NotNull String getVersion();
+
+    int registeredUsersCount();
+
+    class protocoller { private static @Setter Protocoller protocoller$provider; }
     
 }

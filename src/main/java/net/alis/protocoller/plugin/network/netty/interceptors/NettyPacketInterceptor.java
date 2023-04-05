@@ -47,7 +47,7 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             data = new PacketDataSerializer(msg, player);
         } catch (Exception e) {
             super.channelRead(ctx, msg);
-            TaskSimplifier.INSTANCE.preformAsync(() -> {
+            TaskSimplifier.get().preformAsync(() -> {
                 String[] dataReport = new String[(msg.getClass().getDeclaredFields().length)];
                 for(int i = 0; i < msg.getClass().getDeclaredFields().length; i++) {
                     Field field = msg.getClass().getDeclaredFields()[i]; field.setAccessible(true);
@@ -102,7 +102,7 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
             data = new PacketDataSerializer(msg, player);
         } catch (Exception e) {
             super.write(ctx, msg, promise);
-            TaskSimplifier.INSTANCE.preformAsync(() -> {
+            TaskSimplifier.get().preformAsync(() -> {
                 String[] dataReport = new String[(msg.getClass().getDeclaredFields().length)];
                 for(int i = 0; i < msg.getClass().getDeclaredFields().length; i++) {
                     Field field = msg.getClass().getDeclaredFields()[i]; field.setAccessible(true);

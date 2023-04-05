@@ -1,6 +1,5 @@
 package net.alis.protocoller.plugin.network.packet;
 
-import net.alis.protocoller.plugin.util.reflection.NetworkReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketType;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,7 @@ public class ProtocollerPacketType implements MinecraftPacketType {
             case HANDSHAKE_SERVERBOUND:this.packetName = "PacketHandshakingOut" + packetName; break;
             default: this.packetName = "UnknownPacket"; break;
         }
-        this.packetClass = NetworkReflection.packet$getPacketClass(this.packetName, state);
+        this.packetClass = PacketUtils.packet$getPacketClass(this.packetName, state);
     }
 
     @Override

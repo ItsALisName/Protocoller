@@ -6,6 +6,8 @@ listeners-registration-notify: true
 
 api-user-registration-notify: true
 
+save-errors: true
+
 bstats:
   allow-force-enable: true
   enabled: true

@@ -1,6 +1,7 @@
 package net.alis.protocoller.plugin.providers;
 
 import net.alis.protocoller.ApiUser;
+import net.alis.protocoller.plugin.config.ProtocollerConfig;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.event.PacketEventsManager;
@@ -20,14 +21,14 @@ public class ApiProvider implements ApiUser {
     private int registeredPacketListeners;
 
     public ApiProvider(Plugin user) {
-        if(GlobalProvider.instance().getConfig().getBannedPlugin().contains(user.getName())) {
+        if(ProtocollerConfig.getBannedPlugin().contains(user.getName())) {
             this.name = "NONE";
             this.version = "NONE";
             this.authors = new ArrayList<>();
             LogsManager.get().getLogger().warn("The banned plugin(Name: \"" + user.getName() + "\") tried to use the API");
             return;
         }
-        if(Utils.findSimilar(GlobalProvider.instance().getConfig().getBannedAuthors(), user.getDescription().getAuthors()).size() > 0) {
+        if(Utils.findSimilar(ProtocollerConfig.getBannedAuthors(), user.getDescription().getAuthors()).size() > 0) {
             this.name = "NONE";
             this.version = "NONE";
             this.authors = new ArrayList<>();
