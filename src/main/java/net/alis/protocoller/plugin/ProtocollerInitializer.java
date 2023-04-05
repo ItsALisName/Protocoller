@@ -1,6 +1,5 @@
 package net.alis.protocoller.plugin;
 
-import Example.TEST;
 import net.alis.protocoller.plugin.config.FileManager;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.data.InitialData;
@@ -14,7 +13,6 @@ import net.alis.protocoller.plugin.server.listeners.InjectionListener;
 import net.alis.protocoller.plugin.util.FastUtilLegacyAdapter;
 import net.alis.protocoller.plugin.util.Metrics;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
-import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.samples.attributes.GenericAttributes;
 import net.alis.protocoller.samples.craftbukkit.MagicNumbersSample;
 import net.alis.protocoller.samples.crafting.CRecipe;
@@ -47,21 +45,21 @@ public class ProtocollerInitializer {
         CRecipe.RecipeSerializer.init();
         GlobalProvider.init();
         PacketBuilders.init();
-        Utils.forceBStatsEnable();
+        Metrics.forceBStatsEnable();
         LogsManager.get().sendPreloadingFinishedMessage(this.plugin.getDescription().getVersion());
     }
 
     protected void asyncPreLoad() {
-        new Thread(this::syncPreLoad, "BootThread-" + Utils.generateRandomInt(5)).start();
+        new Thread(this::syncPreLoad).start();
     }
 
     protected void syncLoad() {
         if(GlobalProvider.instance() == null) {
             try {
-                Bukkit.getLogger().info("[Protocoller/" + Thread.currentThread().getName() + "] For some unknown reason Protocoller hasn't loaded yet... Please wait!");
+                Bukkit.getLogger().info("[Protocoller] For some unknown reason Protocoller hasn't loaded yet... Please wait!");
                 Thread.sleep(5000L);
             } catch (InterruptedException e) {
-                Bukkit.getLogger().info("[Protocoller/" + Thread.currentThread().getName() + "] Failed to pause server thread for Protocoller loading! Disabling...");
+                Bukkit.getLogger().info("[Protocoller] Failed to pause server thread for Protocoller loading! Disabling...");
                 Bukkit.getLogger().info("[Protocoller] Please, report about that!");
                 Bukkit.getPluginManager().disablePlugin(this.plugin);
                 return;
@@ -78,7 +76,6 @@ public class ProtocollerInitializer {
                 new Metrics((JavaPlugin) this.plugin, 17877);
             }
         }
-        new TEST(this.plugin);
     }
 
     protected void unload() {

@@ -28,16 +28,4 @@ public class Utils {
         return input.replace("&", "§");
     }
 
-    @SneakyThrows
-    public static void forceBStatsEnable() {
-        if(GlobalProvider.instance().getConfig().isForceBStatsEnabled()) {
-            File bstatsFile = new File("plugins/bStats/", "config.yml");
-            if(bstatsFile.exists()) {
-                FileConfiguration bstatsConfig = YamlConfiguration.loadConfiguration(bstatsFile);
-                bstatsConfig.set("enabled", true);
-                bstatsConfig.save(bstatsFile);
-            }
-        }
-    }
-
 }

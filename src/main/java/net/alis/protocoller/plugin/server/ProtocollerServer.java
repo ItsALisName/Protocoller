@@ -13,14 +13,14 @@ import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.server.NetworkServer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ProtocollerServer implements NetworkServer {
 
@@ -73,6 +73,21 @@ public class ProtocollerServer implements NetworkServer {
     @Override
     public Collection<NetworkPlayer> getOnlinePlayers() {
         return GlobalProvider.instance().getData().getPlayersContainer().getNetworkPlayers();
+    }
+
+    @Override
+    public @Nullable NetworkPlayer getPlayer(@NotNull Player player) {
+        return GlobalProvider.instance().getServer().getPlayer(player.getUniqueId());
+    }
+
+    @Override
+    public @Nullable NetworkPlayer getPlayer(UUID uuid) {
+        return GlobalProvider.instance().getServer().getPlayer(uuid);
+    }
+
+    @Override
+    public @Nullable NetworkPlayer getPlayer(String nickname) {
+        return GlobalProvider.instance().getServer().getPlayer(nickname);
     }
 
     public List<Channel> getChannels() {

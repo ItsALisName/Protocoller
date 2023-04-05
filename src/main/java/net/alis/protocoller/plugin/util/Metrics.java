@@ -28,7 +28,10 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
 
+import lombok.SneakyThrows;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -660,5 +663,18 @@ public class Metrics {
             }
         }
     }
+
+    @SneakyThrows
+    public static void forceBStatsEnable() {
+        if(GlobalProvider.instance().getConfig().isForceBStatsEnabled()) {
+            File bstatsFile = new File("plugins/bStats/", "config.yml");
+            if(bstatsFile.exists()) {
+                FileConfiguration bstatsConfig = YamlConfiguration.loadConfiguration(bstatsFile);
+                bstatsConfig.set("enabled", true);
+                bstatsConfig.save(bstatsFile);
+            }
+        }
+    }
+
 }
 
