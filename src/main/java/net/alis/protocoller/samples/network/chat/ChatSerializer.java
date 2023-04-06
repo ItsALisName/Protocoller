@@ -4,9 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
-import net.alis.protocoller.samples.util.ChatDeserializer;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -44,7 +43,7 @@ public class ChatSerializer {
 
     @Nullable
     public static Object fromJSON(String json) {
-        return ChatDeserializer.objectFromJsonString(gson, json, ClassesContainer.get().getIChatMutableComponent(), false);
+        return BaseReflection.callMethod(null, fromJson, json);
     }
 
     @Nullable
@@ -65,7 +64,7 @@ public class ChatSerializer {
         return fromJSONOrString(message, false, keepNewlines);
     }
 
-    public static Object fromJSONOrString(String message, boolean nullable, boolean keepNewlines) {
+    public static @Nullable Object fromJSONOrString(String message, boolean nullable, boolean keepNewlines) {
         if (message == null) message = "";
         if (nullable && message.isEmpty()) return null;
         Object component = fromJSONOrNull(message);
@@ -135,11 +134,12 @@ public class ChatSerializer {
 
     public static void init() {
         gson = new Gson();
+        fromJson = BaseReflection.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromJSON", ClassesContainer.get().getIChatBaseComponentClass(), String.class);
         fromString$1 = BaseReflection.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass(), String.class, Boolean.TYPE);
         fromString$2 = BaseReflection.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass(), String.class, Boolean.TYPE, Boolean.TYPE);
         fromComponent = BaseReflection.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromComponent", String.class, ClassesContainer.get().getIChatBaseComponentClass());
     }
 
-    private static Method fromString$1, fromString$2, fromComponent;
+    private static Method fromString$1, fromString$2, fromComponent, fromJson;
     private static Gson gson;
 }

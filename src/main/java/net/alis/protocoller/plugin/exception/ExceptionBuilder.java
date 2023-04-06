@@ -2,9 +2,12 @@ package net.alis.protocoller.plugin.exception;
 
 import lombok.SneakyThrows;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
+import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.managers.FileWorker;
+import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import net.alis.protocoller.plugin.util.Utils;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +28,7 @@ public class ExceptionBuilder {
         return this;
     }
 
-    public ExceptionBuilder ignore(boolean ignore) {
+    public ExceptionBuilder setIgnored(boolean ignore) {
         this.ignore = ignore;
         return this;
     }
@@ -74,16 +77,50 @@ public class ExceptionBuilder {
         return new AttributeException.Builder(showStacktrace, ignore);
     }
 
-    protected static void writeExceptionFile(Throwable e) {
-        TaskSimplifier.get().preformAsync(() -> {
-            FileWorker fileWorker = new FileWorker(ExceptionBuilder.path, e.getClass().getSimpleName() + "_" + Utils.getCurrentDate(false));
-            fileWorker.startWriting().write("Exception: " + e.getClass().getName());
-            fileWorker.writeNewLine("Date and time: " + Utils.getCurrentDate(true) + ", " + Utils.getCurrentTime()).writeNewLine("Cause: " + e.getMessage());
-            fileWorker.writeNewLine("Stacktrace: ");
+    protected static void writeExceptionFile(@NotNull Throwable e) {
+        String serverVersion = GlobalProvider.instance() != null ? GlobalProvider.instance().getServer().getVersion().asString() : InitialData.get().getPreVersion().asString();
+        String fileName = e.getClass().getSimpleName() + "_" + Utils.getCurrentDate(false) + "_" + Utils.getCurrentTime(true) + ".txt";
+        if(TaskSimplifier.get() != null) {
+            TaskSimplifier.get().preformAsync(() -> {
+                FileWorker fileWorker = new FileWorker(ExceptionBuilder.path, fileName);
+                fileWorker.startWriting()
+                        .write("Exception: " + e.getClass().getName())
+                        .writeNewLine()
+                        .writeNewLine("Date and time: " + Utils.getCurrentDate(true) + ", " + Utils.getCurrentTime(false))
+                        .writeNewLine()
+                        .writeNewLine("Reason: " + e.getMessage())
+                        .writeNewLine()
+                        .writeNewLine("Minecraft server core: " + Bukkit.getVersion().split("-")[1])
+                        .writeNewLine()
+                        .writeNewLine("Minecraft server version: " + serverVersion)
+                        .writeNewLine()
+                        .writeNewLine("Stacktrace: ");
+                for (StackTraceElement traceElement : e.getStackTrace())
+                    fileWorker.writeNewLine("    " + traceElement.toString().replace("Protocoller.jar//", ""));
+                fileWorker.writeNewLine()
+                        .writeNewLine("Please, report about that: https://github.com/ItsALisName/Protocoller/issues")
+                        .stopAll();
+            });
+        } else {
+            FileWorker fileWorker = new FileWorker(ExceptionBuilder.path, fileName);
+            fileWorker.startWriting()
+                    .write("Exception: " + e.getClass().getName())
+                    .writeNewLine()
+                    .writeNewLine("Date and time: " + Utils.getCurrentDate(true) + ", " + Utils.getCurrentTime(false))
+                    .writeNewLine()
+                    .writeNewLine("Reason: " + e.getMessage())
+                    .writeNewLine()
+                    .writeNewLine("Minecraft server core: " + Bukkit.getVersion().split("-")[1])
+                    .writeNewLine()
+                    .writeNewLine("Minecraft server version: " + serverVersion)
+                    .writeNewLine()
+                    .writeNewLine("Stacktrace: ");
             for (StackTraceElement traceElement : e.getStackTrace())
-                fileWorker.writeNewLine(traceElement.toString());
-            fileWorker.stopAll();
-        });
+                fileWorker.writeNewLine("    " + traceElement.toString().replace("Protocoller.jar//", ""));
+            fileWorker.writeNewLine()
+                    .writeNewLine("Please, report about that: https://github.com/ItsALisName/Protocoller/issues")
+                    .stopAll();
+        }
     }
 
     @SneakyThrows

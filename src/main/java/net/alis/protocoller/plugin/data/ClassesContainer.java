@@ -135,7 +135,7 @@ public class ClassesContainer {
         setCraftItemStackClass(BaseReflection.getCraftBukkitClass("inventory.CraftItemStack", true));
         setCraftPlayerClass(BaseReflection.getCraftBukkitClass("entity.CraftPlayer", true));
         setResourcePackStatusEnum(BaseReflection.getNMSClass("PacketPlayInResourcePackStatus$EnumResourcePackStatus", "net.minecraft.network.protocol.game.PacketPlayInResourcePackStatus$EnumResourcePackStatus", true));
-        if(InitialData.INSTANCE.getPreVersion().greaterThanOrEqualTo(Version.v1_11) && InitialData.INSTANCE.getPreVersion().lessThan(Version.v1_14)) {
+        if(InitialData.get().getPreVersion().greaterThanOrEqualTo(Version.v1_11) && InitialData.get().getPreVersion().lessThan(Version.v1_14)) {
             setChatVisibilityEnum(BaseReflection.getNMSClass("EntityHuman$EnumChatVisibility", "null", true));
         } else {
             setChatVisibilityEnum(BaseReflection.getNMSClass("EnumChatVisibility", "net.minecraft.world.entity.player.EnumChatVisibility", true));

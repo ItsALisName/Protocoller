@@ -6,6 +6,7 @@ import io.netty.channel.ChannelPipeline;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.util.AccessedObject;
 import org.bukkit.Chunk;
@@ -109,11 +110,11 @@ public class MinecraftReflection {
     }
 
     public static Object getMinecraftChunk(Chunk chunk) {
-        return ((WeakReference<?>) BaseReflection.readField(getCraftChunk(chunk), 0, WeakReference.class)).get();
+        return ((WeakReference<?>) BaseReflection.readField(getCraftChunk(chunk), 0, WeakReference.class, false)).get();
     }
 
     public static Chunk chunkFromMinecraftChunk(Object minecraftChunk) {
-        return BaseReflection.readField(minecraftChunk, 0, Chunk.class);
+        return BaseReflection.readField(minecraftChunk, 0, Chunk.class, false);
     }
 
     public static Chunk chunkFromCraftChunk(Object craftChunk) {
@@ -126,11 +127,11 @@ public class MinecraftReflection {
 
     public static Object getEntityPlayer(Player player) {
         Object craftPlayer = getCraftPlayer(player);
-        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle", new Class[]{}), craftPlayer);
+        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle", new Class[]{}));
     }
 
     public static Object getEntityPlayer(Object craftPlayer) {
-        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle", new Class[]{}), craftPlayer);
+        return BaseReflection.callMethod(craftPlayer, BaseReflection.getMethod(craftPlayer.getClass(), "getHandle", new Class[]{}));
     }
 
     public static Object getPlayerConnection(@NotNull Player player) {
@@ -167,7 +168,7 @@ public class MinecraftReflection {
 
     public static int getPlayerPing(Player player) {
         if(GlobalProvider.instance().getServer().isLegacy()) {
-            return BaseReflection.readField(getEntityPlayer(player), "ping");
+            return BaseReflection.readField(getEntityPlayer(player), "ping", false);
         } else {
             return player.getPing();
         }
@@ -175,7 +176,7 @@ public class MinecraftReflection {
 
     public static int getServerProtocolVersion() {
         Class<?> sharedConstants; int protocol = 0;
-        if(InitialData.INSTANCE.isLegacyServer()) {
+        if(InitialData.get().isLegacyServer()) {
             sharedConstants = BaseReflection.getLegacyNMSClass("SharedConstants", false);
         } else {
             sharedConstants = BaseReflection.getNMClass("SharedConstants", false);
@@ -183,7 +184,7 @@ public class MinecraftReflection {
         try {
             protocol = BaseReflection.callInterfaceMethod(sharedConstants, 0, int.class);
         } catch (Exception e) {
-            protocol = Version.fromPackageName(InitialData.INSTANCE.getPackageVersion()).getProtocol();
+            protocol = Version.fromPackageName(InitialData.get().getPackageVersion()).getProtocol();
         }
         return protocol;
     }
@@ -200,20 +201,20 @@ public class MinecraftReflection {
         Object server = getMinecraftServer();
         if(server.getClass() == ClassesContainer.get().getDedicatedServerClass()) {
             Object fromDedicated = ClassesContainer.get().getMinecraftServerClass().cast(server);
-            return BaseReflection.readSuperclassField(fromDedicated, 0, ClassesContainer.get().getServerConnectionClass());
+            return BaseReflection.readSuperclassField(fromDedicated, 0, ClassesContainer.get().getServerConnectionClass(), false);
         }
-        return BaseReflection.readField(server, 0, ClassesContainer.get().getServerConnectionClass());
+        return BaseReflection.readField(server, 0, ClassesContainer.get().getServerConnectionClass(), false);
     }
 
     public static @NotNull List<Object> getServerChannelFutures() {
-        List<Object> list = Collections.synchronizedList(new ArrayList<Object>());
-        list.addAll(BaseReflection.readField(getServerConnection(), 0, List.class));
+        List<Object> list = Collections.synchronizedList(new ArrayList<>());
+        list.addAll(BaseReflection.readField(getServerConnection(), 0, List.class, false));
         return list;
     }
 
     public static @NotNull List<Object> getServerNetworkManagers() {
         List<Object> list = Collections.synchronizedList(Lists.newArrayList());
-        list.addAll(BaseReflection.readField(getServerConnection(), 1, List.class));
+        list.addAll(BaseReflection.readField(getServerConnection(), 1, List.class, false));
         return list;
     }
 

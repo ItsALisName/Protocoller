@@ -60,10 +60,10 @@ public class LogsManager {
         logger.log(Level.INFO, "[*] Information:                                                  ");
         logger.log(Level.INFO, "[*]  * Server Version: " + GlobalProvider.instance().getServer().getVersion().asString() + "(Protocol: " + GlobalProvider.instance().getServer().getVersion().getProtocol() + ")");
         logger.log(Level.INFO, "[*]  * Plugin Version: " + pluginVersion);
-        logger.log(Level.INFO, "[*]  * Java Version: " + InitialData.INSTANCE.getJavaVersion());
-        logger.log(Level.INFO, "[*]  * JDK Version: " + InitialData.INSTANCE.getJdkVersion());
-        logger.log(Level.INFO, "[*]  * OS Name/Architecture: " + InitialData.INSTANCE.getOsName() + " / " + InitialData.INSTANCE.getOsArchitecture());
-        logger.log(Level.INFO, "[*]  * OS Version: " + InitialData.INSTANCE.getOsVersion());
+        logger.log(Level.INFO, "[*]  * Java Version: " + InitialData.get().getJavaVersion());
+        logger.log(Level.INFO, "[*]  * JDK Version: " + InitialData.get().getJdkVersion());
+        logger.log(Level.INFO, "[*]  * OS Name/Architecture: " + InitialData.get().getOsName() + " / " + InitialData.get().getOsArchitecture());
+        logger.log(Level.INFO, "[*]  * OS Version: " + InitialData.get().getOsVersion());
         logger.log(Level.INFO, "[*]============================================================[*]");
     }
 

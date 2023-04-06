@@ -31,12 +31,12 @@ public class PacketPlayOutCommands implements PlayOutPacket {
         if (!legacyPacket) {
             this.rootCommands = packetData.readList(0);
             for(Object o : this.rootCommands) {
-                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(BaseReflection.readField(o, 0, ClassesContainer.get().getOutCommandInterfaceE()));
-                this.nodes.add(BaseReflection.readField(clsA, 0, String.class));
+                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(BaseReflection.readField(o, 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
+                this.nodes.add(BaseReflection.readField(clsA, 0, String.class, false));
             }
         } else {
             this.rootCommandNode = packetData.readObject(0, ClassesContainer.get().getRootCommandNodeClass());
-            Map<Object, Object> nods = BaseReflection.readSuperclassField(this.rootCommandNode, 0, Map.class);
+            Map<Object, Object> nods = BaseReflection.readSuperclassField(this.rootCommandNode, 0, Map.class, false);
             for(Map.Entry<Object, Object> entry : nods.entrySet()) this.nodes.add((String) entry.getKey());
         }
     }
@@ -48,8 +48,8 @@ public class PacketPlayOutCommands implements PlayOutPacket {
     public void removeCommand(String node) {
         if(!legacyPacket) {
             for(int i = this.rootCommands.size() - 1; i >= 0; i--) {
-                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(BaseReflection.readField(this.rootCommands.get(i), 0, ClassesContainer.get().getOutCommandInterfaceE()));
-                if(((String) BaseReflection.readField(clsA, 0, String.class)).equalsIgnoreCase(node)) {
+                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(BaseReflection.readField(this.rootCommands.get(i), 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
+                if(((String) BaseReflection.readField(clsA, 0, String.class, false)).equalsIgnoreCase(node)) {
                     this.rootCommands.remove(i);
                 }
             }

@@ -5,6 +5,7 @@ import net.alis.protocoller.plugin.config.ConfigUtils;
 import net.alis.protocoller.plugin.data.GlobalData;
 import net.alis.protocoller.plugin.server.ProtocollerServer;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.Nullable;
 
 public class GlobalProvider {
 
@@ -33,7 +34,7 @@ public class GlobalProvider {
         return server;
     }
 
-    public static GlobalProvider instance() {
+    public @Nullable static GlobalProvider instance() {
         return instance;
     }
 

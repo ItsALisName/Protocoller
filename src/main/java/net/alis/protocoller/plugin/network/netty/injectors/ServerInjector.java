@@ -56,7 +56,7 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
         } catch (Exception e) {
             ClassLoader loader = bootstrapAcceptor.getClass().getClassLoader();
             if (loader.getClass().getName().equalsIgnoreCase("org.bukkit.plugin.java.PluginClassLoader")) {
-                PluginDescriptionFile errorSourceDescription = BaseReflection.readField(loader, "description");
+                PluginDescriptionFile errorSourceDescription = BaseReflection.readField(loader, "description", false);
                 new ExceptionBuilder().getInjectExceptions().defineReason(e).failedChannelFutureInject(errorSourceDescription).throwException();
             } else {
                 new ExceptionBuilder().getInjectExceptions().failedChannelFutureInject().throwException();

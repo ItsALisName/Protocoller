@@ -26,29 +26,29 @@ public class PacketUtils {
             case CLIENTBOUND:
             case PLAY_CLIENTBOUND:
                 return BaseReflection.getClassOr(
-                        InitialData.INSTANCE.getPacketsPackage() + ".game." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        InitialData.get().getPacketsPackage() + ".game." + packetName,
+                        InitialData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case LOGIN_SERVERBOUND:
             case LOGIN_CLIENTBOUND:
                 return BaseReflection.getClassOr(
-                        InitialData.INSTANCE.getPacketsPackage() + ".login." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        InitialData.get().getPacketsPackage() + ".login." + packetName,
+                        InitialData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case HANDSHAKE_CLIENTBOUND:
             case HANDSHAKE_SERVERBOUND:
                 return BaseReflection.getClassOr(
-                        InitialData.INSTANCE.getPacketsPackage() + ".handshake." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        InitialData.get().getPacketsPackage() + ".handshake." + packetName,
+                        InitialData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case STATUS_CLIENTBOUND:
             case STATUS_SERVERBOUND:
                 return BaseReflection.getClassOr(
-                        InitialData.INSTANCE.getPacketsPackage() + ".status." + packetName,
-                        InitialData.INSTANCE.getPacketsPackage() + "." + packetName,
+                        InitialData.get().getPacketsPackage() + ".status." + packetName,
+                        InitialData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             default: return null;
@@ -63,7 +63,7 @@ public class PacketUtils {
         report.append("\nPacket class: ").append(data.getType().getPacketClass());
         report.append("\nPacket data [Field -> Type -> Value]:");
         for(Field field : data.getRawPacket().getClass().getDeclaredFields()) {
-            report.append("Field: ").append(field.getName()).append("Type: ").append(field.getType().getSimpleName()).append("Value: ").append((Object) BaseReflection.readField(data.getRawPacket(), field));
+            report.append("\nField: ").append(field.getName()).append("; Type: ").append(field.getType().getSimpleName()).append("; Value: ").append((Object) BaseReflection.readField(data, field, true));
         }
         return report.toString();
     }
@@ -76,7 +76,7 @@ public class PacketUtils {
         report.append("\nPacket class: ").append(data.getClass().getName());
         report.append("\nPacket data [Field -> Type -> Value]:");
         for(Field field : data.getClass().getDeclaredFields()) {
-            report.append("Field: ").append(field.getName()).append("Type: ").append(field.getType().getSimpleName()).append("Value: ").append((Object) BaseReflection.readField(data, field));
+            report.append("\nField: ").append(field.getName()).append("; Type: ").append(field.getType().getSimpleName()).append("; Value: ").append((Object) BaseReflection.readField(data, field, true));
         }
         return report.toString();
     }

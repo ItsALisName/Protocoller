@@ -19,7 +19,7 @@ public class UpdateServerDataRunner implements Runnable {
         GlobalProvider.instance().getServer().channels.clear();
         try {
             for (Object networkManager : MinecraftReflection.getServerNetworkManagers()) {
-                GlobalProvider.instance().getServer().channels.add(BaseReflection.readField(networkManager, 0, Channel.class));
+                GlobalProvider.instance().getServer().channels.add(BaseReflection.readField(networkManager, 0, Channel.class, false));
             }
         } catch (Exception ex) {
             new ExceptionBuilder().getServerExceptions().defineReason(ex).networkManagersError().throwException();

@@ -33,7 +33,7 @@ public class NettyChannelManager {
     }
 
     public void sendPacket(@NotNull PlayOutPacket packet) {
-        channel.writeAndFlush(packet.getRawPacket());
+        channel.writeAndFlush(packet.getData().getRawPacket());
     }
 
 }

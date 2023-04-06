@@ -22,8 +22,10 @@ public class FileWorker {
     }
 
     @SneakyThrows
-    public FileWorker(String path, String name) {
-        this.file = new File(path, name);
+    public FileWorker(String directoryPath, String name) {
+        File directory = new File(directoryPath);
+        if(!directory.exists()) directory.mkdir();
+        this.file = new File(directory, name);
         if(!this.file.exists()) this.file.createNewFile();
     }
 
@@ -79,9 +81,13 @@ public class FileWorker {
         return this;
     }
 
-    @SneakyThrows
     public FileWorker writeNewLine(String o) {
         write("\n" + o);
+        return this;
+    }
+
+    public FileWorker writeNewLine() {
+        write("\n");
         return this;
     }
 

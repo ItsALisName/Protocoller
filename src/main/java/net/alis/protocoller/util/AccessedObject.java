@@ -33,7 +33,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.fields) {
             if(field.getType() == type) {
-                if(start == index) return BaseReflection.readField(this.object, field);
+                if(start == index) return BaseReflection.readField(this.object, field, false);
                 start += 1; continue;
             }
         }
@@ -53,7 +53,7 @@ public class AccessedObject {
         Class<?> type = param.getClass();
         for(Field field : this.fields) {
             if(field.getType() == type) {
-                if(start == index) BaseReflection.writeField(this.object, field, param);
+                if(start == index) BaseReflection.writeField(this.object, field, param, false);
                 start += 1; continue;
             }
         }
@@ -71,7 +71,7 @@ public class AccessedObject {
     public void writeSpecify(int index, Class<?> specify, Object param) {
         int start = 0;
         for(Field field : this.fields) {
-            if(field.getType() == specify && start == index) BaseReflection.writeField(this.object, field, param);
+            if(field.getType() == specify && start == index) BaseReflection.writeField(this.object, field, param, false);
             start += 1;
         }
         writeSpecifySuperclass(index, specify, param);
@@ -82,7 +82,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == type) {
-                if(index == start) return BaseReflection.readField(this.object, field);
+                if(index == start) return BaseReflection.readField(this.object, field, false);
                 start += 1;
             }
         }
@@ -93,7 +93,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == param.getClass()) {
-                if(index == start) BaseReflection.writeField(this.object, field, param);
+                if(index == start) BaseReflection.writeField(this.object, field, param, false);
                 start += 1;
             }
         }
@@ -103,7 +103,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == type) {
-                if(index == start) BaseReflection.writeField(this.object, field, param);
+                if(index == start) BaseReflection.writeField(this.object, field, param, false);
                 start += 1;
             }
         }

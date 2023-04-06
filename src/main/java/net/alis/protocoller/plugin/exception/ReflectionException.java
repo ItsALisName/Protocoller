@@ -27,7 +27,7 @@ public class ReflectionException extends RuntimeException {
         }
 
         public Builder defineReason(@NotNull Throwable throwable) {
-            this.definedReason = "\nReason: " + throwable.getMessage();
+            this.definedReason = "\n-> Reason from the branch: " + throwable.getMessage() + "\n";
             return this;
         }
 
@@ -78,7 +78,13 @@ public class ReflectionException extends RuntimeException {
         public CompletedException methodNotFound(Class<?> from, String methodName, Class<?> @NotNull ... parameters) {
             if(parameters.length > 0){
                 List<String> params = new ArrayList<>();
-                for (Class<?> p : parameters) params.add(p.getSimpleName());
+                for (Class<?> p : parameters) {
+                    if (p != null) {
+                        params.add(p.getSimpleName());
+                    } else {
+                        params.add("UnknownClass(Null)");
+                    }
+                }
                 return new CompletedException(new ReflectionException("Could not find method named \"" + methodName + "\" in class \"" + from.getName() + "\" with parameters \"" + String.join(", ",params) + "\"" + definedReason), showStackTrace, ignore);
             } else {
                 return new CompletedException(new ReflectionException("Could not find method named \"" + methodName + "\" in class \"" + from.getName() + "\"" + definedReason), showStackTrace, ignore);
@@ -88,7 +94,13 @@ public class ReflectionException extends RuntimeException {
         public CompletedException methodNotFound(Class<?> from, String methodName, Class<?> returnType, Class<?> @NotNull ... parameters) {
             if(parameters.length > 0) {
                 List<String> params = new ArrayList<>();
-                for (Class<?> p : parameters) params.add(p.getSimpleName());
+                for (Class<?> p : parameters) {
+                    if (p != null) {
+                        params.add(p.getSimpleName());
+                    } else {
+                        params.add("UnknownClass(Null)");
+                    }
+                }
                 return new CompletedException(new ReflectionException("Could not find method named \"" + methodName + "\" returning type \"" + returnType.getName() + "\" in class \"" + from.getName() + "\" with parameters \"" + String.join(", ", params) + "\"" + definedReason), showStackTrace, ignore);
             } else {
                 return new CompletedException(new ReflectionException("Could not find method named \"" + methodName + "\" returning type \"" + returnType.getName() + "\" in class \"" + from.getName() + "\"" + definedReason), showStackTrace, ignore);
@@ -118,7 +130,13 @@ public class ReflectionException extends RuntimeException {
         public CompletedException constructorNotFound(Class<?> from, Class<?> @NotNull ... parameters) {
             if(parameters.length > 0){
                 List<String> params = new ArrayList<>();
-                for (Class<?> p : parameters) params.add(p.getSimpleName());
+                for (Class<?> p : parameters) {
+                    if (p != null) {
+                        params.add(p.getSimpleName());
+                    } else {
+                        params.add("UnknownClass(Null)");
+                    }
+                }
                 return new CompletedException(new ReflectionException("Could not find constructor in class \"" + from.getName() + "\" with parameters \"" + String.join(", ",params) + "\"" + definedReason), showStackTrace, ignore);
             } else {
                 return new CompletedException(new ReflectionException("Could not find constructor in class \"" + from.getName() + "\" without parameters" + definedReason), showStackTrace, ignore);
@@ -131,7 +149,13 @@ public class ReflectionException extends RuntimeException {
 
         public CompletedException callConstructorError(Constructor<?> constructor, Class<?> @NotNull ... parameters) {
             List<String> params = new ArrayList<>();
-            for (Class<?> p : parameters) params.add(p.getSimpleName());
+            for (Class<?> p : parameters) {
+                if (p != null) {
+                    params.add(p.getSimpleName());
+                } else {
+                    params.add("UnknownClass(Null)");
+                }
+            }
             return new CompletedException(new ReflectionException("Failed to call constructor named \"" + constructor.getName() + "\" with parameters \"" + String.join(", ", params) +"\"" + definedReason), showStackTrace, ignore);
         }
 

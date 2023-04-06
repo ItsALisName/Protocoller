@@ -24,9 +24,9 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition>, ObjectS
 
     public BaseBlockPosition(Object blockPosition, boolean trueLink) {
         if (!trueLink) {
-            this.x = BaseReflection.readSuperclassField(blockPosition, 0, int.class);
-            this.y = BaseReflection.readSuperclassField(blockPosition, 1, int.class);
-            this.z = BaseReflection.readSuperclassField(blockPosition, 2, int.class);
+            this.x = BaseReflection.readSuperclassField(blockPosition, 0, int.class, false);
+            this.y = BaseReflection.readSuperclassField(blockPosition, 1, int.class, false);
+            this.z = BaseReflection.readSuperclassField(blockPosition, 2, int.class, false);
         } else {
             AccessedObject accessor = new AccessedObject(blockPosition);
             this.x = accessor.read(0, int.class);

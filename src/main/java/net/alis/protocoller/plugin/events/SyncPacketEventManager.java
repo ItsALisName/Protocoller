@@ -1,6 +1,7 @@
 package net.alis.protocoller.plugin.events;
 
 import io.netty.channel.Channel;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.providers.ApiProvider;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
@@ -53,7 +54,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                 }
             }
             if(methodsCount == 0) {
-                LogsManager.get().getLogger().warn("No methods found listening for packets during registration of packet listener class '" + listener.getClass().getSimpleName() + "'");
+                LogsManager.get().getLogger().warn("No methods found listening for packets during registration of packet listener class '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getSimpleName() + "'");
             }
         });
     }
@@ -88,7 +89,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
         switch (data.getType().getState()) {
             case CLIENTBOUND: {
                 if(player == null) {
-                    LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
+                    new ExceptionBuilder().getEventsExceptions().processedNullPlayer("PacketPlaySendEvent", data).showException();
                 }
                 PacketPlaySendEvent event = new PacketPlaySendEvent(data, channel, address, player, networkPlayer);
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
@@ -97,8 +98,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -109,8 +112,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         }catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -121,8 +126,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -133,8 +140,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -145,8 +154,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -157,8 +168,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -167,7 +180,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
             }
             case PLAY_CLIENTBOUND: {
                 if(player == null) {
-                    LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'PacketPlayReceiveEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
+                    new ExceptionBuilder().getEventsExceptions().processedNullPlayer("PacketPlayReceiveEvent", data).showException();
                 }
                 PacketPlayReceiveEvent event = new PacketPlayReceiveEvent(data, channel, address, player, networkPlayer);
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
@@ -176,8 +189,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -188,8 +203,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -200,8 +217,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -212,8 +231,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -224,8 +245,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -236,8 +259,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -246,7 +271,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
             }
             case PLAY_SERVERBOUND: {
                 if(player == null) {
-                    LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'PacketPlaySendEvent' (PLAYER_IS_NULL)! Inform the author about this: https://vk.com/alphatwo");
+                    new ExceptionBuilder().getEventsExceptions().processedNullPlayer("PacketPlaySendEvent", data).showException();
                 }
                 PacketPlaySendEvent event = new PacketPlaySendEvent(data, channel, address, player, networkPlayer);
                 for(RegisteredPacketListener listener : PacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
@@ -255,8 +280,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -267,8 +294,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -279,8 +308,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -291,8 +322,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -303,8 +336,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -315,8 +350,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -331,8 +368,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -343,8 +382,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try{
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -355,8 +396,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -367,8 +410,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -379,8 +424,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -391,8 +438,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -407,8 +456,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -419,8 +470,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -431,8 +484,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -443,8 +498,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -455,8 +512,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -467,8 +526,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -483,8 +544,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -495,8 +558,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -507,8 +572,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -519,8 +586,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -531,8 +600,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -543,8 +614,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -559,8 +632,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -571,8 +646,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -583,8 +660,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -595,8 +674,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -607,8 +688,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -619,8 +702,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -635,8 +720,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -647,8 +734,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -659,8 +748,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -671,8 +762,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -683,8 +776,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -695,8 +790,10 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                         try {
                             BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
-                            LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                            LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                            new ExceptionBuilder().getEventsExceptions()
+                                    .defineReason(e)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .showException();
                             return null;
                         }
                     }
@@ -704,7 +801,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                 return event;
             }
         }
-        LogsManager.get().getLogger().error("An error occurred while trying to initialize the event 'SynchronousPacketEvent'! Inform the author about this: https://vk.com/alphatwo");
+        new ExceptionBuilder().getEventsExceptions().callEventUnknownError("SynchronousPacketEvent").showException();
         return null;
     }
 }

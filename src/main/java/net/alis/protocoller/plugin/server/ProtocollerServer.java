@@ -17,6 +17,7 @@ import java.util.*;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -33,9 +34,11 @@ public class ProtocollerServer implements NetworkServer {
     private final List<NettyPacketInterceptor> packetInterceptors;
     private final ServerInjector serverInjector;
     private final PlayersInjector playersInjector;
+    private final String coreName;
 
     public ProtocollerServer(Server server) {
         this.server = server;
+        this.coreName = Bukkit.getVersion().split("-")[1];
         this.version = Version.fromProtocol(MinecraftReflection.getServerProtocolVersion());
         this.isLegacy = this.version.ordinal() < Version.v1_17.ordinal();
         this.isVeryLegacy = isLegacy && this.version.ordinal() < Version.v1_13.ordinal();
@@ -44,7 +47,7 @@ public class ProtocollerServer implements NetworkServer {
         List<Object> networkManagers = MinecraftReflection.getServerNetworkManagers();
         synchronized (networkManagers) {
             for(Object networkManager : networkManagers) {
-                this.channels.add(BaseReflection.readField(networkManager, 0, Channel.class));
+                this.channels.add(BaseReflection.readField(networkManager, 0, Channel.class, false));
             }
         }
         for(Object future : MinecraftReflection.getServerChannelFutures()) {
@@ -88,6 +91,11 @@ public class ProtocollerServer implements NetworkServer {
     @Override
     public @Nullable NetworkPlayer getPlayer(String nickname) {
         return GlobalProvider.instance().getServer().getPlayer(nickname);
+    }
+
+    @Override
+    public String getCoreName() {
+        return coreName;
     }
 
     public List<Channel> getChannels() {

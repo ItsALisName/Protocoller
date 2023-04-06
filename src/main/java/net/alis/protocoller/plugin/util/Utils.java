@@ -30,18 +30,19 @@ public class Utils {
         return input.replace("&", "§");
     }
 
-    public static @NotNull String getCurrentDate(boolean isDetail) {
+    public static @NotNull String getCurrentDate(boolean inDetail) {
         SimpleDateFormat format;
-        if(isDetail) {
+        if(inDetail) {
             format = new SimpleDateFormat("EEEE, dd MMMM yyyy");
         } else {
-            format = new SimpleDateFormat("dd/MM/yyyy");
+            format = new SimpleDateFormat("dd-MM-yyyy");
         }
         return format.format(new Date());
     }
 
-    public static @NotNull String getCurrentTime() {
-        return new SimpleDateFormat("HH:mm:ss").format(new Date());
+    public static @NotNull String getCurrentTime(boolean fileNameFormat) {
+        if(!fileNameFormat) return new SimpleDateFormat("HH:mm:ss").format(new Date());
+        return new SimpleDateFormat("HH-mm-ss").format(new Date());
     }
 
 }

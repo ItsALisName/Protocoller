@@ -1,7 +1,9 @@
 package net.alis.protocoller.plugin.config;
 
 import lombok.Getter;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,12 @@ public class ProtocollerConfig {
     private static @Getter boolean bStatsEnabled;
     private static @Getter boolean saveErrors;
 
-    public static void load(FileConfiguration file) {
+    public static void load(Plugin plugin, FileConfiguration file) {
+        String configVersion = ConfigUtils.getConfigVersion(file);
+        if(configVersion == null || !configVersion.equalsIgnoreCase("0.0.1-build2")) {
+            ConfigUpdater.updateConfiguration(plugin, "general.yml", ConfigUtils.getFile("general.yml"));
+            file = ConfigUtils.getConfigurationFile("general.yml");
+        }
         listenerRegistrationNotify = ConfigUtils.getIfNotNull(file, "listeners-registration-notify", Boolean.class);
         bannedPlugin.addAll(ConfigUtils.getIfNotNull(file, "banned-plugins", List.class));
         bannedAuthors.addAll(ConfigUtils.getIfNotNull(file, "banned-authors", List.class));
@@ -27,6 +34,10 @@ public class ProtocollerConfig {
     }
 
     public static void reload(FileConfiguration file) {
+        String configVersion = ConfigUtils.getConfigVersion(file);
+        if(configVersion == null || !configVersion.equalsIgnoreCase("0.0.1-build2")) {
+            new ExceptionBuilder().getConfigExceptions().differentVersionsError("general.yml", configVersion == null ? "N/A" : configVersion, "0.0.1-build2").throwException();
+        }
         bannedPlugin.clear(); bannedAuthors.clear();
         bannedPlugin.addAll(ConfigUtils.getIfNotNull(file, "banned-plugins", List.class));
         bannedAuthors.addAll(ConfigUtils.getIfNotNull(file, "banned-authors", List.class));

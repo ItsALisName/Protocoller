@@ -14,7 +14,7 @@ import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.MessageType;
 
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public class PacketPlayOutChat implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private ChatComponent message;
-    private ChatMessageType messageType;
+    private MessageType messageType;
     private @Nullable UUID sender;
 
     public PacketPlayOutChat(@NotNull PacketDataContainer packetData) {
@@ -30,16 +30,16 @@ public class PacketPlayOutChat implements PlayOutPacket {
         this.packetData = packetData;
         this.message = new ChatComponent(ChatSerializer.fromComponent(packetData.readIChatBaseComponent(0)));
         if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)){
-            this.messageType = ChatMessageType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getChatMessageTypeEnum()).ordinal());
+            this.messageType = MessageType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getChatMessageTypeEnum()).ordinal());
         } else {
-            this.messageType = ChatMessageType.getById(packetData.readInt(0));
+            this.messageType = MessageType.getById(packetData.readInt(0));
         }
         if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
             this.sender = packetData.readUUID(0);
         }
     }
 
-    public PacketPlayOutChat(ChatComponent message, ChatMessageType messageType, @Nullable UUID sender) {
+    public PacketPlayOutChat(ChatComponent message, MessageType messageType, @Nullable UUID sender) {
         PacketBuilder builder = PacketBuilder.get(getPacketType());
         switch (builder.getConstructorIndicator().getLevel()) {
             case 1: {
@@ -64,7 +64,7 @@ public class PacketPlayOutChat implements PlayOutPacket {
         this.sender = sender;
     }
 
-    public PacketPlayOutChat(ChatComponent message, ChatMessageType messageType) {
+    public PacketPlayOutChat(ChatComponent message, MessageType messageType) {
         this(message, messageType, null);
     }
 
@@ -77,11 +77,11 @@ public class PacketPlayOutChat implements PlayOutPacket {
         this.message = message;
     }
 
-    public ChatMessageType getMessageType() {
+    public MessageType getMessageType() {
         return messageType;
     }
 
-    public void setMessageType(ChatMessageType messageType) {
+    public void setMessageType(MessageType messageType) {
         if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)) {
             this.packetData.writeEnumConstant(0, messageType.original());
         } else {

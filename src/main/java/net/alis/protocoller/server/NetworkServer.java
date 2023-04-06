@@ -15,6 +15,8 @@ public interface NetworkServer {
 
     boolean isVeryLegacy();
 
+    String getCoreName();
+
     Collection<NetworkPlayer> getOnlinePlayers();
 
     NetworkPlayer getPlayer(Player player);

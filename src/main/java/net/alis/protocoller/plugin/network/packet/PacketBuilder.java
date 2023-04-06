@@ -23,7 +23,7 @@ public class PacketBuilder {
         this.type = type;
         this.indicator = indicator;
         this.version = latest;
-        this.constructor = BaseReflection.getConstructor(type.getPacketClass(), indicator.getTypes());
+        this.constructor = BaseReflection.getConstructor(type.getPacketClass(), true, indicator.getTypes());
     }
 
     public Object buildPacket(@Nullable IndexedParam<?, ?>[] parameters, @Nullable Object... objects) {

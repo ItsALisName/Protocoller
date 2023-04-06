@@ -1,6 +1,7 @@
 package net.alis.protocoller.plugin.exception;
 
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
+import net.alis.protocoller.plugin.managers.LogsManager;
 
 public class CompletedException {
 
@@ -25,6 +26,21 @@ public class CompletedException {
             throw this.exception;
         }
         return null;
+    }
+
+    public Exception showException() {
+        if (saveToFile) {
+            ExceptionBuilder.writeExceptionFile(this.exception);
+        }
+        LogsManager.get().getLogger().error("An exception was found: " + exception.getClass().getName());
+        LogsManager.get().getLogger().error("Message: " + exception.getMessage());
+        if(showStacktrace) {
+            LogsManager.get().getLogger().error("StackTrace:");
+            for(StackTraceElement ste : this.exception.getStackTrace()) {
+                LogsManager.get().getLogger().error(ste.toString());
+            }
+        }
+        return this.exception;
     }
 
 }

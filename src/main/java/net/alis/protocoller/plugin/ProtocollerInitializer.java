@@ -42,8 +42,8 @@ public class ProtocollerInitializer {
         ClassesContainer.init();
         MagicNumbersSample.init();
         ChatSerializer.init();
-        ConfigUtils.createFiles(this.plugin);
-        ProtocollerConfig.load(ConfigUtils.getConfigurationFile("general.yml"));
+        ConfigUtils.createFiles(this.plugin, false);
+        ProtocollerConfig.load(this.plugin, ConfigUtils.getConfigurationFile("general.yml"));
         PacketTypesInitializer.init();
         CRecipe.RecipeSerializer.init();
         GlobalProvider.init();

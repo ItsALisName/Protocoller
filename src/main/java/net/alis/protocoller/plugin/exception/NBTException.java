@@ -22,7 +22,7 @@ public class NBTException extends RuntimeException {
         }
 
         public Builder defineReason(@NotNull Throwable throwable) {
-            this.definedReason = "\nReason: " + throwable.getMessage();
+            this.definedReason = "\n-> Reason from the branch: " + throwable.getMessage() + "\n";
             return this;
         }
 

@@ -77,7 +77,7 @@ public class MobEffectList implements ObjectSample {
             for(Map.Entry<AttributeBase, AttributeModifier> e : this.attributeModifierMap.entrySet()) {
                 atrMap.put(e.getKey().createOriginal(), e.getValue().createOriginal());
             }
-            BaseReflection.writeField(original, BaseReflection.getField(original.getClass(), 0, Map.class), atrMap);
+            BaseReflection.writeField(original, BaseReflection.getField(original.getClass(), 0, Map.class), atrMap, false);
         }
         return original;
     }

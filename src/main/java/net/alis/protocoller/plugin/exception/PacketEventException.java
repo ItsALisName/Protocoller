@@ -22,7 +22,7 @@ public class PacketEventException extends RuntimeException {
         }
 
         public Builder defineReason(@NotNull Throwable throwable) {
-            this.definedReason = "\nReason: " + throwable.getMessage();
+            this.definedReason = "\n-> Reason from the branch: " + throwable.getMessage() + "\n";
             return this;
         }
 
@@ -48,6 +48,14 @@ public class PacketEventException extends RuntimeException {
             } else {
                 return new CompletedException(new PacketEventException("Failed to call event \"" + eventTypeName + "\" for listener \"" + listener.getName() + "\"" + definedReason), showStackTrace, ignore);
             }
+        }
+
+        public CompletedException readPacketError(PacketDataContainer data) {
+            return new CompletedException(new PacketEventException("Failed to read incoming packet" + definedReason + PacketUtils.buildPacketDataReport(data)), showStackTrace, ignore);
+        }
+
+        public CompletedException readPacketError(Object data) {
+            return new CompletedException(new PacketEventException("Failed to read incoming packet" + definedReason + PacketUtils.buildPacketDataReport(data)), showStackTrace, ignore);
         }
 
     }

@@ -100,14 +100,10 @@ public class MagicNumbersSample {
         return BaseReflection.callMethod(null, serializeEntity, entity);
     }
 
-    public static Entity deserializeEntity(byte[] bytes) {
-        return BaseReflection.callMethod(null, deserializeEntity, (Object) bytes);
-    }
-
     public static void init() {
         iBlockDataFromMaterial = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getBlock", ClassesContainer.get().getIBlockDataClass(), Material.class, byte.class);
         materialDataFromIBlockData = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterial", MaterialData.class, ClassesContainer.get().getIBlockDataClass());
-        itemFromMaterial = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getItem", ClassesContainer.get().getMinecraftItemClass(), Material.class, byte.class);
+        itemFromMaterial = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getItem", ClassesContainer.get().getMinecraftItemClass(), Material.class, short.class);
         materialDataFromItem = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterialData", MaterialData.class, ClassesContainer.get().getMinecraftItemClass());
         materialFromMinecraftBlock = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, ClassesContainer.get().getMinecraftBlockClass());
         materialFromMinecraftItem = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, ClassesContainer.get().getMinecraftItemClass());
@@ -126,11 +122,10 @@ public class MagicNumbersSample {
         serializeItem = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "serializeItem", byte[].class, ItemStack.class);
         deserializeItem = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "deserializeItem", ItemStack.class, byte[].class);
         serializeEntity = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "serializeEntity", byte[].class, Entity.class);
-        deserializeEntity = BaseReflection.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "deserializeEntity", Entity.class, byte[].class);
     }
 
     private static Method materialDataFromIBlockData, iBlockDataFromMaterial, itemFromMaterial, materialDataFromItem, materialFromMinecraftBlock, materialFromMinecraftItem,
     itemFromMaterial$1, minecraftBlockFromMaterial, minecraftEntityTypesFromEntityType, entityTypeFromMinecraftEntityTypes, toLegacyMaterial, fromLegacyMaterial, fromLegacyMaterialData,
-    fromLegacyMaterialData$1, fromLegacyBlockData, materialFromVersion, getMappingsVersion, getDataVersion, serializeItem, deserializeItem, serializeEntity, deserializeEntity;
+    fromLegacyMaterialData$1, fromLegacyBlockData, materialFromVersion, getMappingsVersion, getDataVersion, serializeItem, deserializeItem, serializeEntity;
 
 }

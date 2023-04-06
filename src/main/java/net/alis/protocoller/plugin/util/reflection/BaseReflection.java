@@ -24,35 +24,36 @@ public class BaseReflection {
         try {
             return Class.forName(clazz);
         } catch (ClassNotFoundException e) {
-            return new ExceptionBuilder().ignore(ignoreException).getReflectionExceptions().classNotFound(clazz).throwException();
+            return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().classNotFound(clazz).throwException();
         }
     }
 
     @Nullable
-    public static Field getField(@NotNull Class<?> instance, String fieldName) {
+    public static Field getField(@NotNull Class<?> instance, String fieldName, boolean ignoreException) {
         for(Field field : instance.getDeclaredFields()) {
             field.setAccessible(true);
             if(field.getName().equalsIgnoreCase(fieldName)) return field;
         }
-        return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(instance, fieldName).throwException();
+        return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().fieldNotFound(instance, fieldName).throwException();
     }
 
-    public static void writeField(Object instance, @NotNull Field field, Object param) {
+    public static void writeField(Object instance, @NotNull Field field, Object param, boolean ignoreException) {
         field.setAccessible(true);
         try {
             field.set(instance, param);
         } catch (IllegalAccessException e) {
-            new ExceptionBuilder().getReflectionExceptions().defineReason(e).writeFieldError(instance.getClass(), field).throwException();
+            new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(e).writeFieldError(instance.getClass(), field).throwException();
         }
     }
 
     @Contract(pure = true)
     @Nullable
-    public static <PARAM> PARAM readField(Object instance, @NotNull Field field) {
+    public static <PARAM> PARAM readField(Object instance, @NotNull Field field, boolean ignoreException) {
         try {
+            field.setAccessible(true);
             return (PARAM) field.get(instance);
         } catch (IllegalAccessException accessException) {
-            return new ExceptionBuilder().getReflectionExceptions().defineReason(accessException).readFieldError(instance.getClass(), field).throwException();
+            return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(accessException).readFieldError(instance.getClass(), field).throwException();
         }
     }
 
@@ -62,7 +63,7 @@ public class BaseReflection {
                 return subClass;
             }
         }
-        return new ExceptionBuilder().ignore(ignoreException).getReflectionExceptions().subClassNotFound(name, clazz.getName()).throwException();
+        return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().subClassNotFound(name, clazz.getName()).throwException();
     }
 
     @Nullable
@@ -73,7 +74,7 @@ public class BaseReflection {
 
     @Nullable
     public static Class<?> getCraftBukkitClass(String clazz, boolean ignoreException) {
-        return getClass(InitialData.INSTANCE.getCraftBukkitPackage() + "." + clazz, ignoreException);
+        return getClass(InitialData.get().getCraftBukkitPackage() + "." + clazz, ignoreException);
     }
 
     @Nullable
@@ -83,11 +84,11 @@ public class BaseReflection {
 
     @Nullable
     public static Class<?> getLegacyNMSClass(String clazz, boolean ignoreException) {
-        return getClass("net.minecraft.server." + InitialData.INSTANCE.getPackageVersion() + "." + clazz, ignoreException);
+        return getClass("net.minecraft.server." + InitialData.get().getPackageVersion() + "." + clazz, ignoreException);
     }
 
     public static Class<?> getNMSClass(String clazzName, @Nullable String clazzPathWithName, boolean ignoreException) {
-        if(InitialData.INSTANCE.isLegacyServer()) {
+        if(InitialData.get().isLegacyServer()) {
             return getLegacyNMSClass(clazzName, ignoreException);
         } else {
             return getClass(clazzPathWithName, ignoreException);
@@ -156,7 +157,7 @@ public class BaseReflection {
         return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, instance).throwException();
     }
 
-    public static <PARAM> @Nullable PARAM readSuperclassField(@NotNull Object instance, int index, Class<?> type) {
+    public static <PARAM> @Nullable PARAM readSuperclassField(@NotNull Object instance, int index, Class<?> type, boolean ignoreException) {
         int start = 0;
         for(Field field : instance.getClass().getSuperclass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -165,7 +166,7 @@ public class BaseReflection {
                     try {
                         return (PARAM) field.get(instance);
                     } catch (IllegalAccessException e) {
-                        return new ExceptionBuilder().getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), index, field).throwException();
+                        return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), index, field).throwException();
                     }
                 }
                 start += 1;
@@ -174,15 +175,16 @@ public class BaseReflection {
         return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, instance.getClass()).throwException();
     }
 
-    public static <PARAM> PARAM readField(@NotNull Object instance, String fieldName) {
+    public static <PARAM> PARAM readField(@NotNull Object instance, String fieldName, boolean ignoreException) {
         try {
-            return (PARAM) instance.getClass().getDeclaredField(fieldName).get(instance);
+            Field f = instance.getClass().getDeclaredField(fieldName); f.setAccessible(true);
+            return (PARAM) f.get(instance);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), fieldName).throwException();
+            return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), fieldName).throwException();
         }
     }
 
-    public static <PARAM> PARAM readField(@NotNull Object instance, int index, Class<?> type) {
+    public static <PARAM> PARAM readField(@NotNull Object instance, int index, Class<?> type, boolean ignoreException) {
         int start = 0;
         for(Field field : instance.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -191,7 +193,7 @@ public class BaseReflection {
                     try {
                         return (PARAM) field.get(instance);
                     } catch (IllegalAccessException e) {
-                        return new ExceptionBuilder().getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), index, field).throwException();
+                        return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(e).readFieldError(instance.getClass(), index, field).throwException();
                     }
                 }
                 start += 1;
@@ -200,7 +202,7 @@ public class BaseReflection {
         return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, instance.getClass()).throwException();
     }
 
-    public static void writeField(@NotNull Object instance, int index, Object param) {
+    public static void writeField(@NotNull Object instance, int index, Object param, boolean ignoreException) {
         int start = 0;
         for(Field field : instance.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -209,13 +211,13 @@ public class BaseReflection {
                     try {
                         field.set(instance, param); break;
                     } catch (IllegalAccessException e) {
-                        new ExceptionBuilder().getReflectionExceptions().defineReason(e).writeFieldError(instance.getClass(), index, field).throwException();
+                        new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(e).writeFieldError(instance.getClass(), index, field).throwException();
                     }
                 }
                 start += 1;
             }
         }
-        new ExceptionBuilder().getReflectionExceptions().fieldNotFound(param.getClass(), index, instance.getClass()).throwException();
+        new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().fieldNotFound(param.getClass(), index, instance.getClass()).throwException();
     }
 
     public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, String methodName) {
@@ -274,7 +276,7 @@ public class BaseReflection {
     }
 
     @Nullable
-    public static Constructor<?> getConstructor(Class<?> instance, Class<?>... parameters) {
+    public static Constructor<?> getConstructor(Class<?> instance, boolean ignoreException, Class<?>... parameters) {
         if(instance != null){
             for (Constructor<?> constructor : instance.getDeclaredConstructors()) {
                 constructor.setAccessible(true);
@@ -282,8 +284,12 @@ public class BaseReflection {
                     return constructor;
                 }
             }
+            return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().constructorNotFound(instance, parameters).throwException();
         }
-        return new ExceptionBuilder().getReflectionExceptions().constructorNotFound(instance, parameters).throwException();
+        if(!ignoreException){
+            return ExceptionBuilder.throwException(new NullPointerException("Failed to get class constructor because class is null"), true);
+        }
+        return null;
     }
 
     @Nullable

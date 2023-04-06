@@ -163,31 +163,31 @@ public final class NBTUtil {
                 return new NBTTagEnd();
             }
             case 1: {
-                return new NBTTagByte(BaseReflection.readField(nbtBase, 0, Byte.TYPE));
+                return new NBTTagByte(BaseReflection.readField(nbtBase, 0, Byte.TYPE, false));
             }
             case 2: {
-                return new NBTTagShort(BaseReflection.readField(nbtBase, 0, Short.TYPE));
+                return new NBTTagShort(BaseReflection.readField(nbtBase, 0, Short.TYPE, false));
             }
             case 3: {
-                return new NBTTagInt(BaseReflection.readField(nbtBase, 0, Integer.TYPE));
+                return new NBTTagInt(BaseReflection.readField(nbtBase, 0, Integer.TYPE, false));
             }
             case 4: {
-                return new NBTTagLong(BaseReflection.readField(nbtBase, 0, Long.TYPE));
+                return new NBTTagLong(BaseReflection.readField(nbtBase, 0, Long.TYPE, false));
             }
             case 5: {
-                return new NBTTagFloat(BaseReflection.readField(nbtBase, 0, Float.TYPE));
+                return new NBTTagFloat(BaseReflection.readField(nbtBase, 0, Float.TYPE, false));
             }
             case 6: {
-                return new NBTTagDouble(BaseReflection.readField(nbtBase, 0, Double.TYPE));
+                return new NBTTagDouble(BaseReflection.readField(nbtBase, 0, Double.TYPE, false));
             }
             case 7: {
-                return new NBTTagByteArray((byte[]) BaseReflection.readField(nbtBase, 0, byte[].class));
+                return new NBTTagByteArray((byte[]) BaseReflection.readField(nbtBase, 0, byte[].class, false));
             }
             case 8: {
-                return new NBTTagString(BaseReflection.readField(nbtBase, 0, String.class));
+                return new NBTTagString(BaseReflection.readField(nbtBase, 0, String.class, false));
             }
             case 9: {
-                return new NBTTagList(BaseReflection.readField(nbtBase, 0, List.class), true);
+                return new NBTTagList(BaseReflection.readField(nbtBase, 0, List.class, false), true);
             }
             case 10: {
                 NBTTagCompound nbt = new NBTTagCompound();
@@ -195,10 +195,10 @@ public final class NBTUtil {
                 return nbt;
             }
             case 11: {
-                return new NBTTagIntArray((int[]) BaseReflection.readField(nbtBase, 0, int[].class));
+                return new NBTTagIntArray((int[]) BaseReflection.readField(nbtBase, 0, int[].class, false));
             }
             case 12: {
-                return new NBTTagLongArray((long[]) BaseReflection.readField(nbtBase, 0, long[].class));
+                return new NBTTagLongArray((long[]) BaseReflection.readField(nbtBase, 0, long[].class, false));
             }
             default: return null;
         }

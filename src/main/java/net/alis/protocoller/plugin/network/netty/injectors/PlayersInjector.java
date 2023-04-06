@@ -13,7 +13,9 @@ public class PlayersInjector implements ChannelInjector.PlayerInjector {
 
     @Override
     public void inject(Player player) {
-        this.refreshInterceptor(player, MinecraftReflection.getPlayerChannel(player));
+        {
+            this.refreshInterceptor(player, MinecraftReflection.getPlayerChannel(player));
+        }
     }
 
     @Override

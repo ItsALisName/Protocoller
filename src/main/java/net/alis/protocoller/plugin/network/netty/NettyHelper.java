@@ -41,8 +41,8 @@ public class NettyHelper {
         for (String handlerName : channelHandlerNames) {
             ChannelHandler handler = future.channel().pipeline().get(handlerName);
             if(handler != null) {
-                localField$0 = BaseReflection.getField(handler.getClass(), "childHandler");
-                BaseReflection.readField(handler, localField$0);
+                localField$0 = BaseReflection.getField(handler.getClass(), "childHandler", false);
+                BaseReflection.readField(handler, localField$0, false);
                 bootstrapAcceptor = handler;
             }
         }
@@ -50,11 +50,11 @@ public class NettyHelper {
     }
 
     public static ChannelInitializer<?> getInitializerFromBootstrap(ChannelHandler bootstrapAcceptor) {
-        return BaseReflection.readField(bootstrapAcceptor, localField$0);
+        return BaseReflection.readField(bootstrapAcceptor, localField$0, false);
     }
 
     public static void replaceInitializers(ChannelHandler bootstrapAcceptor, ChannelInitializer<?> newChannelInitializer) {
-        BaseReflection.writeField(bootstrapAcceptor, localField$0, newChannelInitializer);
+        BaseReflection.writeField(bootstrapAcceptor, localField$0, newChannelInitializer, false);
     }
 
     public static void ejectChannelFuture(ChannelFuture channelFuture) {
@@ -70,7 +70,7 @@ public class NettyHelper {
         try {
             ChannelInitializer<Channel> original = (ChannelInitializer<Channel>) localField$0.get(bootstrapAcceptor);
             if (original instanceof NettyChannelInitializer) {
-                BaseReflection.writeField(bootstrapAcceptor, localField$0, ((NettyChannelInitializer) original).getOriginal());
+                BaseReflection.writeField(bootstrapAcceptor, localField$0, ((NettyChannelInitializer) original).getOriginal(), false);
             }
         } catch (Exception ignored) { }
     }

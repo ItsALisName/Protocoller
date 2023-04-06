@@ -5,7 +5,6 @@ import org.bukkit.Server;
 
 public class InitialData {
 
-    public static InitialData INSTANCE;
     private final String serverPackageVersion;
     private final String packetsPackage;
     private final boolean isLegacyServer;
@@ -17,7 +16,6 @@ public class InitialData {
     private final String osName;
     private final String osVersion;
     private final String osArchitecture;
-
     InitialData(Server server) {
         String packageName = server.getClass().getPackage().getName();
         this.serverPackageVersion = packageName.substring(packageName.lastIndexOf(46) + 1);
@@ -80,4 +78,10 @@ public class InitialData {
     public static void init(Server server) {
         INSTANCE = new InitialData(server);
     }
+
+    public static InitialData get() {
+        return INSTANCE;
+    }
+
+    private static InitialData INSTANCE;
 }
