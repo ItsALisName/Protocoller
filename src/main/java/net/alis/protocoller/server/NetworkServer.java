@@ -25,4 +25,8 @@ public interface NetworkServer {
 
     NetworkPlayer getPlayer(String nickname);
 
+    int getReceivedPacketsCount();
+
+    int getSentPacketsCount();
+
 }

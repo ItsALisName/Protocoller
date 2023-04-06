@@ -1,5 +1,6 @@
 package net.alis.protocoller.plugin;
 
+import net.A.TEST;
 import net.alis.protocoller.Protocoller;
 import net.alis.protocoller.plugin.config.ConfigUtils;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
@@ -86,6 +87,7 @@ public class ProtocollerInitializer {
                 new Metrics((JavaPlugin) this.plugin, 17877);
             }
         }
+        new TEST(this.plugin);
     }
 
     protected void unload() {

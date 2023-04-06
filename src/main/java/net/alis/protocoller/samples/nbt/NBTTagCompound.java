@@ -359,7 +359,7 @@ public class NBTTagCompound extends NBTBase {
         Map<String, Object> nbtMap = nbt.read(0, Map.class);
         for(String s : nbtMap.keySet()) {
             Object nbtBase = nbtMap.get(s);
-            int nbtTypeId = BaseReflection.callMethod(nbtBase, BaseReflection.getMethod(nbtBase.getClass(), 0, Integer.TYPE));
+            int nbtTypeId = BaseReflection.callMethod(nbtBase, BaseReflection.getMethod(nbtBase.getClass(), 0, Integer.TYPE), false);
             if(nbtTypeId == 10){
                 if (this.hasKey(s, 10)) {
                     NBTTagCompound nbttagcompound = this.getCompoundTag(s);

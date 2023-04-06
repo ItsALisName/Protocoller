@@ -10,9 +10,9 @@ public class CompletedException {
     private final boolean showStacktrace;
     private final boolean ignore;
 
-    protected CompletedException(RuntimeException exception, boolean showStacktrace, boolean ignore) {
+    protected CompletedException(RuntimeException exception, boolean showStacktrace, boolean saveToFile, boolean ignore) {
         this.exception = exception;
-        this.saveToFile = ProtocollerConfig.isSaveErrors();
+        this.saveToFile = saveToFile;
         this.showStacktrace = showStacktrace;
         this.ignore = ignore;
     }

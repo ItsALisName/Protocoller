@@ -17,11 +17,11 @@ public class ChatSerializer {
     }
 
     public static Object[] fromString(String s, boolean keepNewLines) {
-        return BaseReflection.callMethod(null, fromString$1, s, keepNewLines);
+        return BaseReflection.callMethod(null, fromString$1, false, s, keepNewLines);
     }
 
     public static Object[] fromString(String s, boolean keepNewLines, boolean plain) {
-        if(fromString$2 != null) return BaseReflection.callMethod(null, fromString$2, s, keepNewLines, plain);
+        if(fromString$2 != null) return BaseReflection.callMethod(null, fromString$2, false, s, keepNewLines, plain);
         return fromString(s, keepNewLines);
     }
 
@@ -43,7 +43,7 @@ public class ChatSerializer {
 
     @Nullable
     public static Object fromJSON(String json) {
-        return BaseReflection.callMethod(null, fromJson, json);
+        return BaseReflection.callMethod(null, fromJson, false, json);
     }
 
     @Nullable
@@ -129,7 +129,7 @@ public class ChatSerializer {
     }
 
     public static String fromComponent(Object iChatBaseComponent) {
-        return BaseReflection.callMethod(null, fromComponent, iChatBaseComponent);
+        return BaseReflection.callMethod(null, fromComponent, false, iChatBaseComponent);
     }
 
     public static void init() {

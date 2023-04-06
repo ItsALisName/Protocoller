@@ -1,14 +1,18 @@
 package net.alis.protocoller.plugin.network;
 
 import io.netty.channel.Channel;
+import io.netty.util.AttributeKey;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProtocollerPlayer implements NetworkPlayer {
+
+    private final AttributeKey<Integer> PROTOCOL_KEY = AttributeKey.valueOf("PROTOCOL-" + new AtomicInteger().getAndIncrement());
 
     private final NettyChannelManager channelManager;
     private final String name;
@@ -30,6 +34,11 @@ public class ProtocollerPlayer implements NetworkPlayer {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int getProtocolVersion() {
+        return this.channelManager.getChannel().attr(PROTOCOL_KEY).get();
     }
 
     @Override

@@ -17,6 +17,8 @@ public interface NetworkPlayer {
 
     Channel getChannel();
 
+    int getProtocolVersion();
+
     void sendPacket(PlayOutPacket packet);
 
     int getPacketsSentCount();

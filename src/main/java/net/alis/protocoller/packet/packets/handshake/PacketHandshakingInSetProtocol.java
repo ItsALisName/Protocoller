@@ -16,10 +16,10 @@ import org.jetbrains.annotations.NotNull;
 public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
 
     private final PacketDataContainer packetData;
-    public String address;
+    private String address;
     private int protocolVersion;
-    public int port;
-    public ProtocolEnum intendedState;
+    private int port;
+    private ProtocolEnum intendedState;
     private final boolean legacyPacket = GlobalProvider.instance().getServer().isLegacy();
 
     public PacketHandshakingInSetProtocol(@NotNull PacketDataContainer packetData) {

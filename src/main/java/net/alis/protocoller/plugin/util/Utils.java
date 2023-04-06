@@ -1,13 +1,9 @@
 package net.alis.protocoller.plugin.util;
 
-import lombok.SneakyThrows;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +39,10 @@ public class Utils {
     public static @NotNull String getCurrentTime(boolean fileNameFormat) {
         if(!fileNameFormat) return new SimpleDateFormat("HH:mm:ss").format(new Date());
         return new SimpleDateFormat("HH-mm-ss").format(new Date());
+    }
+
+    public static <T> T[] joinArrays(T[] a, T[] b) {
+        return (T[]) ArrayUtils.addAll(a, b);
     }
 
 }

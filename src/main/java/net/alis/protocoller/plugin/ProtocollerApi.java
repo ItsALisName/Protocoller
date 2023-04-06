@@ -17,7 +17,7 @@ public class ProtocollerApi implements Protocoller {
 
     @Contract(pure = true)
     public @NotNull String getVersion() {
-        return "0.0.1";
+        return "0.0.1-build2";
     }
 
     @Override

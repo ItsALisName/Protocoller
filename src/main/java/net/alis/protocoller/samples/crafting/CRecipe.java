@@ -51,9 +51,9 @@ public class CRecipe implements Recipe {
 
         public static CRecipe fromIRecipe(Object iRecipe) {
             CRecipe recipe = new CRecipe();
-            recipe.setResult(MinecraftReflection.itemStackFromMinecraftItemStack(BaseReflection.callMethod(null, getItemStackMethod)));
+            recipe.setResult(MinecraftReflection.itemStackFromMinecraftItemStack(BaseReflection.callMethod(null, getItemStackMethod, false)));
             if(getKeyMethod != null){
-                recipe.setMinecraftKey(new MinecraftKey((Object) BaseReflection.callMethod(null, getKeyMethod)));
+                recipe.setMinecraftKey(new MinecraftKey((Object) BaseReflection.callMethod(null, getKeyMethod, false)));
             }
             return recipe;
         }

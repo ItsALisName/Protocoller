@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.providers.ApiProvider;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import net.alis.protocoller.ApiUser;
 import net.alis.protocoller.NetworkPlayer;
@@ -16,8 +15,10 @@ import net.alis.protocoller.event.impl.PacketListener;
 import net.alis.protocoller.event.manager.SynchronousEventManager;
 import net.alis.protocoller.packet.PacketDataContainer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 
@@ -60,7 +61,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
     }
 
     @Override
-    public void registerListeners(ApiUser user, PacketListener... listeners) {
+    public void registerListeners(ApiUser user, PacketListener @NotNull ... listeners) {
         for(PacketListener listener : listeners) this.registerListener(user, listener);
     }
 
@@ -85,7 +86,7 @@ public class SyncPacketEventManager implements SynchronousEventManager {
 
     }
 
-    public static SyncPacketEvent callListeners(PacketDataContainer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
+    public static @Nullable SyncPacketEvent callListeners(@NotNull PacketDataContainer data, Channel channel, InetSocketAddress address, @Nullable Player player, @Nullable NetworkPlayer networkPlayer) {
         switch (data.getType().getState()) {
             case CLIENTBOUND: {
                 if(player == null) {
@@ -96,13 +97,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -110,13 +110,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         }catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -124,13 +123,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -138,13 +136,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -152,13 +149,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -166,13 +162,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -187,13 +182,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -201,27 +195,25 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
                 for(RegisteredPacketListener listener : PacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
-                        try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                        try {
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -229,13 +221,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -243,13 +234,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -257,13 +247,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -278,13 +267,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -292,13 +280,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -306,13 +293,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -320,13 +306,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -334,13 +319,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -348,13 +332,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -366,13 +349,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -380,13 +362,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try{
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -394,13 +375,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -408,13 +388,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -422,13 +401,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -436,13 +414,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -454,13 +431,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -468,13 +444,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -482,13 +457,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -496,13 +470,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -510,13 +483,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -524,13 +496,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -542,13 +513,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -556,13 +526,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -570,13 +539,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -584,13 +552,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -598,13 +565,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -612,13 +578,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -630,13 +595,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -644,13 +608,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -658,13 +621,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -672,13 +634,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -686,13 +647,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -700,13 +660,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -718,13 +677,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOWEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -732,13 +690,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.LOW) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -746,13 +703,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.NORMAL) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -760,13 +716,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGH) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -774,13 +729,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -788,13 +742,12 @@ public class SyncPacketEventManager implements SynchronousEventManager {
                     if(listener.getPriority() == PacketEventPriority.MONITOR) {
                         if(listener.isIgnoreCancelled() && event.isCancelled()) continue;
                         try {
-                            BaseReflection.callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener) listener).getListener(), ((RegisteredProtocollerListener) listener).getMethod(), event);
                         } catch (Exception e) {
                             new ExceptionBuilder().getEventsExceptions()
                                     .defineReason(e)
-                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                    .callEventError("PacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), event.getData())
                                     .showException();
-                            return null;
                         }
                     }
                 }
@@ -804,4 +757,18 @@ public class SyncPacketEventManager implements SynchronousEventManager {
         new ExceptionBuilder().getEventsExceptions().callEventUnknownError("SynchronousPacketEvent").showException();
         return null;
     }
+
+    private static  <PARAM> PARAM callMethod(Object instance, @NotNull Method method, Object... parameters) {
+        try {
+            return (PARAM) method.invoke(instance, parameters);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return new ExceptionBuilder()
+                    .saveToFile(false)
+                    .getReflectionExceptions()
+                    .defineReason(e)
+                    .callMethodError(instance.getClass(), method)
+                    .throwException();
+        }
+    }
+    
 }

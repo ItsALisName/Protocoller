@@ -17,7 +17,7 @@ public class NettyHelper {
     private static Field localField$0;
 
     public static void tryInitChannel(ChannelInitializer<?> source, Method sourceMethod, Channel newChannel) {
-        BaseReflection.callMethod(source, sourceMethod, newChannel);
+        BaseReflection.callMethod(source, sourceMethod, false, newChannel);
         injectChannel(newChannel);
     }
 

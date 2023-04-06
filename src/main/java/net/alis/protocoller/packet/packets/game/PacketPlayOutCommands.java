@@ -55,7 +55,7 @@ public class PacketPlayOutCommands implements PlayOutPacket {
             }
             this.packetData.writeList(0, this.rootCommands);
         } else {
-            BaseReflection.callMethod(this.rootCommandNode, BaseReflection.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), node);
+            BaseReflection.callMethod(this.rootCommandNode, BaseReflection.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), false, node);
         }
         this.nodes.remove(node);
     }
@@ -66,7 +66,7 @@ public class PacketPlayOutCommands implements PlayOutPacket {
                 if(!legacyPacket) {
                     this.rootCommands.remove(i);
                 } else {
-                    BaseReflection.callMethod(this.rootCommandNode, BaseReflection.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), this.nodes.get(i));
+                    BaseReflection.callMethod(this.rootCommandNode, BaseReflection.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), false, this.nodes.get(i));
                 }
                 this.nodes.remove(i);
             }

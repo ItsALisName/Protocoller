@@ -3,6 +3,7 @@ package net.alis.protocoller.plugin.network.netty.interceptors;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import net.alis.protocoller.plugin.events.AsyncPacketEventManager;
+import net.alis.protocoller.plugin.events.RegisteredProtocollerListener;
 import net.alis.protocoller.plugin.events.SyncPacketEventManager;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.exception.PacketEventException;

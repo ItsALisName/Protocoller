@@ -123,7 +123,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
         }
 
         public static Action fromModernPacket(Object action) {
-            return Action.getById(((Enum<?>) BaseReflection.callMethod(action, BaseReflection.getMethod(action.getClass(), 0, ClassesContainer.get().getBossActionEnum()))).ordinal());
+            return Action.getById(((Enum<?>) BaseReflection.callMethod(action, BaseReflection.getMethod(action.getClass(), 0, ClassesContainer.get().getBossActionEnum()), false)).ordinal());
         }
 
         public @NotNull Enum<?> original() {

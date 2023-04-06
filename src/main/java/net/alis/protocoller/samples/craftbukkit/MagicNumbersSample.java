@@ -17,59 +17,59 @@ public class MagicNumbersSample {
     }
 
     public static <IBlockData> IBlockData getBlock(Material material, byte data) {
-        return BaseReflection.callMethod(null, iBlockDataFromMaterial, material, data);
+        return BaseReflection.callMethod(null, iBlockDataFromMaterial, false, material, data);
     }
 
     public static MaterialData getMaterialFromBlockData(Object IBlockData) {
-        return BaseReflection.callMethod(null, materialDataFromIBlockData, IBlockData);
+        return BaseReflection.callMethod(null, materialDataFromIBlockData, false, IBlockData);
     }
 
     public static <MinecraftItem> MinecraftItem getItem(Material material, byte data) {
-        return BaseReflection.callMethod(null, itemFromMaterial, material, data);
+        return BaseReflection.callMethod(null, itemFromMaterial, false, material, data);
     }
 
     public static MaterialData getMaterialData(Object minecraftItem) {
-        return BaseReflection.callMethod(null, materialDataFromItem, minecraftItem);
+        return BaseReflection.callMethod(null, materialDataFromItem, false, minecraftItem);
     }
 
     public static Material getMaterialFromBlock(Object minecraftBlock) {
-        return BaseReflection.callMethod(null, materialFromMinecraftBlock, minecraftBlock);
+        return BaseReflection.callMethod(null, materialFromMinecraftBlock, false, minecraftBlock);
     }
 
     public static Material getMaterialFromItem(Object minecraftItem) {
-        return BaseReflection.callMethod(null, materialFromMinecraftItem, minecraftItem);
+        return BaseReflection.callMethod(null, materialFromMinecraftItem, false, minecraftItem);
     }
 
     public static <MinecraftItem> MinecraftItem getItem(Material material) {
-        return BaseReflection.callMethod(null, itemFromMaterial$1, material);
+        return BaseReflection.callMethod(null, itemFromMaterial$1, false, material);
     }
 
     public static <MinecraftBlock> MinecraftBlock getBlock(Material material) {
-        return BaseReflection.callMethod(null, minecraftBlockFromMaterial, material);
+        return BaseReflection.callMethod(null, minecraftBlockFromMaterial, false, material);
     }
 
     public static <MinecraftEntityTypes> MinecraftEntityTypes getEntityTypes(EntityType type) {
-        return BaseReflection.callMethod(null, minecraftEntityTypesFromEntityType, type);
+        return BaseReflection.callMethod(null, minecraftEntityTypesFromEntityType, false, type);
     }
 
     public static EntityType getEntityType(Object minecraftEntityTypes) {
-        return BaseReflection.callMethod(null, entityTypeFromMinecraftEntityTypes, minecraftEntityTypes);
+        return BaseReflection.callMethod(null, entityTypeFromMinecraftEntityTypes, false, minecraftEntityTypes);
     }
 
     public static Material toLegacy(Material material) {
-        return BaseReflection.callMethod(null, toLegacyMaterial, material);
+        return BaseReflection.callMethod(null, toLegacyMaterial, false, material);
     }
 
     public static Material fromLegacy(Material material) {
-        return BaseReflection.callMethod(null, fromLegacyMaterial, material);
+        return BaseReflection.callMethod(null, fromLegacyMaterial, false, material);
     }
 
     public static Material fromLegacy(MaterialData data) {
-        return BaseReflection.callMethod(null, fromLegacyMaterialData, data);
+        return BaseReflection.callMethod(null, fromLegacyMaterialData, false, data);
     }
 
     public static Material fromLegacy(Material material, boolean itemPriority) {
-        return BaseReflection.callMethod(null, fromLegacyMaterialData$1, material, itemPriority);
+        return BaseReflection.callMethod(null, fromLegacyMaterialData$1, false, material, itemPriority);
     }
 
     //public static BlockData fromLegacy(Material material, byte data) {
@@ -77,27 +77,27 @@ public class MagicNumbersSample {
     //}
 
     public static Material getMaterial(String material, int version) {
-        return BaseReflection.callMethod(null, materialFromVersion, material, version);
+        return BaseReflection.callMethod(null, materialFromVersion, false, material, version);
     }
 
     public static String getMappingsVersion() {
-        return BaseReflection.callMethod(null, getMappingsVersion);
+        return BaseReflection.callMethod(null, getMappingsVersion, false);
     }
 
     public static int getDataVersion() {
-        return BaseReflection.callMethod(null, getDataVersion);
+        return BaseReflection.callMethod(null, getDataVersion, false);
     }
 
     public static byte[] serializeItem(ItemStack itemStack) {
-        return BaseReflection.callMethod(null, serializeItem, itemStack);
+        return BaseReflection.callMethod(null, serializeItem, false, itemStack);
     }
 
     public static ItemStack deserializeItem(byte[] bytes) {
-        return BaseReflection.callMethod(null, deserializeItem, (Object) bytes);
+        return BaseReflection.callMethod(null, deserializeItem, false, bytes);
     }
 
     public static byte[] serializeEntity(Entity entity) {
-        return BaseReflection.callMethod(null, serializeEntity, entity);
+        return BaseReflection.callMethod(null, serializeEntity, false, entity);
     }
 
     public static void init() {

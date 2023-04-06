@@ -2,6 +2,7 @@ package net.alis.protocoller.plugin.server.listeners;
 
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.packet.packets.game.PacketPlayOutChat;
+import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.network.NettyChannelManager;
 import net.alis.protocoller.plugin.network.ProtocollerPlayer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;

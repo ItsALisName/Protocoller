@@ -234,19 +234,19 @@ public class BaseReflection {
         return new ExceptionBuilder().getReflectionExceptions().methodNotFound(instance, index, methodName).throwException();
     }
 
-    public static <PARAM> PARAM callMethod(Object instance, @NotNull Method method, Object... parameters) {
+    public static <PARAM> PARAM callMethod(Object instance, @NotNull Method method, boolean ignoreException, Object... parameters) {
         try {
             method.setAccessible(true);
             return (PARAM) method.invoke(instance, parameters);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callMethodError(instance.getClass(), method).throwException();
+        } catch (Exception e) {
+            return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(e).callMethodError(instance.getClass(), method).throwException();
         }
     }
 
     public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, Class<?> returnType) {
         try {
             return (PARAM) getMethod(instance, index, returnType).invoke(null);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, returnType).throwException();
         }
     }
@@ -254,7 +254,7 @@ public class BaseReflection {
     public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, Class<?> returnType, Object... objects) {
         try {
             return (PARAM) getMethod(instance, index, returnType).invoke(null, objects);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, returnType).throwException();
         }
     }
@@ -262,7 +262,7 @@ public class BaseReflection {
     public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, String methodName) {
         try {
             return (PARAM) getMethod(instance, index, methodName).invoke(null);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, methodName).throwException();
         }
     }
@@ -270,7 +270,7 @@ public class BaseReflection {
     public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, String methodName, Object... objects) {
         try {
             return (PARAM) getMethod(instance, index, methodName).invoke(null,objects);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, methodName).throwException();
         }
     }
@@ -321,7 +321,7 @@ public class BaseReflection {
                 return (PARAM) constructor.newInstance();
             }
             return (PARAM) constructor.newInstance(parameters);
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch (Exception e) {
             List<Class<?>> params = Arrays.stream(parameters).map(Object::getClass).collect(Collectors.toList());
             return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callConstructorError(constructor, params.toArray(new Class[0])).throwException();
         }

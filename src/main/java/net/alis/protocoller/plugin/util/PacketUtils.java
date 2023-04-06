@@ -5,6 +5,7 @@ import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
+import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,27 +57,29 @@ public class PacketUtils {
     }
 
     public static @NotNull String buildPacketDataReport(@NotNull PacketDataContainer data) {
-        StringBuilder report = new StringBuilder("[*] Processed packet details:");
+        StringBuilder report = new StringBuilder("\n[*] Processed packet details:");
         report.append("\nPacket name: ").append(data.getType().getPacketName());
         report.append("\nPacket id: ").append(data.getType().getPacketId());
         report.append("\nPacket state: ").append(data.getType().getState().name());
-        report.append("\nPacket class: ").append(data.getType().getPacketClass());
-        report.append("\nPacket data [Field -> Type -> Value]:");
+        report.append("\nPacket class: ").append(data.getType().getPacketClass().getName());
+        report.append("\nPacket data:");
         for(Field field : data.getRawPacket().getClass().getDeclaredFields()) {
-            report.append("\nField: ").append(field.getName()).append("; Type: ").append(field.getType().getSimpleName()).append("; Value: ").append((Object) BaseReflection.readField(data, field, true));
+            field.setAccessible(true);
+            report.append("\n    Parameter: ").append(field.getName()).append(" <-> ").append(field.getType().getSimpleName()).append(" <-> ").append((Object) BaseReflection.readField(data.getRawPacket(), field, true));
         }
         return report.toString();
     }
 
     public static @NotNull String buildPacketDataReport(@NotNull Object data) {
-        StringBuilder report = new StringBuilder("[*] Processed packet details:");
+        StringBuilder report = new StringBuilder("\n[*] Processed packet details:");
         report.append("\nPacket name: ").append(data.getClass().getSimpleName());
         report.append("\nPacket id: ").append("Unknown");
         report.append("\nPacket state: ").append("Unknown");
         report.append("\nPacket class: ").append(data.getClass().getName());
-        report.append("\nPacket data [Field -> Type -> Value]:");
+        report.append("\nPacket data:");
         for(Field field : data.getClass().getDeclaredFields()) {
-            report.append("\nField: ").append(field.getName()).append("; Type: ").append(field.getType().getSimpleName()).append("; Value: ").append((Object) BaseReflection.readField(data, field, true));
+            field.setAccessible(true);
+            report.append("\n    Parameter: ").append(field.getName()).append(" <-> ").append(field.getType().getSimpleName()).append(" <-> ").append((Object) BaseReflection.readField(data, field, true));
         }
         return report.toString();
     }

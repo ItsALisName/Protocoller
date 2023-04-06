@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.providers.ApiProvider;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import net.alis.protocoller.ApiUser;
 import net.alis.protocoller.NetworkPlayer;
@@ -16,8 +15,10 @@ import net.alis.protocoller.event.impl.PacketListener;
 import net.alis.protocoller.event.manager.AsynchronousEventManager;
 import net.alis.protocoller.packet.PacketDataContainer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 
@@ -103,7 +104,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             } catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -115,17 +116,19 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOW) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                                callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
-                                LogsManager.get().getLogger().error("Failed to call packet event for listener - '" + ((RegisteredProtocollerListener)listener).getListener().getClass().getName() + "'");
-                                LogsManager.get().getLogger().error("Reason: " + e.getMessage());
+                                new ExceptionBuilder().getEventsExceptions()
+                                        .defineReason(e)
+                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .showException();
                             }
                         }
                     }
                     for(RegisteredPacketListener listener : AsyncPacketPlaySendEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.NORMAL) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -138,7 +141,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGH) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                                callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -151,7 +154,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGHEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -164,7 +167,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.MONITOR) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -183,7 +186,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -195,7 +198,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.LOW) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -207,7 +210,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.NORMAL) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -219,7 +222,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.HIGH) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -231,7 +234,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.HIGHEST) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -243,7 +246,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketPlayReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.MONITOR) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -260,7 +263,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -273,7 +276,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOW) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -286,7 +289,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.NORMAL) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -299,7 +302,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGH) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -312,7 +315,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGHEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -325,7 +328,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.MONITOR) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -342,7 +345,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -355,7 +358,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOW) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -368,7 +371,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.NORMAL) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -381,7 +384,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGH) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -394,7 +397,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGHEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -407,7 +410,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.MONITOR) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -424,7 +427,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -437,7 +440,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOW) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -450,7 +453,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.NORMAL) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -463,7 +466,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGH) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -476,7 +479,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGHEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -489,7 +492,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.MONITOR) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -506,7 +509,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -519,7 +522,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOW) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -532,7 +535,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.NORMAL) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -545,7 +548,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGH) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -558,7 +561,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGHEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -571,7 +574,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.MONITOR) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -588,7 +591,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOWEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -601,7 +604,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.LOW) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -614,7 +617,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.NORMAL) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -627,7 +630,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGH) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -640,7 +643,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         if(listener.getPriority() == PacketEventPriority.HIGHEST) {
 
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -652,7 +655,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                     for(RegisteredPacketListener listener : AsyncPacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners()) {
                         if(listener.getPriority() == PacketEventPriority.MONITOR) {
                             try {
-                                BaseReflection.callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
+                            callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             } catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
                                         .defineReason(e)
@@ -667,4 +670,18 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
             new ExceptionBuilder().getEventsExceptions().callEventUnknownError("AsynchronousPacketEvent").showException();
         });
     }
+
+    private static  <PARAM> PARAM callMethod(Object instance, @NotNull Method method, Object... parameters) {
+        try {
+            return (PARAM) method.invoke(instance, parameters);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return new ExceptionBuilder()
+                    .saveToFile(false)
+                    .getReflectionExceptions()
+                    .defineReason(e)
+                    .callMethodError(instance.getClass(), method)
+                    .throwException();
+        }
+    }
+    
 }

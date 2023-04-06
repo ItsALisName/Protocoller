@@ -2,6 +2,7 @@ package net.alis.protocoller.util;
 
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -38,9 +39,7 @@ public class AccessedObject {
             }
         }
         PARAM param = readSuperclass(index, type);
-        if(param != null) {
-            return param;
-        }
+        if(param != null) return param;
         if(start == 0) {
             return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, this.object.getClass()).throwException();
         } else {
@@ -48,11 +47,12 @@ public class AccessedObject {
         }
     }
 
-    public void write(int index, Object param) {
+    public void write(int index, @NotNull Object param) {
         int start = 0;
         Class<?> type = param.getClass();
         for(Field field : this.fields) {
             if(field.getType() == type) {
+                field.setAccessible(true);
                 if(start == index) BaseReflection.writeField(this.object, field, param, false);
                 start += 1; continue;
             }
@@ -71,6 +71,7 @@ public class AccessedObject {
     public void writeSpecify(int index, Class<?> specify, Object param) {
         int start = 0;
         for(Field field : this.fields) {
+            field.setAccessible(true);
             if(field.getType() == specify && start == index) BaseReflection.writeField(this.object, field, param, false);
             start += 1;
         }
@@ -93,6 +94,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == param.getClass()) {
+                field.setAccessible(true);
                 if(index == start) BaseReflection.writeField(this.object, field, param, false);
                 start += 1;
             }
@@ -103,6 +105,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == type) {
+                field.setAccessible(true);
                 if(index == start) BaseReflection.writeField(this.object, field, param, false);
                 start += 1;
             }

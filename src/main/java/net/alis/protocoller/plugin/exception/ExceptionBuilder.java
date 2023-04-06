@@ -17,10 +17,17 @@ public class ExceptionBuilder {
 
     private boolean showStacktrace;
     private boolean ignore;
+    private boolean saveToFile;
 
     public ExceptionBuilder() {
         this.showStacktrace = true;
         this.ignore = false;
+        this.saveToFile = ProtocollerConfig.isSaveErrors();
+    }
+
+    public ExceptionBuilder saveToFile(boolean saveToFile) {
+        this.saveToFile = saveToFile;
+        return this;
     }
 
     public ExceptionBuilder showStackTrace(boolean showStacktrace) {
@@ -38,43 +45,43 @@ public class ExceptionBuilder {
     }
 
     public ConfigException.Builder getConfigExceptions() {
-        return new ConfigException.Builder(showStacktrace, ignore);
+        return new ConfigException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public ServerAccessException.Builder getServerExceptions() {
-        return new ServerAccessException.Builder(showStacktrace, ignore);
+        return new ServerAccessException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public ReflectionException.Builder getReflectionExceptions() {
-        return new ReflectionException.Builder(showStacktrace, ignore);
+        return new ReflectionException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public PacketException.Builder getPacketExceptions() {
-        return new PacketException.Builder(showStacktrace, ignore);
+        return new PacketException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public PacketEventException.Builder getEventsExceptions() {
-        return new PacketEventException.Builder(showStacktrace, ignore);
+        return new PacketEventException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public InjectionException.Builder getInjectExceptions() {
-        return new InjectionException.Builder(showStacktrace, ignore);
+        return new InjectionException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public CryptographyException.Builder getCryptographyExceptions() {
-        return new CryptographyException.Builder(showStacktrace, ignore);
+        return new CryptographyException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public MinecraftKeyException.Builder getMinecraftKeyExceptions() {
-        return new MinecraftKeyException.Builder(showStacktrace, ignore);
+        return new MinecraftKeyException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public NBTException.Builder getNBTExceptions() {
-        return new NBTException.Builder(showStacktrace, ignore);
+        return new NBTException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     public AttributeException.Builder getAttributeExceptions() {
-        return new AttributeException.Builder(showStacktrace, ignore);
+        return new AttributeException.Builder(showStacktrace, saveToFile, ignore);
     }
 
     protected static void writeExceptionFile(@NotNull Throwable e) {

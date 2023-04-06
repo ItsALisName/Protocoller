@@ -26,8 +26,8 @@ import org.jetbrains.annotations.Nullable;
 public class ProtocollerServer implements NetworkServer {
 
     private final Version version;
-    private final boolean isLegacy; //Lower than 1.17
-    private final boolean isVeryLegacy; //Lower than 1.13
+    private final boolean isLegacy;
+    private final boolean isVeryLegacy;
     protected final List<Channel> channels;
     protected final List<ChannelFuture> channelFutures;
     private final Server server;
@@ -35,9 +35,13 @@ public class ProtocollerServer implements NetworkServer {
     private final ServerInjector serverInjector;
     private final PlayersInjector playersInjector;
     private final String coreName;
+    private int packetsReceived;
+    private int packetsSent;
 
     public ProtocollerServer(Server server) {
         this.server = server;
+        this.packetsReceived = 0;
+        this.packetsSent = 0;
         this.coreName = Bukkit.getVersion().split("-")[1];
         this.version = Version.fromProtocol(MinecraftReflection.getServerProtocolVersion());
         this.isLegacy = this.version.ordinal() < Version.v1_17.ordinal();
@@ -94,6 +98,16 @@ public class ProtocollerServer implements NetworkServer {
     }
 
     @Override
+    public int getReceivedPacketsCount() {
+        return this.packetsReceived;
+    }
+
+    @Override
+    public int getSentPacketsCount() {
+        return this.packetsSent;
+    }
+
+    @Override
     public String getCoreName() {
         return coreName;
     }
@@ -120,6 +134,14 @@ public class ProtocollerServer implements NetworkServer {
 
     public ChannelInjector.PlayerInjector getPlayersInjector() {
         return playersInjector;
+    }
+
+    public void addReceivedPacket() {
+        this.packetsReceived += 1;
+    }
+
+    public void addSentPacket() {
+        this.packetsSent += 1;
     }
 
 }
