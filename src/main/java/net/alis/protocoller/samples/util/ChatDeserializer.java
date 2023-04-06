@@ -3,8 +3,12 @@ package net.alis.protocoller.samples.util;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import net.alis.protocoller.plugin.config.ProtocollerConfig;
+import net.alis.protocoller.plugin.exception.CompletedException;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -77,7 +81,7 @@ public class ChatDeserializer {
         if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
             return element.getAsInt();
         } else {
-            throw new JsonSyntaxException("Expected " + name + " to be Skip$1 Int, was " + elementToString(element));
+            return ExceptionBuilder.throwException(new JsonSyntaxException("Expected " + name + " to be a Int, was " + elementToString(element)), true);
         }
     }
 
@@ -85,7 +89,7 @@ public class ChatDeserializer {
         if (element.isJsonPrimitive()) {
             return element.getAsString();
         } else {
-            throw new JsonSyntaxException("Expected " + name + " to be Skip$1 string, was " + isJsonPrimitiveNumber(element));
+            return ExceptionBuilder.throwException(new JsonSyntaxException("Expected " + name + " to be a string, was " + isJsonPrimitiveNumber(element)), true);
         }
     }
 
@@ -93,44 +97,42 @@ public class ChatDeserializer {
         if (object.has(element)) {
             return jsonArrayFromElement(object.get(element), element);
         } else {
-            throw new JsonSyntaxException("Missing " + element + ", expected to find Skip$1 JsonArray");
+            return ExceptionBuilder.throwException(new JsonSyntaxException("Missing " + element + ", expected to find a JsonArray"), true);
         }
     }
 
-    public static JsonArray jsonArrayFromElement(JsonElement element, String name) {
+    public static JsonArray jsonArrayFromElement(@NotNull JsonElement element, String name) {
         if (element.isJsonArray()) {
             return element.getAsJsonArray();
         } else {
-            throw new JsonSyntaxException("Expected " + name + " to be Skip$1 JsonArray, was " + elementToString(element));
+            return ExceptionBuilder.throwException(new JsonSyntaxException("Expected " + name + " to be a JsonArray, was " + elementToString(element)), true);
         }
     }
 
     public static String toDefaultString(JsonElement json) {
         StringWriter stringWriter = new StringWriter();
         JsonWriter jsonWriter = new JsonWriter(stringWriter);
-
         try {
             writeString(jsonWriter, json, Comparator.naturalOrder());
-        } catch (IOException var4) {
-            throw new AssertionError(var4);
+        } catch (IOException io) {
+            return ExceptionBuilder.throwException(new AssertionError(io), true);
         }
-
         return stringWriter.toString();
     }
 
-    public static JsonObject elementAsJsonObject(JsonElement element, String name) {
+    public static JsonObject elementAsJsonObject(@NotNull JsonElement element, String name) {
         if (element.isJsonObject()) {
             return element.getAsJsonObject();
         } else {
-            throw new JsonSyntaxException("Expected " + name + " to be Skip$1 JsonObject, was " + elementToString(element));
+            return ExceptionBuilder.throwException(new JsonSyntaxException("Expected " + name + " to be a JsonObject, was " + elementToString(element)), true);
         }
     }
 
-    public static int intFromJson(JsonObject object, String element) {
+    public static int intFromJson(@NotNull JsonObject object, String element) {
         if (object.has(element)) {
             return intFromElement(object.get(element), element);
         } else {
-            throw new JsonSyntaxException("Missing " + element + ", expected to find Skip$1 Int");
+            return ExceptionBuilder.throwException(new JsonSyntaxException("Missing " + element + ", expected to find a Int"), true);
         }
     }
 
@@ -148,29 +150,27 @@ public class ChatDeserializer {
             if (element.isJsonPrimitive()) {
                 JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
                 if (jsonPrimitive.isNumber()) {
-                    return "Skip$1 number (" + string + ")";
+                    return "a number (" + string + ")";
                 }
-
                 if (jsonPrimitive.isBoolean()) {
-                    return "Skip$1 boolean (" + string + ")";
+                    return "a boolean (" + string + ")";
                 }
             }
-
             return string;
         }
     }
 
-    public static String getFrom(JsonObject object, String element) {
+    public static String getFrom(@NotNull JsonObject object, String element) {
         if (object.has(element)) {
             return getFrom(object.get(element), element);
         } else {
-            throw new JsonSyntaxException("Missing " + element + ", expected to find Skip$1 string");
+            return ExceptionBuilder.throwException(new JsonSyntaxException("Missing " + element + ", expected to find a string"), true);
         }
     }
 
     @Nullable
     @Contract("_,_,!null->!null;_,_,null->_")
-    public static String getFromOr(JsonObject object, String element, @Nullable String defaultStr) {
+    public static String getFromOr(@NotNull JsonObject object, String element, @Nullable String defaultStr) {
         return object.has(element) ? getFrom(object.get(element), element) : defaultStr;
     }
 
@@ -180,13 +180,13 @@ public class ChatDeserializer {
     }
 
     @Nullable
-    public static <T> T readGson(Gson gson, Reader reader, Class<T> type, boolean lenient) {
+    public static <T> T readGson(@NotNull Gson gson, Reader reader, Class<T> type, boolean lenient) {
         try {
             JsonReader jsonReader = new JsonReader(reader);
             jsonReader.setLenient(lenient);
             return gson.getAdapter(type).read(jsonReader);
-        } catch (IOException var5) {
-            throw new JsonParseException(var5);
+        } catch (IOException io) {
+            return ExceptionBuilder.throwException(new JsonParseException(io), true);
         }
     }
 
@@ -207,7 +207,6 @@ public class ChatDeserializer {
                 if (json.isJsonArray()) {
                     writer.beginArray();
                     jsonElementIterator = json.getAsJsonArray().iterator();
-
                     while(jsonElementIterator.hasNext()) {
                         JsonElement jsonElement = jsonElementIterator.next();
                         writeString(writer, jsonElement, comparator);
@@ -216,18 +215,15 @@ public class ChatDeserializer {
                     writer.endArray();
                 } else {
                     if (!json.isJsonObject()) {
-                        throw new IllegalArgumentException("Couldn't write " + json.getClass());
+                        ExceptionBuilder.throwException(new IllegalArgumentException("Couldn't write " + json.getClass()), true);
                     }
-
                     writer.beginObject();
                     entryIterator = compareElements(json.getAsJsonObject().entrySet(), comparator).iterator();
-
                     while(entryIterator.hasNext()) {
                         Map.Entry<String, JsonElement> entry = entryIterator.next();
                         writer.name(entry.getKey());
                         writeString(writer, entry.getValue(), comparator);
                     }
-
                     writer.endObject();
                 }
             }
@@ -258,8 +254,8 @@ public class ChatDeserializer {
             JsonReader jsonReader = new JsonReader(reader);
             jsonReader.setLenient(lenient);
             return gson.getAdapter(type).read(jsonReader);
-        } catch (IOException var5) {
-            throw new JsonParseException(var5);
+        } catch (IOException ioException) {
+            return ExceptionBuilder.throwException(new JsonParseException(ioException), true);
         }
     }
 

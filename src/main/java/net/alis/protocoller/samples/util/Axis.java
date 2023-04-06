@@ -1,5 +1,7 @@
 package net.alis.protocoller.samples.util;
 
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
+
 public enum Axis {
 
     X("x") {
@@ -64,7 +66,7 @@ public enum Axis {
                 direction$plane = Plane.VERTICAL;
                 break;
             default:
-                throw new IncompatibleClassChangeError();
+                return ExceptionBuilder.throwException(new IncompatibleClassChangeError(), true);
         }
         return direction$plane;
     }

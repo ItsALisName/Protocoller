@@ -1,6 +1,8 @@
 package net.alis.protocoller.samples.util;
 
 import com.google.common.collect.Iterators;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,18 +14,19 @@ public enum Plane implements Predicate<Direction>, Iterable<Direction> {
     HORIZONTAL,
     VERTICAL;
 
-    public Direction[] facings() {
+    @Contract(value = " -> new", pure = true)
+    public Direction @NotNull [] facings() {
         switch (this) {
             case HORIZONTAL:
                 return new Direction[] {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
             case VERTICAL:
                 return new Direction[] {Direction.UP, Direction.DOWN};
             default:
-                throw new Error("Someone\'s been tampering with the universe!");
+                return ExceptionBuilder.throwException(new Error("Someone's been tampering with the universe!"), true);
         }
     }
 
-    public Direction random(Random rand) {
+    public Direction random(@NotNull Random rand) {
         Direction[] aDirection = this.facings();
         return aDirection[rand.nextInt(aDirection.length)];
     }

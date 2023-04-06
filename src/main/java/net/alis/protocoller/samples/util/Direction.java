@@ -3,6 +3,7 @@ package net.alis.protocoller.samples.util;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.phys.Vector3I;
@@ -31,9 +32,7 @@ public enum Direction {
     public static final Direction[] VALUES = values();
     public static final Direction[] BY_3D_DATA = Arrays.stream(VALUES).sorted(Comparator.comparingInt((direction) -> direction.data3d)).toArray(Direction[]::new);
     public static final Direction[] BY_2D_DATA = Arrays.stream(VALUES).filter((direction) -> direction.getAxis().isHorizontal()).sorted(Comparator.comparingInt((direction) -> direction.data2d)).toArray(Direction[]::new);
-    public static final Long2ObjectMap<Direction> BY_NORMAL = Arrays.stream(VALUES).collect(Collectors.toMap((vector3I) -> (new BlockPosition(vector3I.getNormal())).asLong(), (direction) -> direction, (direction, direction1) -> {
-        throw new IllegalArgumentException("Duplicate keys");
-    }, Long2ObjectOpenHashMap::new));
+    public static final Long2ObjectMap<Direction> BY_NORMAL = Arrays.stream(VALUES).collect(Collectors.toMap((vector3I) -> (new BlockPosition(vector3I.getNormal())).asLong(), (direction) -> direction, (direction, direction1) -> ExceptionBuilder.throwException(new IllegalArgumentException("Duplicate keys"), true), Long2ObjectOpenHashMap::new));
 
     private Direction(int data3d, int oppositeIndex, int data2d, String name, AxisDirection axisDirection, Axis axis, Vector3I normal) {
         this.data3d = data3d;
@@ -79,7 +78,7 @@ public enum Direction {
                 direction = this != UP && this != DOWN ? this.getClockWise() : this;
                 break;
             default:
-                throw new IncompatibleClassChangeError();
+                return ExceptionBuilder.throwException(new IncompatibleClassChangeError(), true);
         }
 
         return direction;
@@ -98,7 +97,7 @@ public enum Direction {
                 direction = this != UP && this != DOWN ? this.getCounterClockWise() : this;
                 break;
             default:
-                throw new IncompatibleClassChangeError();
+                return ExceptionBuilder.throwException(new IncompatibleClassChangeError(), true);
         }
 
         return direction;
@@ -120,7 +119,7 @@ public enum Direction {
                 direction = SOUTH;
                 break;
             default:
-                throw new IllegalStateException("Unable to get Y-rotated direction of " + this);
+                return ExceptionBuilder.throwException(new IllegalStateException("Unable to get Y-rotated direction of " + this), true);
         }
 
         return direction;
@@ -142,9 +141,8 @@ public enum Direction {
                 direction = UP;
                 break;
             default:
-                throw new IllegalStateException("Unable to get X-rotated direction of " + this);
+                return ExceptionBuilder.throwException(new IllegalStateException("Unable to get X-rotated direction of " + this), true);
         }
-
         return direction;
     }
 
@@ -164,9 +162,8 @@ public enum Direction {
                 direction = DOWN;
                 break;
             default:
-                throw new IllegalStateException("Unable to get X-rotated direction of " + this);
+                return ExceptionBuilder.throwException(new IllegalStateException("Unable to get X-rotated direction of " + this), true);
         }
-
         return direction;
     }
 
@@ -182,7 +179,7 @@ public enum Direction {
             case NORTH:
             case SOUTH:
             default:
-                throw new IllegalStateException("Unable to get Z-rotated direction of " + this);
+                return ExceptionBuilder.throwException(new IllegalStateException("Unable to get Z-rotated direction of " + this), true);
             case WEST:
                 direction = UP;
                 break;
@@ -205,7 +202,7 @@ public enum Direction {
             case NORTH:
             case SOUTH:
             default:
-                throw new IllegalStateException("Unable to get Z-rotated direction of " + this);
+                return ExceptionBuilder.throwException(new IllegalStateException("Unable to get Z-rotated direction of " + this), true);
             case WEST:
                 direction = DOWN;
                 break;
@@ -232,7 +229,7 @@ public enum Direction {
                 direction = NORTH;
                 break;
             default:
-                throw new IllegalStateException("Unable to get CCW direction of " + this);
+                return ExceptionBuilder.throwException(new IllegalStateException("Unable to get CCW direction of " + this), true);
         }
 
         return direction;
@@ -293,7 +290,7 @@ public enum Direction {
                 direction = axisDirection == AxisDirection.POSITIVE ? UP : DOWN;
                 break;
             default:
-                throw new IncompatibleClassChangeError();
+                return ExceptionBuilder.throwException(new IncompatibleClassChangeError(), true);
         }
 
         return direction;
@@ -336,8 +333,7 @@ public enum Direction {
                 return direction;
             }
         }
-
-        throw new IllegalArgumentException("No such direction: " + axisDirection + " " + axis);
+        return ExceptionBuilder.throwException(new IllegalArgumentException("No such direction: " + axisDirection + " " + axis), true);
     }
 
     public Vector3I getNormal() {

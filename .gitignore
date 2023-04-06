@@ -31,7 +31,7 @@ hs_err_pid*
 
 *~
 
-# temporary files which can be created if Skip$1 process still has Skip$1 handle open of Skip$1 deleted file
+# temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
 
 # KDE directory preferences
@@ -54,7 +54,7 @@ Icon
 # Thumbnails
 ._*
 
-# Files that might appear in the root of Skip$1 volume
+# Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100

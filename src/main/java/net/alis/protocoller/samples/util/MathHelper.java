@@ -1,5 +1,6 @@
 package net.alis.protocoller.samples.util;
 
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.samples.phys.BaseBlockPosition;
 
 import java.util.Random;
@@ -410,7 +411,7 @@ public class MathHelper {
                 f6 = f2;
                 break;
             default:
-                throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
+                return ExceptionBuilder.throwException(new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value), true);
         }
         int j = clamp((int)(f4 * 255.0F), 0, 255);
         int k = clamp((int)(f5 * 255.0F), 0, 255);

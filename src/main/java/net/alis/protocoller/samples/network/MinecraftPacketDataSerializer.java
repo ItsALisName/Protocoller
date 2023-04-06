@@ -9,6 +9,7 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import io.netty.util.ByteProcessor;
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.nbt.CompressedStreamTools;
@@ -65,7 +66,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     public byte[] readByteArray(int maxLength) {
         int i = this.readVarIntFromBuffer();
         if (i > maxLength) {
-            throw new DecoderException("ByteArray with size " + i + " is bigger than allowed " + maxLength);
+            return ExceptionBuilder.throwException(new DecoderException("ByteArray with size " + i + " is bigger than allowed " + maxLength), true);
         } else {
             byte[] abyte = new byte[i];
             this.readBytes(abyte);
@@ -88,7 +89,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     public int[] readVarIntArray(int maxLength) {
         int i = this.readVarIntFromBuffer();
         if (i > maxLength) {
-            throw new DecoderException("VarIntArray with size " + i + " is bigger than allowed " + maxLength);
+            return ExceptionBuilder.throwException(new DecoderException("VarIntArray with size " + i + " is bigger than allowed " + maxLength), true);
         } else {
             int[] aint = new int[i];
             for (int j = 0; j < aint.length; ++j) {
@@ -114,7 +115,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
         int i = this.readVarIntFromBuffer();
         if (longs == null || longs.length != i) {
             if (i > int0) {
-                throw new DecoderException("LongArray with size " + i + " is bigger than allowed " + int0);
+                return ExceptionBuilder.throwException(new DecoderException("LongArray with size " + i + " is bigger than allowed " + int0), true);
             }
             longs = new long[i];
         }
@@ -155,7 +156,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
         while (true) {
             byte b0 = this.readByte();
             i |= (b0 & 127) << j++ * 7;
-            if (j > 5) throw new DecoderException("VarInt too big");
+            if (j > 5) return ExceptionBuilder.throwException(new DecoderException("VarInt too big"), true);
             if ((b0 & 128) != 128) break;
         }
         return i;
@@ -166,7 +167,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
         while (true) {
             byte b0 = this.readByte();
             i |= (long)(b0 & 127) << j++ * 7;
-            if (j > 10) throw new DecoderException("VarLong too big");
+            if (j > 10) return ExceptionBuilder.throwException(new DecoderException("VarLong too big"), true);
             if ((b0 & 128) != 128) break;
         }
 
@@ -207,10 +208,8 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
         } else {
             try {
                 CompressedStreamTools.write(nbt, new ByteBufOutputStream(this));
-            }
-            catch (IOException ioexception)
-            {
-                throw new EncoderException(ioexception);
+            } catch (IOException ioexception) {
+                return ExceptionBuilder.throwException(new EncoderException(ioexception), true);
             }
         }
         return this;
@@ -227,7 +226,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
             try {
                 return CompressedStreamTools.read(new ByteBufInputStream(this), new NBTSizeTracker(2097152L));
             } catch (IOException ioexception) {
-                throw new EncoderException(ioexception);
+                return ExceptionBuilder.throwException(new EncoderException(ioexception), true);
             }
         }
     }
@@ -235,13 +234,13 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     public String readStringFromBuffer(int maxLength) {
         int i = this.readVarIntFromBuffer();
         if (i > maxLength * 4) {
-            throw new DecoderException("The received encoded string buffer length is longer than maximum allowed (" + i + " > " + maxLength * 4 + ")");
+            return ExceptionBuilder.throwException(new DecoderException("The received encoded string buffer length is longer than maximum allowed (" + i + " > " + maxLength * 4 + ")"), true);
         } else if (i < 0) {
-            throw new DecoderException("The received encoded string buffer length is less than zero! Weird string!");
+            return ExceptionBuilder.throwException(new DecoderException("The received encoded string buffer length is less than zero! Weird string!"), true);
         } else {
             String s = new String(this.readBytes(i).array(), Charsets.UTF_8);
             if (s.length() > maxLength) {
-                throw new DecoderException("The received string length is longer than maximum allowed (" + i + " > " + maxLength + ")");
+                return ExceptionBuilder.throwException(new DecoderException("The received string length is longer than maximum allowed (" + i + " > " + maxLength + ")"), true);
             } else {
                 return s;
             }
@@ -251,7 +250,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     public MinecraftPacketDataSerializer writeString(String string) {
         byte[] bytes = string.getBytes(Charsets.UTF_8);
         if (bytes.length > 32767) {
-            throw new EncoderException("String too big (was " + string.length() + " bytes encoded, max " + 32767 + ")");
+            return ExceptionBuilder.throwException(new EncoderException("String too big (was " + string.length() + " bytes encoded, max " + 32767 + ")"), true);
         } else {
             this.writeVarIntToBuffer(bytes.length);
             this.writeBytes(bytes);

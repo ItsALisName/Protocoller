@@ -1,5 +1,13 @@
 package net.alis.protocoller.plugin.exception;
 
+import lombok.SneakyThrows;
+import net.alis.protocoller.plugin.config.ProtocollerConfig;
+import net.alis.protocoller.plugin.managers.FileWorker;
+import net.alis.protocoller.plugin.util.TaskSimplifier;
+import net.alis.protocoller.plugin.util.Utils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 public class ExceptionBuilder {
 
     protected static final String path = "plugins/Protocoller/errors/";
@@ -56,6 +64,44 @@ public class ExceptionBuilder {
 
     public MinecraftKeyException.Builder getMinecraftKeyExceptions() {
         return new MinecraftKeyException.Builder(showStacktrace, ignore);
+    }
+
+    public NBTException.Builder getNBTExceptions() {
+        return new NBTException.Builder(showStacktrace, ignore);
+    }
+
+    public AttributeException.Builder getAttributeExceptions() {
+        return new AttributeException.Builder(showStacktrace, ignore);
+    }
+
+    protected static void writeExceptionFile(Throwable e) {
+        TaskSimplifier.get().preformAsync(() -> {
+            FileWorker fileWorker = new FileWorker(ExceptionBuilder.path, e.getClass().getSimpleName() + "_" + Utils.getCurrentDate(false));
+            fileWorker.startWriting().write("Exception: " + e.getClass().getName());
+            fileWorker.writeNewLine("Date and time: " + Utils.getCurrentDate(true) + ", " + Utils.getCurrentTime()).writeNewLine("Cause: " + e.getMessage());
+            fileWorker.writeNewLine("Stacktrace: ");
+            for (StackTraceElement traceElement : e.getStackTrace())
+                fileWorker.writeNewLine(traceElement.toString());
+            fileWorker.stopAll();
+        });
+    }
+
+    @SneakyThrows
+    public static <F> F throwException(Exception e, boolean showStacktrace) {
+        if (ProtocollerConfig.isSaveErrors()) {
+            writeExceptionFile(e);
+        }
+        if (!showStacktrace) e.setStackTrace(new StackTraceElement[]{});
+        throw e;
+    }
+
+    @Contract(value = "_,_ -> fail", pure = true)
+    public static <F> F throwException(@NotNull Error error, boolean showStacktrace) {
+        if (ProtocollerConfig.isSaveErrors()) {
+            writeExceptionFile(error);
+        }
+        if (!showStacktrace) error.setStackTrace(new StackTraceElement[]{});
+        throw error;
     }
 
 }

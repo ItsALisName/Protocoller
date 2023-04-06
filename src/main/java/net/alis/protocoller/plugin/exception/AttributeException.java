@@ -3,9 +3,9 @@ package net.alis.protocoller.plugin.exception;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MinecraftKeyException extends RuntimeException {
+public class AttributeException extends RuntimeException {
 
-    private MinecraftKeyException(String s) {
+    private AttributeException(String s) {
         super(s);
     }
 
@@ -24,8 +24,8 @@ public class MinecraftKeyException extends RuntimeException {
             return this;
         }
 
-        public CompletedException verifyError(String namespace, String path) {
-            return new CompletedException(new MinecraftKeyException("Non [a-z0-9_.-] character in namespace of location: " + namespace + ":" + path + definedReason), showStackTrace, ignore);
+        public CompletedException customMessage(String s) {
+            return new CompletedException(new AttributeException(s + definedReason), showStackTrace, ignore);
         }
     }
 

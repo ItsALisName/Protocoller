@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.nbt.NBTBase;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
@@ -50,12 +51,12 @@ public class NBTTagList extends NBTBase {
     public void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         sizeTracker.read(296L);
         if (depth > 512) {
-            throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
+            new ExceptionBuilder().getNBTExceptions().customMessage("Tried to read NBT tag with too high complexity, depth > 512").throwException();
         } else {
             this.tagType = input.readByte();
             int i = input.readInt();
             if (this.tagType == 0 && i > 0) {
-                throw new RuntimeException("Missing type on ListTag");
+                new ExceptionBuilder().getNBTExceptions().customMessage("Missing type on tag ListTag").throwException();
             } else {
                 sizeTracker.read(32L * (long)i);
                 this.tagList = Lists.newArrayListWithCapacity(i);

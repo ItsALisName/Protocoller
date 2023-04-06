@@ -1,6 +1,8 @@
 package net.alis.protocoller.samples.nbt;
 
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.samples.nbt.tags.NBTTagEnd;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -37,7 +39,7 @@ public class CompressedStreamTools {
         }
     }
 
-    public static void safeWrite(NBTTagCompound compound, File fileIn) throws IOException {
+    public static void safeWrite(NBTTagCompound compound, @NotNull File fileIn) throws IOException {
         File file1 = new File(fileIn.getAbsolutePath() + "_tmp");
         if (file1.exists()) {
             file1.delete();
@@ -47,20 +49,20 @@ public class CompressedStreamTools {
             fileIn.delete();
         }
         if (fileIn.exists()) {
-            throw new IOException("Failed to delete " + fileIn);
+            new ExceptionBuilder().getNBTExceptions().fileRemoveError(fileIn).throwException();
         } else {
             file1.renameTo(fileIn);
         }
     }
 
-    public static void write(NBTTagCompound compound, File fileIn) throws IOException {
+    public static void write(NBTTagCompound compound, @NotNull File fileIn) throws IOException {
         try (DataOutputStream dataoutputstream = new DataOutputStream(Files.newOutputStream(fileIn.toPath()))) {
             write(compound, dataoutputstream);
         }
     }
 
     @Nullable
-    public static NBTTagCompound read(File fileIn) throws IOException {
+    public static NBTTagCompound read(@NotNull File fileIn) throws IOException {
         if (!fileIn.exists()) {
             return null;
         } else {
@@ -75,16 +77,16 @@ public class CompressedStreamTools {
         }
     }
 
-    public static NBTTagCompound read(DataInputStream inputStream) throws IOException {
+    public static @NotNull NBTTagCompound read(DataInputStream inputStream) throws IOException {
         return read(inputStream, NBTSizeTracker.INFINITE);
     }
 
-    public static NBTTagCompound read(DataInput input, NBTSizeTracker accounter) throws IOException {
+    public static @NotNull NBTTagCompound read(DataInput input, NBTSizeTracker accounter) throws IOException {
         NBTBase nbtbase = read(input, 0, accounter);
         if (nbtbase instanceof NBTTagCompound) {
             return (NBTTagCompound)nbtbase;
         } else {
-            throw new IOException("Root tag must be Loot named compound tag");
+            return new ExceptionBuilder().getNBTExceptions().customMessage("Root tag must be Loot named compound tag").throwException();
         }
     }
 
@@ -92,7 +94,7 @@ public class CompressedStreamTools {
         writeTag(compound, output);
     }
 
-    private static void writeTag(NBTBase tag, DataOutput output) throws IOException {
+    private static void writeTag(@NotNull NBTBase tag, @NotNull DataOutput output) throws IOException {
         output.writeByte(tag.getId());
         if (tag.getId() != 0) {
             output.writeUTF("");
@@ -100,7 +102,7 @@ public class CompressedStreamTools {
         }
     }
 
-    private static NBTBase read(DataInput input, int depth, NBTSizeTracker accounter) throws IOException {
+    private static NBTBase read(@NotNull DataInput input, int depth, NBTSizeTracker accounter) throws IOException {
         byte b0 = input.readByte();
         if (b0 == 0) {
             return new NBTTagEnd();
@@ -111,7 +113,7 @@ public class CompressedStreamTools {
                 nbtbase.read(input, depth, accounter);
                 return nbtbase;
             } catch (IOException ioexception) {
-                throw new RuntimeException("Failed to read nbt tag[type=" + b0 + "] from nbt...", ioexception);
+                return new ExceptionBuilder().getNBTExceptions().defineReason(ioexception).byteReadError(b0).throwException();
             }
         }
     }

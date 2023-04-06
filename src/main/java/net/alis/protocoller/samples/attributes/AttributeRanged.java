@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.attributes;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.util.MathHelper;
 import net.alis.protocoller.util.AccessedObject;
@@ -14,11 +15,11 @@ public class AttributeRanged extends AttributeBase {
         this.min = min;
         this.max = max;
         if (min > max) {
-            throw new IllegalArgumentException("Minimum value cannot be bigger than maximum value!");
+            new ExceptionBuilder().getAttributeExceptions().customMessage("Minimum value cannot be bigger than maximum value!").throwException();
         } else if (fallback < min) {
-            throw new IllegalArgumentException("Default value cannot be lower than minimum value!");
+            new ExceptionBuilder().getAttributeExceptions().customMessage("Default value cannot be lower than minimum value!").throwException();
         } else if (fallback > max) {
-            throw new IllegalArgumentException("Default value cannot be bigger than maximum value!");
+            new ExceptionBuilder().getAttributeExceptions().customMessage("Default value cannot be bigger than maximum value!").throwException();
         }
     }
 

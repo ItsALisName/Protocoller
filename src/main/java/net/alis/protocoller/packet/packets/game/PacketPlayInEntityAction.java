@@ -1,6 +1,7 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.network.packet.IndexedParam;
 import net.alis.protocoller.plugin.network.packet.PacketBuilder;
@@ -62,7 +63,8 @@ public class PacketPlayInEntityAction implements PlayInPacket {
             this.mountJumpHeight = mountJumpHeight;
             return;
         }
-        throw new RuntimeException("Entity with id " + entityId + " not founded!");
+        this.packetData = null;
+        ExceptionBuilder.throwException(new RuntimeException("Entity with id " + entityId + " not founded!"), true);
     }
 
     public int getEntityId() {

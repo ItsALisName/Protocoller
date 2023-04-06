@@ -32,7 +32,7 @@ public class ChatComponent {
 
     public ChatComponent(String text) {
         if(text == null) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&c[FunctionalServerControl] String cannot be null"));
+            this.component = new TextComponent("");
             return;
         }
         this.component = new TextComponent(setColors(text));
@@ -46,7 +46,7 @@ public class ChatComponent {
 
     public ChatComponent(BaseComponent text) {
         if (text == null) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&c[FunctionalServerControl] BaseComponent cannot be null"));
+            this.component = new TextComponent("");
             return;
         }
         this.component = new TextComponent(text);
@@ -55,7 +55,7 @@ public class ChatComponent {
 
     public ChatComponent(BaseComponent... texts) {
         if (texts == null) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&c[FunctionalServerControl] BaseComponents cannot be null"));
+            this.component = new TextComponent("");
             return;
         }
         TextComponent components = new TextComponent("");
@@ -68,7 +68,8 @@ public class ChatComponent {
 
     public ChatComponent(ChatComponent text) {
         if (text == null) {
-            throw new IllegalArgumentException("[FunctionalServerControl] ChatComponent cannot be null");
+            this.component = new TextComponent("");
+            return;
         }
         this.string = text.string;
         this.component = text.component;
@@ -76,7 +77,8 @@ public class ChatComponent {
 
     public ChatComponent(ChatComponent... texts) {
         if (texts == null) {
-            throw new IllegalArgumentException("[FunctionalServerControl] ChatComponents cannot be null");
+            this.component = new TextComponent("");
+            return;
         }
         ChatComponent component = new ChatComponent("");
         for (ChatComponent c : texts) {
@@ -95,10 +97,7 @@ public class ChatComponent {
     }
 
     public ChatComponent setHoverEvent(HoverEvent.Action action, @NotNull String extra) {
-        if (hasHoverEvents()) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&c[FunctionalServerControl] Component already has hover event"));
-            return this;
-        }
+        if (hasHoverEvents()) return this;
         HoverEvent event = new HoverEvent(action, new Text(setColors(extra)));
         this.component.setHoverEvent(event);
         this.hoverEvents.add(event);
@@ -106,18 +105,12 @@ public class ChatComponent {
     }
 
     public List<HoverEvent> getHoverEvents() {
-        if (!hasHoverEvents()) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&c[FunctionalServerControl] Component has no hover events"));
-            return new ArrayList<HoverEvent>();
-        }
+        if (!hasHoverEvents()) return new ArrayList<>();
         return this.hoverEvents;
     }
 
     public List<ClickEvent> getClickEvents() {
-        if (!hasClickEvents()) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&c[FunctionalServerControl] Component has no click events"));
-            return new ArrayList<ClickEvent>();
-        }
+        if (!hasClickEvents()) return new ArrayList<>();
         return this.clickEvents;
     }
 
@@ -144,23 +137,20 @@ public class ChatComponent {
     }
 
     public ChatComponent setClickEvent(ClickEvent.Action action, @NotNull String extra) {
-        if (hasClickEvents()) {
-            Bukkit.getConsoleSender().sendMessage(setColors("&c[FunctionalServerControl] Component already has click event"));
-            return this;
-        }
+        if (hasClickEvents()) return this;
         ClickEvent event = new ClickEvent(action, extra);
         this.component.setClickEvent(event);
         this.clickEvents.add(event);
         return this;
     }
 
-    public ChatComponent append(ChatComponent extra) {
+    public ChatComponent append(@NotNull ChatComponent extra) {
         this.component.addExtra(extra.component);
         this.string = this.string + extra.string;
         return this;
     }
 
-    public ChatComponent append(String delimiter, ChatComponent... extra) {
+    public ChatComponent append(String delimiter, ChatComponent @NotNull ... extra) {
         ChatComponent component = new ChatComponent();
         StringBuilder builder = new StringBuilder(this.string);
         for(ChatComponent c : extra) {

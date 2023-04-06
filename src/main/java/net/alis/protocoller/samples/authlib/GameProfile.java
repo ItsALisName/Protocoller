@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.authlib;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.authlib.properties.PropertyMap;
 import net.alis.protocoller.util.AccessedObject;
@@ -10,14 +11,14 @@ import java.util.UUID;
 
 public class GameProfile {
 
-    private final UUID id;
-    private final String name;
+    private UUID id;
+    private String name;
     private PropertyMap properties = new PropertyMap();
     private boolean legacy;
 
     public GameProfile(UUID id, String name) {
         if (id == null && StringUtils.isBlank(name)) {
-            throw new IllegalArgumentException("Name and ID cannot both be blank");
+            ExceptionBuilder.throwException(new IllegalArgumentException("Name and ID cannot both be blank"), true);
         } else {
             this.id = id;
             this.name = name;

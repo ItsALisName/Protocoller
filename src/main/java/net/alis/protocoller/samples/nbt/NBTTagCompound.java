@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import net.alis.protocoller.samples.nbt.tags.*;
 import net.alis.protocoller.util.AccessedObject;
@@ -35,7 +36,7 @@ public class NBTTagCompound extends NBTBase {
     public void read(DataInput input, int depth, @NotNull NBTSizeTracker sizeTracker) throws IOException {
         sizeTracker.read(384L);
         if (depth > 512) {
-            throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
+            new ExceptionBuilder().getNBTExceptions().customMessage("Tried to read NBT tag with too high complexity, depth > 512").throwException();
         } else {
             this.tagMap.clear();
             byte b0;
@@ -219,7 +220,7 @@ public class NBTTagCompound extends NBTBase {
                 return ((NBTTagByteArray)this.tagMap.get(key)).getByteArray();
             }
         } catch (ClassCastException classcastexception) {
-            throw new RuntimeException("Failed to get byte array from nbt...", classcastexception);
+            return new ExceptionBuilder().getNBTExceptions().defineReason(classcastexception).readFromError("ByteArray").throwException();
         }
 
         return new byte[0];
@@ -231,7 +232,7 @@ public class NBTTagCompound extends NBTBase {
                 return ((NBTTagIntArray)this.tagMap.get(key)).getIntArray();
             }
         } catch (ClassCastException classcastexception) {
-            throw new RuntimeException("Failed to get int array from nbt...", classcastexception);
+            return new ExceptionBuilder().getNBTExceptions().defineReason(classcastexception).readFromError("IntArray").throwException();
         }
 
         return new int[0];
@@ -243,7 +244,7 @@ public class NBTTagCompound extends NBTBase {
                 return (NBTTagCompound)this.tagMap.get(key);
             }
         } catch (ClassCastException classcastexception) {
-            throw new RuntimeException("Failed to get nbt compound from nbt...", classcastexception);
+            return new ExceptionBuilder().getNBTExceptions().defineReason(classcastexception).readFromError("NBTCompound").throwException();
         }
         return new NBTTagCompound();
     }
@@ -258,7 +259,7 @@ public class NBTTagCompound extends NBTBase {
                 return nbttaglist;
             }
         } catch (ClassCastException classcastexception) {
-            throw new RuntimeException("Failed to get tag list from nbt...", classcastexception);
+            return new ExceptionBuilder().getNBTExceptions().defineReason(classcastexception).readFromError("List").throwException();
         }
         return new NBTTagList();
     }
@@ -330,7 +331,10 @@ public class NBTTagCompound extends NBTBase {
             nbtbase.read(input, depth, sizeTracker);
             return nbtbase;
         } catch (IOException ioexception) {
-            throw new RuntimeException("Failed to read nbt[name=" + key + ", type=" + id + "] from nbt...", ioexception);
+            return new ExceptionBuilder().getNBTExceptions()
+                    .defineReason(ioexception)
+                    .customMessage("Failed to read nbt[name=" + key + ", type=" + id + "] from nbt...")
+                    .throwException();
         }
     }
 

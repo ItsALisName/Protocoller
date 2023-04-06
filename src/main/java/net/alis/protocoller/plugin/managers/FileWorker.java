@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Scanner;
 
-public class FileManager {
+public class FileWorker {
 
     private final File file;
     private FileReader reader;
@@ -17,12 +17,12 @@ public class FileManager {
     private int linesCount = 0;
 
     @SneakyThrows
-    public FileManager(File file) {
+    public FileWorker(File file) {
         this.file = file;
     }
 
     @SneakyThrows
-    public FileManager(String path, String name) {
+    public FileWorker(String path, String name) {
         this.file = new File(path, name);
         if(!this.file.exists()) this.file.createNewFile();
     }
@@ -36,13 +36,13 @@ public class FileManager {
     }
 
     @SneakyThrows
-    public FileManager startWriting() {
+    public FileWorker startWriting() {
         this.writer = new FileWriter(this.file);
         return this;
     }
 
     @SneakyThrows
-    public FileManager stopWriting() {
+    public FileWorker stopWriting() {
         if(isFileWritingNow()) {
             this.writer.close();
             this.writer = null;
@@ -51,7 +51,7 @@ public class FileManager {
     }
 
     @SneakyThrows
-    public FileManager startReading() {
+    public FileWorker startReading() {
         this.reader = new FileReader(this.file);
         this.scanner = new Scanner(this.reader);
         while (this.scanner.hasNextLine()) this.linesCount++;
@@ -59,7 +59,7 @@ public class FileManager {
     }
 
     @SneakyThrows
-    public FileManager stopReading() {
+    public FileWorker stopReading() {
         if(isFileReadingNow()) {
             this.scanner.close();
             this.reader.close();
@@ -74,13 +74,13 @@ public class FileManager {
     }
 
     @SneakyThrows
-    public FileManager write(String o) {
+    public FileWorker write(String o) {
         if(isFileWritingNow()) this.writer.write(o);
         return this;
     }
 
     @SneakyThrows
-    public FileManager writeNewLine(String o) {
+    public FileWorker writeNewLine(String o) {
         write("\n" + o);
         return this;
     }

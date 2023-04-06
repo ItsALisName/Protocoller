@@ -1,5 +1,6 @@
 package net.alis.protocoller.samples.core;
 
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public class NibbleArray {
@@ -13,7 +14,7 @@ public class NibbleArray {
     public NibbleArray(byte @NotNull [] storageArray) {
         this.data = storageArray;
         if (storageArray.length != 2048) {
-            throw new IllegalArgumentException("ChunkNibbleArrays should be 2048 bytes not: " + storageArray.length);
+            ExceptionBuilder.throwException(new IllegalArgumentException("ChunkNibbleArrays should be 2048 bytes not: " + storageArray.length), true);
         }
     }
 

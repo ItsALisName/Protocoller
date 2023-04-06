@@ -30,6 +30,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import lombok.SneakyThrows;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -280,7 +281,7 @@ public class Metrics {
                         new String(new byte[] {'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
                 if (MetricsBase.class.getPackage().getName().startsWith(defaultPackage)
                         || MetricsBase.class.getPackage().getName().startsWith(examplePackage)) {
-                    throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
+                    ExceptionBuilder.throwException(new IllegalStateException("bStats Metrics class has not been relocated correctly!"), true);
                 }
             }
         }
@@ -410,7 +411,6 @@ public class Metrics {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
             Map<String, Integer> map = callable.call();
             if (map == null || map.isEmpty()) {
-                // Null = skip the chart
                 return null;
             }
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
@@ -426,7 +426,7 @@ public class Metrics {
 
         protected CustomChart(String chartId) {
             if (chartId == null) {
-                throw new IllegalArgumentException("chartId must not be null");
+                ExceptionBuilder.throwException(new IllegalArgumentException("chartId must not be null"), true);
             }
             this.chartId = chartId;
         }
@@ -438,7 +438,6 @@ public class Metrics {
             try {
                 JsonObjectBuilder.JsonObject data = getChartData();
                 if (data == null) {
-                    // If the data is null we don't send the chart.
                     return null;
                 }
                 builder.appendField("data", data);
@@ -468,7 +467,6 @@ public class Metrics {
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             String value = callable.call();
             if (value == null || value.isEmpty()) {
-                // Null = skip the chart
                 return null;
             }
             return new JsonObjectBuilder().appendField("value", value).build();
@@ -521,7 +519,6 @@ public class Metrics {
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             int value = callable.call();
             if (value == 0) {
-                // Null = skip the chart
                 return null;
             }
             return new JsonObjectBuilder().appendField("value", value).build();
@@ -548,7 +545,7 @@ public class Metrics {
 
         public JsonObjectBuilder appendField(String key, String value) {
             if (value == null) {
-                throw new IllegalArgumentException("JSON value must not be null");
+                return ExceptionBuilder.throwException(new IllegalArgumentException("JSON value must not be null"), true);
             }
             appendFieldUnescaped(key, "\"" + escape(value) + "\"");
             return this;
@@ -563,7 +560,7 @@ public class Metrics {
 
         public JsonObjectBuilder appendField(String key, JsonObject object) {
             if (object == null) {
-                throw new IllegalArgumentException("JSON object must not be null");
+                return ExceptionBuilder.throwException(new IllegalArgumentException("JSON object must not be null"), true);
             }
             appendFieldUnescaped(key, object.toString());
             return this;
@@ -572,7 +569,7 @@ public class Metrics {
 
         public JsonObjectBuilder appendField(String key, String[] values) {
             if (values == null) {
-                throw new IllegalArgumentException("JSON values must not be null");
+                return ExceptionBuilder.throwException(new IllegalArgumentException("JSON values must not be null"), true);
             }
             String escapedValues =
                     Arrays.stream(values)
@@ -585,7 +582,7 @@ public class Metrics {
 
         public JsonObjectBuilder appendField(String key, int[] values) {
             if (values == null) {
-                throw new IllegalArgumentException("JSON values must not be null");
+                return ExceptionBuilder.throwException(new IllegalArgumentException("JSON values must not be null"), true);
             }
             String escapedValues =
                     Arrays.stream(values).mapToObj(String::valueOf).collect(Collectors.joining(","));
@@ -596,7 +593,7 @@ public class Metrics {
 
         public JsonObjectBuilder appendField(String key, JsonObject[] values) {
             if (values == null) {
-                throw new IllegalArgumentException("JSON values must not be null");
+                return ExceptionBuilder.throwException(new IllegalArgumentException("JSON values must not be null"), true);
             }
             String escapedValues =
                     Arrays.stream(values).map(JsonObject::toString).collect(Collectors.joining(","));
@@ -607,10 +604,10 @@ public class Metrics {
 
         private void appendFieldUnescaped(String key, String escapedValue) {
             if (builder == null) {
-                throw new IllegalStateException("JSON has already been built");
+                ExceptionBuilder.throwException(new IllegalStateException("JSON has already been built"), true);
             }
             if (key == null) {
-                throw new IllegalArgumentException("JSON key must not be null");
+                ExceptionBuilder.throwException(new IllegalArgumentException("JSON key must not be null"), true);
             }
             if (hasAtLeastOneField) {
                 builder.append(",");
@@ -622,7 +619,7 @@ public class Metrics {
 
         public JsonObject build() {
             if (builder == null) {
-                throw new IllegalStateException("JSON has already been built");
+                return ExceptionBuilder.throwException(new IllegalStateException("JSON has already been built"), true);
             }
             JsonObject object = new JsonObject(builder.append("}").toString());
             builder = null;

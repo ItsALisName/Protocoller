@@ -1,12 +1,15 @@
 package net.alis.protocoller.plugin.util;
 
 import net.alis.protocoller.packet.MinecraftPacketType;
+import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.BaseReflection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
 
 public class PacketUtils {
 
@@ -50,6 +53,32 @@ public class PacketUtils {
                 );
             default: return null;
         }
+    }
+
+    public static @NotNull String buildPacketDataReport(@NotNull PacketDataContainer data) {
+        StringBuilder report = new StringBuilder("[*] Processed packet details:");
+        report.append("\nPacket name: ").append(data.getType().getPacketName());
+        report.append("\nPacket id: ").append(data.getType().getPacketId());
+        report.append("\nPacket state: ").append(data.getType().getState().name());
+        report.append("\nPacket class: ").append(data.getType().getPacketClass());
+        report.append("\nPacket data [Field -> Type -> Value]:");
+        for(Field field : data.getRawPacket().getClass().getDeclaredFields()) {
+            report.append("Field: ").append(field.getName()).append("Type: ").append(field.getType().getSimpleName()).append("Value: ").append((Object) BaseReflection.readField(data.getRawPacket(), field));
+        }
+        return report.toString();
+    }
+
+    public static @NotNull String buildPacketDataReport(@NotNull Object data) {
+        StringBuilder report = new StringBuilder("[*] Processed packet details:");
+        report.append("\nPacket name: ").append(data.getClass().getSimpleName());
+        report.append("\nPacket id: ").append("Unknown");
+        report.append("\nPacket state: ").append("Unknown");
+        report.append("\nPacket class: ").append(data.getClass().getName());
+        report.append("\nPacket data [Field -> Type -> Value]:");
+        for(Field field : data.getClass().getDeclaredFields()) {
+            report.append("Field: ").append(field.getName()).append("Type: ").append(field.getType().getSimpleName()).append("Value: ").append((Object) BaseReflection.readField(data, field));
+        }
+        return report.toString();
     }
 
 }
