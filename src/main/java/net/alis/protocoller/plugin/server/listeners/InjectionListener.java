@@ -30,7 +30,6 @@ public class InjectionListener implements Listener {
         TaskSimplifier.get().preformAsync(() -> {
             GlobalProvider.instance().getData().getEntitiesContainer().addEntity(player.getEntityId(), player);
         });
-        p.getConnection().sendPacket(new PacketPlayOutChat(new ChatComponent("Lol"), MessageType.ACTION_BAR, p.getUniqueId()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

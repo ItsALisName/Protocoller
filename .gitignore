@@ -1,6 +1,9 @@
 # client-specific stuff
 .idea/
 
+pom.xml
+.gitignore
+
 *.iml
 *.ipr
 *.iws
