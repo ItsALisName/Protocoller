@@ -1,8 +1,8 @@
 package net.alis.protocoller;
 
-import io.netty.channel.Channel;
-import net.alis.protocoller.packet.Packet;
-import net.alis.protocoller.packet.type.PlayOutPacket;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.samples.network.PlayerConnection;
+import org.bukkit.entity.Player;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -13,16 +13,18 @@ public interface NetworkPlayer {
 
     UUID getUniqueId();
 
+    Version getVersion();
+
     InetSocketAddress getInetSocketAddress();
 
-    Channel getChannel();
-
-    int getProtocolVersion();
-
-    void sendPacket(PlayOutPacket packet);
+    PlayerConnection getConnection();
 
     int getPacketsSentCount();
 
     int getPacketsReceivedCount();
+
+    Player getBukkitPlayer();
+
+    int getPing();
 
 }

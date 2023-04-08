@@ -2,8 +2,8 @@ package net.alis.protocoller.plugin.network.netty.interceptors;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
+import net.alis.protocoller.packet.packets.handshake.PacketHandshakingInSetProtocol;
 import net.alis.protocoller.plugin.events.AsyncPacketEventManager;
-import net.alis.protocoller.plugin.events.RegisteredProtocollerListener;
 import net.alis.protocoller.plugin.events.SyncPacketEventManager;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.exception.PacketEventException;
@@ -11,9 +11,11 @@ import net.alis.protocoller.plugin.network.ProtocollerPlayer;
 import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.NetworkPlayer;
-import net.alis.protocoller.event.synchronous.SyncPacketEvent;
+import net.alis.protocoller.event.sync.SyncPacketEvent;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
+import net.alis.protocoller.plugin.util.ProtocolUtil;
+import net.alis.protocoller.plugin.util.TaskSimplifier;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,6 +48,15 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
         } catch (Exception e) {
             super.channelRead(ctx, msg);
             return;
+        }
+        if(!ProtocolUtil.viaVersionInstalled){
+            if (data.getType() == PacketType.Handshake.Client.SET_PROTOCOL) {
+                PacketHandshakingInSetProtocol protocol = new PacketHandshakingInSetProtocol(data);
+                if (!ProtocolUtil.TEMP_PROTOCOL_MAP.containsKey(protocol.getAddress())) {
+                    ProtocolUtil.TEMP_PROTOCOL_MAP.put(protocol.getAddress(), protocol.getProtocolVersion());
+                    TaskSimplifier.get().preformAsyncLater(() -> ProtocolUtil.TEMP_PROTOCOL_MAP.remove(protocol.getAddress()), 300L);
+                }
+            }
         }
         if(data.getType().getState() == PacketType.State.PLAY_CLIENTBOUND && player == null) {
             super.channelRead(ctx, msg);
@@ -113,12 +124,9 @@ public class NettyPacketInterceptor extends ChannelDuplexHandler {
 
 
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public void setNetworkPlayer(NetworkPlayer networkPlayer) {
-        this.networkPlayer = networkPlayer;
+    public void setPlayer(@NotNull NetworkPlayer player) {
+        this.networkPlayer = player;
+        this.player = player.getBukkitPlayer();
     }
 
     public Player getPlayer() {

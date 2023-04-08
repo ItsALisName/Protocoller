@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.resources;
 
 import com.google.common.collect.Maps;
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
 
@@ -46,8 +46,8 @@ public class ResourceKey<T> implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getResourceKeyClass(), ClassesContainer.get().getMinecraftKeyClass(), ClassesContainer.get().getMinecraftKeyClass()),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getResourceKeyClass(), ClassesContainer.get().getMinecraftKeyClass(), ClassesContainer.get().getMinecraftKeyClass()),
                 this.registry.createOriginal(), this.value.createOriginal()
         );
     }

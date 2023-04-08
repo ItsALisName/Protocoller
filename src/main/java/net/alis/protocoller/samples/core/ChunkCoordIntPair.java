@@ -3,7 +3,7 @@ package net.alis.protocoller.samples.core;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
 
@@ -88,8 +88,8 @@ public class ChunkCoordIntPair implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getChunkCoordIntPairClass(), Integer.TYPE, Integer.TYPE),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getChunkCoordIntPairClass(), Integer.TYPE, Integer.TYPE),
                 this.x, this.z
         );
     }

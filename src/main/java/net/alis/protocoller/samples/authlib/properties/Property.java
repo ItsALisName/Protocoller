@@ -1,13 +1,17 @@
 package net.alis.protocoller.samples.authlib.properties;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
+import net.alis.protocoller.util.ObjectSample;
 import org.apache.commons.codec.binary.Base64;
 
+import java.lang.reflect.Array;
 import java.security.*;
 
-public class Property {
+public class Property implements ObjectSample {
+
+    public static Class<?> PROPERTY_ARRAY_CLASS = Array.newInstance(ClassesContainer.get().getPropertyClass(), 1).getClass();
 
     private final String name;
     private final String value;
@@ -63,9 +67,9 @@ public class Property {
         return false;
     }
 
-    public Object create() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getPropertyClass(), String.class, String.class, String.class),
+    public Object createOriginal() {
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getPropertyClass(), String.class, String.class, String.class),
                 this.name, this.value, this.signature
         );
     }

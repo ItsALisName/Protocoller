@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class PropertyMap extends ForwardingMultimap<String, Property> {
 
-    private Multimap<String, Property> properties = LinkedHashMultimap.create();
+    private final Multimap<String, Property> properties = LinkedHashMultimap.create();
 
     public PropertyMap() {}
 

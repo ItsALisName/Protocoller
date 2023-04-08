@@ -2,7 +2,7 @@ package net.alis.protocoller.plugin.util;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public class FastUtilLegacyAdapter {
     public static Int2ObjectMap<Object> newInt2ObjectMap() {
@@ -20,7 +20,7 @@ public class FastUtilLegacyAdapter {
 
 
         public static void init() {
-            Int2ObjectMap  = BaseReflection.getClass("it.unimi.dsi.fastutil.ints.Int2ObjectMap", true);
+            Int2ObjectMap  = Reflect.getClass("it.unimi.dsi.fastutil.ints.Int2ObjectMap", true);
         }
     }
 

@@ -8,45 +8,31 @@ import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PlayersInjector implements ChannelInjector.PlayerInjector {
 
     @Override
-    public void inject(Player player) {
-        {
-            this.refreshInterceptor(player, MinecraftReflection.getPlayerChannel(player));
+    public void inject(NetworkPlayer player) {
+        this.refreshInterceptor(player);
+    }
+
+    @Override
+    public void eject(@NotNull NetworkPlayer player) {
+        Channel channel = player.getConnection().getNetworkManager().getChannel();
+        if(channel.pipeline().get("protocoller_handler") != null) {
+            channel.pipeline().remove("protocoller_handler");
         }
     }
 
     @Override
-    public void eject(Player player) {
-        Channel channel = MinecraftReflection.getPlayerChannel(player);
-        if (channel != null) {
-            try {
-                channel.pipeline().remove("protocoller_handler");
-            } catch (Exception ignored) {}
-        }
-    }
-
-    @Override
-    public void eject(NetworkPlayer player) {
-        player.getChannel().pipeline().remove("protocoller_handler");
-    }
-
-    @Override
-    public boolean isInjected(Player player) {
-        NetworkPlayer networkPlayer = GlobalProvider.instance().getData().getPlayersContainer().get(player.getUniqueId());
-        Channel channel;
-        if(networkPlayer != null) {
-            channel = networkPlayer.getChannel();
-        } else {
-            channel = MinecraftReflection.getPlayerChannel(player);
-        }
-        return channel.pipeline().get("protocoller_handler") != null;
+    public boolean isInjected(@NotNull NetworkPlayer player) {
+        return player.getConnection().getNetworkManager().getChannel().pipeline().get("protocoller_handler") != null;
     }
 
 
-    private NettyPacketInterceptor getInterceptor(Channel channel) {
+    private @Nullable NettyPacketInterceptor getInterceptor(@NotNull Channel channel) {
         ChannelHandler handler = channel.pipeline().get("protocoller_handler");
         if (handler instanceof NettyPacketInterceptor) {
             return (NettyPacketInterceptor)handler;
@@ -55,11 +41,8 @@ public class PlayersInjector implements ChannelInjector.PlayerInjector {
         }
     }
 
-    public void refreshInterceptor(Player player, Channel channel) {
-        NettyPacketInterceptor handler = this.getInterceptor(channel);
-        if (handler != null) {
-            handler.setPlayer(player);
-            handler.setNetworkPlayer(GlobalProvider.instance().getData().getPlayersContainer().get(player.getUniqueId()));
-        }
+    public void refreshInterceptor(@NotNull NetworkPlayer player) {
+        NettyPacketInterceptor handler = this.getInterceptor(player.getConnection().getNetworkManager().getChannel());
+        if (handler != null) handler.setPlayer(player);
     }
 }

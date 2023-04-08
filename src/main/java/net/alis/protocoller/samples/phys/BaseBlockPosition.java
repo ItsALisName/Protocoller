@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.phys;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.MathHelper;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -24,9 +24,9 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition>, ObjectS
 
     public BaseBlockPosition(Object blockPosition, boolean trueLink) {
         if (!trueLink) {
-            this.x = BaseReflection.readSuperclassField(blockPosition, 0, int.class, false);
-            this.y = BaseReflection.readSuperclassField(blockPosition, 1, int.class, false);
-            this.z = BaseReflection.readSuperclassField(blockPosition, 2, int.class, false);
+            this.x = Reflect.readSuperclassField(blockPosition, 0, int.class, false);
+            this.y = Reflect.readSuperclassField(blockPosition, 1, int.class, false);
+            this.z = Reflect.readSuperclassField(blockPosition, 2, int.class, false);
         } else {
             AccessedObject accessor = new AccessedObject(blockPosition);
             this.x = accessor.read(0, int.class);
@@ -113,8 +113,8 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition>, ObjectS
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getBaseBlockPositionClass(), int.class, int.class, int.class),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getBaseBlockPositionClass(), int.class, int.class, int.class),
                 this.x, this.y, this.z
         );
     }

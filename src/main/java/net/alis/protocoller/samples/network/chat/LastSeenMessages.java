@@ -3,7 +3,7 @@ package net.alis.protocoller.samples.network.chat;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
 import net.alis.protocoller.util.annotations.NotOnAllVersions;
@@ -64,8 +64,8 @@ public class LastSeenMessages implements ObjectSample {
                 list.add(cache.createOriginal());
             }
         }
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getLastSeenMessagesClass(), List.class),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesClass(), List.class),
                 list
         );
     }
@@ -104,8 +104,8 @@ public class LastSeenMessages implements ObjectSample {
 
         @Override
         public Object createOriginal() {
-            return BaseReflection.callConstructor(
-                    BaseReflection.getConstructor(ClassesContainer.get().getLastSeenMessagesCacheClass(), UUID.class, ClassesContainer.get().getMessageSignatureClass()),
+            return Reflect.callConstructor(
+                    Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesCacheClass(), UUID.class, ClassesContainer.get().getMessageSignatureClass()),
                     this.uuid, this.signature.createOriginal()
             );
         }
@@ -133,13 +133,13 @@ public class LastSeenMessages implements ObjectSample {
         public Object createOriginal() {
             Object response = null;
             if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
-                response = BaseReflection.callConstructor(
-                        BaseReflection.getConstructor(ClassesContainer.get().getLastSeenMessagesUpdaterClass(), Integer.TYPE, BitSet.class),
+                response = Reflect.callConstructor(
+                        Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesUpdaterClass(), Integer.TYPE, BitSet.class),
                         this.i, this.bitSet
                 );
             } else {
-                response = BaseReflection.callConstructor(
-                        BaseReflection.getConstructor(ClassesContainer.get().getLastSeenMessagesUpdaterClass(), ClassesContainer.get().getLastSeenMessagesClass(), Optional.class),
+                response = Reflect.callConstructor(
+                        Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesUpdaterClass(), ClassesContainer.get().getLastSeenMessagesClass(), Optional.class),
                         this.lastSeenMessages, Optional.of(this.updater.get().createOriginal())
                 );
             }

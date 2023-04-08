@@ -5,25 +5,34 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InjectionException extends RuntimeException {
+public class InjectionException extends ProtocollerException {
 
     private InjectionException(String s) {
         super(s);
     }
 
-    private InjectionException mergeStackTracesIfNeed(StackTraceElement[] traceElements) {
+    protected ProtocollerException mergeStackTracesIfNeed(StackTraceElement[] traceElements) {
         if(traceElements != null && traceElements.length > 0){
             super.setStackTrace(Utils.joinArrays(traceElements, super.getStackTrace()));
         }
         return this;
     }
 
-    public static class Builder {
+    @Override
+    protected ProtocollerException changeStackTraceIfNeed(StackTraceElement[] traceElements) {
+        if(traceElements != null && traceElements.length > 0){
+            super.setStackTrace(traceElements);
+        }
+        return this;
+    }
+
+    public static class Builder implements ExceptionBuilderSource<Builder> {
         private final boolean showStackTrace;
         private final boolean ignore;
         private final boolean saveToFile;
         private @Nullable String definedReason = "";
         private StackTraceElement[] elementsToMerge = null;
+        private StackTraceElement[] newStackTrace;
 
         protected Builder(boolean showStackTrace, boolean saveToFile, boolean ignore) {
             this.showStackTrace = showStackTrace;
@@ -34,7 +43,17 @@ public class InjectionException extends RuntimeException {
         public Builder defineReason(@NotNull Throwable throwable) {
             if(throwable.getMessage() != null) {
                 this.definedReason = "\n-> Reason from the branch: " + throwable.getMessage() + "\n";
+            } else {
+                if(throwable.getCause().getMessage() != null) {
+                        this.definedReason = "\n-> Reason from the branch: " + throwable.getCause().getMessage() + "\n";
+                    }
             }
+            return this;
+        }
+
+        @Override
+        public Builder changeStackTrace(StackTraceElement[] newTrace) {
+            this.newStackTrace = newTrace;
             return this;
         }
 
@@ -44,11 +63,11 @@ public class InjectionException extends RuntimeException {
         }
 
         public CompletedException failedChannelFutureInject() {
-            return new CompletedException(new InjectionException("Failed to inject to ChannelFuture." + definedReason).mergeStackTracesIfNeed(elementsToMerge), showStackTrace, saveToFile, ignore);
+            return new CompletedException(new InjectionException("Failed to inject to ChannelFuture." + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
 
         public CompletedException failedChannelFutureInject(@NotNull PluginDescriptionFile source) {
-            return new CompletedException(new InjectionException("Failed to inject to ChannelFuture, Possible error initiator: \"" + source.getName() + "\"" + definedReason).mergeStackTracesIfNeed(elementsToMerge), showStackTrace, saveToFile, ignore);
+            return new CompletedException(new InjectionException("Failed to inject to ChannelFuture, Possible error initiator: \"" + source.getName() + "\"" + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
 
     }

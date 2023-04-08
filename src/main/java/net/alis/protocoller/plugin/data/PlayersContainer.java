@@ -41,4 +41,11 @@ public class PlayersContainer {
         }
         return null;
     }
+
+    public NetworkPlayer get(String nickname) {
+        for(NetworkPlayer player : this.networkPlayers) {
+            if(player.getName().equalsIgnoreCase(nickname)) return player;
+        }
+        return null;
+    }
 }

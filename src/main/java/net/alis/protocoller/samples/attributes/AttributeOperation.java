@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.attributes;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum AttributeOperation {
     ADDITION(0),
@@ -26,7 +26,7 @@ public enum AttributeOperation {
     }
 
     public Enum<?> original() {
-        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAttributeOperationEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAttributeOperationEnum(), this.id);
     }
 
 }

@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.boss;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum BarStyle {
     PROGRESS(0, "progress"),
@@ -34,6 +34,6 @@ public enum BarStyle {
     }
 
     public Enum<?> original() {
-        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBarStyleEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBarStyleEnum(), this.id);
     }
 }

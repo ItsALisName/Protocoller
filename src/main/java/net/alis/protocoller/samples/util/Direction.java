@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.phys.Vector3I;
 import org.jetbrains.annotations.Contract;
@@ -356,6 +356,6 @@ public enum Direction {
     }
 
     public @NotNull Enum<?> original() {
-        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getDirectionEnum(), this.ordinal());
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getDirectionEnum(), this.ordinal());
     }
 }

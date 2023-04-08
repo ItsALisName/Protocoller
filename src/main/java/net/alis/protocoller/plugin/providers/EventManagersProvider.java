@@ -2,11 +2,8 @@ package net.alis.protocoller.plugin.providers;
 
 import net.alis.protocoller.plugin.events.AsyncPacketEventManager;
 import net.alis.protocoller.plugin.events.SyncPacketEventManager;
-import net.alis.protocoller.event.PacketEventsManager;
-import net.alis.protocoller.event.manager.AsynchronousEventManager;
-import net.alis.protocoller.event.manager.SynchronousEventManager;
 
-public class EventManagersProvider implements PacketEventsManager {
+public class EventManagersProvider {
 
     private final SyncPacketEventManager sync;
     private final AsyncPacketEventManager async;
@@ -16,13 +13,11 @@ public class EventManagersProvider implements PacketEventsManager {
         this.async = new AsyncPacketEventManager();
     }
 
-    @Override
-    public SynchronousEventManager getSynchronousManager() {
-        return this.sync;
+    public AsyncPacketEventManager getAsync() {
+        return async;
     }
 
-    @Override
-    public AsynchronousEventManager getAsynchronousManager() {
-        return this.async;
+    public SyncPacketEventManager getSync() {
+        return sync;
     }
 }

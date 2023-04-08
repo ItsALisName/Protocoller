@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.tags.*;
 import net.alis.protocoller.util.AccessedObject;
 import org.apache.logging.log4j.LogManager;
@@ -359,7 +359,7 @@ public class NBTTagCompound extends NBTBase {
         Map<String, Object> nbtMap = nbt.read(0, Map.class);
         for(String s : nbtMap.keySet()) {
             Object nbtBase = nbtMap.get(s);
-            int nbtTypeId = BaseReflection.callMethod(nbtBase, BaseReflection.getMethod(nbtBase.getClass(), 0, Integer.TYPE), false);
+            int nbtTypeId = Reflect.callMethod(nbtBase, Reflect.getMethod(nbtBase.getClass(), 0, Integer.TYPE), false);
             if(nbtTypeId == 10){
                 if (this.hasKey(s, 10)) {
                     NBTTagCompound nbttagcompound = this.getCompoundTag(s);
@@ -379,7 +379,7 @@ public class NBTTagCompound extends NBTBase {
 
     @Override
     public Object toOriginal() {
-        AccessedObject object = new AccessedObject(BaseReflection.classNewInstance(ClassesContainer.get().getNbtTagCompoundClass()));
+        AccessedObject object = new AccessedObject(Reflect.classNewInstance(ClassesContainer.get().getNbtTagCompoundClass()));
         Map<String, Object> nbtMap = new HashMap<>();
         for(Map.Entry<String, NBTBase> e : this.tagMap.entrySet()) nbtMap.put(e.getKey(), e.getValue().toOriginal());
         object.writeSpecify(0, Map.class, nbtMap);

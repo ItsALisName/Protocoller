@@ -1,6 +1,6 @@
 package net.alis.protocoller.plugin.events;
 
-import net.alis.protocoller.ApiUser;
+import net.alis.protocoller.ProtocollerClient;
 import net.alis.protocoller.event.impl.PacketEventPriority;
 import net.alis.protocoller.event.RegisteredPacketListener;
 import net.alis.protocoller.event.impl.PacketListener;
@@ -9,14 +9,14 @@ import java.lang.reflect.Method;
 
 public class RegisteredProtocollerListener implements RegisteredPacketListener {
 
-    private final ApiUser user;
+    private final ProtocollerClient client;
     private final PacketListener listener;
     private final boolean ignoreCancelled;
     private final PacketEventPriority priority;
     private final Method method;
 
-    public RegisteredProtocollerListener(ApiUser user, PacketListener listener, boolean ignoreCancelled, PacketEventPriority priority, Method method) {
-        this.user = user;
+    public RegisteredProtocollerListener(ProtocollerClient client, PacketListener listener, boolean ignoreCancelled, PacketEventPriority priority, Method method) {
+        this.client = client;
         this.listener = listener;
         this.ignoreCancelled = ignoreCancelled;
         this.priority = priority;
@@ -24,8 +24,8 @@ public class RegisteredProtocollerListener implements RegisteredPacketListener {
     }
 
     @Override
-    public ApiUser getUser() {
-        return user;
+    public ProtocollerClient getClient() {
+        return client;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.effect;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.attributes.AttributeBase;
 import net.alis.protocoller.samples.attributes.AttributeModifier;
 import net.alis.protocoller.util.AccessedObject;
@@ -29,8 +29,8 @@ public class MobEffectHealthBoost extends MobEffectList {
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getMobEffectHealthBoostClass(), ClassesContainer.get().getMobEffectInfoEnum(), int.class),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getMobEffectHealthBoostClass(), ClassesContainer.get().getMobEffectInfoEnum(), int.class),
                 this.getCategory().original(), this.getColor()
         );
     }

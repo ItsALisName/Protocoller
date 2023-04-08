@@ -1,7 +1,8 @@
 package net.alis.protocoller.util;
 
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -26,6 +27,20 @@ public class AccessedObject {
         }
     }
 
+    public AccessedObject(Object o, boolean ignoreStatic) {
+        this.object = o;
+        this.fields = new ArrayList<>();
+        if(object == null) {
+            new IllegalArgumentException("AccessedObject cannot be created with null input object").printStackTrace();
+            return;
+        }
+        for(Field field : object.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if(ignoreStatic && field.toGenericString().contains(" static ")) continue;
+            this.fields.add(field);
+        }
+    }
+
     public Object getObject() {
         return object;
     }
@@ -34,7 +49,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.fields) {
             if(field.getType() == type) {
-                if(start == index) return BaseReflection.readField(this.object, field, false);
+                if(start == index) return Reflect.readField(this.object, field, false);
                 start += 1; continue;
             }
         }
@@ -53,7 +68,7 @@ public class AccessedObject {
         for(Field field : this.fields) {
             if(field.getType() == type) {
                 field.setAccessible(true);
-                if(start == index) BaseReflection.writeField(this.object, field, param, false);
+                if(start == index) Reflect.writeField(this.object, field, param, false);
                 start += 1; continue;
             }
         }
@@ -72,7 +87,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.fields) {
             field.setAccessible(true);
-            if(field.getType() == specify && start == index) BaseReflection.writeField(this.object, field, param, false);
+            if(field.getType() == specify && start == index) Reflect.writeField(this.object, field, param, false);
             start += 1;
         }
         writeSpecifySuperclass(index, specify, param);
@@ -83,7 +98,7 @@ public class AccessedObject {
         int start = 0;
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == type) {
-                if(index == start) return BaseReflection.readField(this.object, field, false);
+                if(index == start) return Reflect.readField(this.object, field, false);
                 start += 1;
             }
         }
@@ -95,7 +110,7 @@ public class AccessedObject {
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == param.getClass()) {
                 field.setAccessible(true);
-                if(index == start) BaseReflection.writeField(this.object, field, param, false);
+                if(index == start) Reflect.writeField(this.object, field, param, false);
                 start += 1;
             }
         }
@@ -106,7 +121,7 @@ public class AccessedObject {
         for(Field field : this.object.getClass().getSuperclass().getDeclaredFields()) {
             if(field.getType() == type) {
                 field.setAccessible(true);
-                if(index == start) BaseReflection.writeField(this.object, field, param, false);
+                if(index == start) Reflect.writeField(this.object, field, param, false);
                 start += 1;
             }
         }

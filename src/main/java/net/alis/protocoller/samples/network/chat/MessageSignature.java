@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.MinecraftEncryption;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -85,13 +85,13 @@ public class MessageSignature implements ObjectSample {
     public Object createOriginal() {
         Object response = null;
         if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
-            response = BaseReflection.callConstructor(
-                    BaseReflection.getConstructor(ClassesContainer.get().getMessageSignatureClass(), byte[].class),
+            response = Reflect.callConstructor(
+                    Reflect.getConstructor(ClassesContainer.get().getMessageSignatureClass(), byte[].class),
                     (Object) this.bytes
             );
         } else {
-            response = BaseReflection.callConstructor(
-                    BaseReflection.getConstructor(ClassesContainer.get().getMessageSignatureClass(), UUID.class, Instant.class, ClassesContainer.get().getMinecraftEncryptionSignatureDataClass()),
+            response = Reflect.callConstructor(
+                    Reflect.getConstructor(ClassesContainer.get().getMessageSignatureClass(), UUID.class, Instant.class, ClassesContainer.get().getMinecraftEncryptionSignatureDataClass()),
                     this.uuid, this.instant, this.signatureData.createOriginal()
             );
         }
@@ -132,8 +132,8 @@ public class MessageSignature implements ObjectSample {
 
         @Override
         public Object createOriginal() {
-            return BaseReflection.callConstructor(
-                    BaseReflection.getConstructor(ClassesContainer.get().getMessageSignatureStorageClass(), Integer.TYPE, ClassesContainer.get().getMessageSignatureClass()),
+            return Reflect.callConstructor(
+                    Reflect.getConstructor(ClassesContainer.get().getMessageSignatureStorageClass(), Integer.TYPE, ClassesContainer.get().getMessageSignatureClass()),
                     this.id, this.fullSignature.createOriginal()
             );
         }

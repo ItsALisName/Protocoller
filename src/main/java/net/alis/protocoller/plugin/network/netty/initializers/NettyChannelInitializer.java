@@ -4,7 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import net.alis.protocoller.plugin.network.netty.NettyHelper;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 import java.lang.reflect.Method;
 
@@ -16,7 +16,7 @@ public class NettyChannelInitializer extends ChannelInitializer<Channel> {
 
     public NettyChannelInitializer(ChannelInitializer<?> originalChannelInitializer) {
         this.original = originalChannelInitializer;
-        sourceMethod = BaseReflection.getMethod(original.getClass(), 0, "initChannel");
+        sourceMethod = Reflect.getMethod(original.getClass(), 0, "initChannel");
     }
 
     public ChannelInitializer<?> getOriginal() {

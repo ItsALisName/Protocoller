@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.crafting;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.resources.MinecraftKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -45,15 +45,15 @@ public class CRecipe implements Recipe {
 
         private static Method getKeyMethod, getItemStackMethod;
         public static void init() {
-            getKeyMethod = BaseReflection.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftKeyClass());
-            getItemStackMethod = BaseReflection.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftItemStackClass());
+            getKeyMethod = Reflect.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftKeyClass());
+            getItemStackMethod = Reflect.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftItemStackClass());
         }
 
         public static CRecipe fromIRecipe(Object iRecipe) {
             CRecipe recipe = new CRecipe();
-            recipe.setResult(MinecraftReflection.itemStackFromMinecraftItemStack(BaseReflection.callMethod(null, getItemStackMethod, false)));
+            recipe.setResult(MinecraftReflection.itemStackFromMinecraftItemStack(Reflect.callMethod(null, getItemStackMethod, false)));
             if(getKeyMethod != null){
-                recipe.setMinecraftKey(new MinecraftKey((Object) BaseReflection.callMethod(null, getKeyMethod, false)));
+                recipe.setMinecraftKey(new MinecraftKey((Object) Reflect.callMethod(null, getKeyMethod, false)));
             }
             return recipe;
         }

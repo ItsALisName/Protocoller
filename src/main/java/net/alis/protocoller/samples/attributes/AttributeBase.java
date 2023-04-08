@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.attributes;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
 
@@ -55,8 +55,8 @@ public class AttributeBase implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getAttributeBaseClass(), String.class, double.class),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getAttributeBaseClass(), String.class, double.class),
                 this.translationKey, this.fallback
         );
     }

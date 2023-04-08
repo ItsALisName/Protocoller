@@ -1,31 +1,30 @@
 package net.alis.protocoller.plugin.events;
 
 import io.netty.channel.Channel;
+import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.providers.ApiProvider;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
-import net.alis.protocoller.ApiUser;
+import net.alis.protocoller.ProtocollerClient;
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.event.RegisteredPacketListener;
-import net.alis.protocoller.event.asynchronous.*;
+import net.alis.protocoller.event.async.*;
 import net.alis.protocoller.event.impl.PacketEventHandler;
 import net.alis.protocoller.event.impl.PacketEventPriority;
 import net.alis.protocoller.event.impl.PacketListener;
-import net.alis.protocoller.event.manager.AsynchronousEventManager;
 import net.alis.protocoller.packet.PacketDataContainer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 
-public class AsyncPacketEventManager implements AsynchronousEventManager {
+public class AsyncPacketEventManager implements PacketEventsManager {
 
     @Override
-    public void registerListener(ApiUser user, PacketListener listener) {
+    public void registerListener(ProtocollerClient client, PacketListener listener) {
         TaskSimplifier.get().preformAsync(() -> {
             int methodsCount = 0;
             for(Method method : listener.getClass().getDeclaredMethods()) {
@@ -38,7 +37,7 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         continue;
                     }
                     ListenerType lt = ListenerType.fromClass(parameterType);
-                    RegisteredProtocollerListener protocollerListener = new RegisteredProtocollerListener(user, listener, annotation.ignoreCancelled(), annotation.eventPriority(), method);
+                    RegisteredProtocollerListener protocollerListener = new RegisteredProtocollerListener(client, listener, annotation.ignoreCancelled(), annotation.eventPriority(), method);
                     switch (lt) {
                         case PPRE: AsyncPacketPlayReceiveEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
                         case PPSE: AsyncPacketPlaySendEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
@@ -48,8 +47,8 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                         case PSSE: AsyncPacketStatusSendEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
                         case PHRE: AsyncPacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
                     }
-                    LogsManager.get().sendRegisteredListenerMessage(user.getName(), user.getVersion(), lt.inName);
-                    ((ApiProvider)user).addListenerCount();
+                    LogsManager.get().sendRegisteredListenerMessage(client.getName(), ((ApiProvider)client).getVersion(), lt.inName);
+                    ((ApiProvider)client).addListenerCount();
                     methodsCount += 1;
 
                 }
@@ -61,8 +60,8 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
     }
 
     @Override
-    public void registerListeners(ApiUser user, PacketListener... listeners) {
-        for(PacketListener listener : listeners) this.registerListener(user, listener);
+    public void registerListeners(ProtocollerClient client, PacketListener... listeners) {
+        for(PacketListener listener : listeners) this.registerListener(client, listener);
     }
 
     protected enum ListenerType {
@@ -107,8 +106,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             } catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -119,8 +119,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                                 callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -131,8 +132,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -144,8 +146,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                                 callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -157,8 +160,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -170,8 +174,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlaySendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -189,8 +194,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -201,8 +207,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -213,8 +220,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -225,8 +233,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -237,8 +246,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -249,8 +259,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketPlayReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -266,8 +277,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -279,8 +291,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -292,8 +305,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -305,8 +319,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -318,8 +333,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -331,8 +347,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -348,8 +365,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -361,8 +379,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -374,8 +393,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -387,8 +407,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -400,8 +421,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -413,8 +435,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketLoginSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -430,8 +453,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -443,8 +467,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -456,8 +481,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -469,8 +495,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -482,8 +509,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -495,8 +523,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -512,8 +541,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -525,8 +555,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -538,8 +569,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -551,8 +583,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -564,8 +597,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -577,8 +611,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketStatusSendEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -594,8 +629,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -607,8 +643,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -620,8 +657,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -633,8 +671,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -646,8 +685,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             }catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                    .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -658,8 +698,9 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
                             callMethod(((RegisteredProtocollerListener)listener).getListener(), ((RegisteredProtocollerListener)listener).getMethod(), event);
                             } catch (Exception e) {
                                 new ExceptionBuilder().getEventsExceptions()
-                                        .defineReason(e)
-                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), data)
+                                        .defineReason(e.getCause())
+                                        .changeStackTrace(e.getCause().getStackTrace())
+                                        .callEventError("AsyncPacketHandshakeReceiveEvent", ((RegisteredProtocollerListener)listener).getListener().getClass(), listener.getClient(), event.getData())
                                         .showException();
                             }
                         }
@@ -671,17 +712,8 @@ public class AsyncPacketEventManager implements AsynchronousEventManager {
         });
     }
 
-    private static  <PARAM> PARAM callMethod(Object instance, @NotNull Method method, Object... parameters) {
-        try {
-            return (PARAM) method.invoke(instance, parameters);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            return new ExceptionBuilder()
-                    .saveToFile(false)
-                    .getReflectionExceptions()
-                    .defineReason(e)
-                    .callMethodError(instance.getClass(), method)
-                    .throwException();
-        }
+    private static void callMethod(Object instance, @NotNull Method method, Object... parameters) throws Exception {
+        method.invoke(instance, parameters);
     }
     
 }

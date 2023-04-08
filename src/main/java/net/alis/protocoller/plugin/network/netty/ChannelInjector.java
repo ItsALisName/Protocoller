@@ -7,13 +7,11 @@ public class ChannelInjector {
 
     public interface PlayerInjector {
 
-        void inject(Player player);
-
-        void eject(Player player);
+        void inject(NetworkPlayer player);
 
         void eject(NetworkPlayer player);
 
-        boolean isInjected(Player player);
+        boolean isInjected(NetworkPlayer player);
 
     }
 

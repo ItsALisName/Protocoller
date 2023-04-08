@@ -1,4 +1,4 @@
-config-version: "0.0.1-build2"
+config-version: "0.0.2"
 
 banned-plugins: []
 
@@ -6,7 +6,7 @@ banned-authors: []
 
 listeners-registration-notify: true
 
-api-user-registration-notify: true
+client-registration-notify: true
 
 save-errors: true
 

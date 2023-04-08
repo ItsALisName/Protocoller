@@ -1,45 +1,39 @@
 package net.alis.protocoller.plugin.providers;
 
-import net.alis.protocoller.ApiUser;
+import net.alis.protocoller.ProtocollerClient;
+import net.alis.protocoller.event.impl.ManagerType;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.event.PacketEventsManager;
-import net.alis.protocoller.server.NetworkServer;
+import net.alis.protocoller.NetworkServer;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class ApiProvider implements ApiUser {
+public class ApiProvider implements ProtocollerClient {
 
-    private final String name;
-    private final String version;
-    private final List<String> authors;
+    private String name;
+    private String version;
+    private List<String> authors;
     private int registeredPacketListeners;
 
-    public ApiProvider(Plugin user) {
-        if(ProtocollerConfig.getBannedPlugin().contains(user.getName())) {
-            this.name = "NONE";
-            this.version = "NONE";
-            this.authors = new ArrayList<>();
-            LogsManager.get().getLogger().warn("The banned plugin(Name: \"" + user.getName() + "\") tried to use the API");
+    public ApiProvider(@NotNull Plugin client) {
+        if(ProtocollerConfig.getBannedPlugin().contains(client.getName())) {
+            new ExceptionBuilder().getClientExceptions().bannedPlugin(client).throwException();
             return;
         }
-        if(Utils.findSimilar(ProtocollerConfig.getBannedAuthors(), user.getDescription().getAuthors()).size() > 0) {
-            this.name = "NONE";
-            this.version = "NONE";
-            this.authors = new ArrayList<>();
-            LogsManager.get().getLogger().warn("The plugin(Name: \"" + user.getName() + "\") from banned author tried to use the API");
+        if(Utils.findSimilar(ProtocollerConfig.getBannedAuthors(), client.getDescription().getAuthors()).size() > 0) {
+            new ExceptionBuilder().getClientExceptions().bannedAuthor(client).throwException();
             return;
         }
-        GlobalProvider.instance().getData().getUsersContainer().getRegisteredUsers().add(this);
-        LogsManager.get().sendRegisteredUserNotify(user.getName(), user.getDescription().getVersion(), String.join(", ", user.getDescription().getAuthors()));
-        this.name = user.getName();
-        this.version = user.getDescription().getVersion();
-        this.authors = user.getDescription().getAuthors();
+        GlobalProvider.instance().getData().getClients().get().add(this);
+        LogsManager.get().sendRegisteredClientNotify(client.getName(), client.getDescription().getVersion(), String.join(", ", client.getDescription().getAuthors()));
+        this.name = client.getName();
+        this.version = client.getDescription().getVersion();
+        this.authors = client.getDescription().getAuthors();
         this.registeredPacketListeners = 0;
     }
 
@@ -49,8 +43,12 @@ public class ApiProvider implements ApiUser {
     }
 
     @Override
-    public PacketEventsManager getEventManager() {
-        return GlobalProvider.instance().getEventManager();
+    public PacketEventsManager getEventManager(ManagerType type) {
+        switch (type) {
+            case SYNCHRONOUS: return GlobalProvider.instance().getEventManagers().getSync();
+            case ASYNCHRONOUS: return GlobalProvider.instance().getEventManagers().getAsync();
+            default: return new ExceptionBuilder().getEventsExceptions().customMessage("Can't get packet event manager").throwException();
+        }
     }
 
     @Override
@@ -63,24 +61,26 @@ public class ApiProvider implements ApiUser {
         return name;
     }
 
-    @Override
     public String getVersion() {
         return version;
     }
 
-    @Override
     public List<String> getAuthors() {
         return authors;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof ApiUser && ((ApiUser) obj).getName().equalsIgnoreCase(this.name) && ((ApiUser) obj).getVersion().equalsIgnoreCase(this.version);
+    public String getFullName() {
+        return this.name + " " + this.version;
     }
 
     @Override
-    public boolean equals(@NotNull ApiUser user) {
-        return user.getName().equalsIgnoreCase(this.name) && user.getVersion().equalsIgnoreCase(this.version);
+    public boolean equals(Object obj) {
+        return obj instanceof ProtocollerClient && ((ProtocollerClient) obj).getName().equalsIgnoreCase(this.name) && ((ApiProvider) obj).getVersion().equalsIgnoreCase(this.version);
+    }
+
+    @Override
+    public boolean equals(@NotNull ProtocollerClient client) {
+        return client.getName().equalsIgnoreCase(this.name) && ((ApiProvider)client).getVersion().equalsIgnoreCase(this.version);
     }
 
     public void addListenerCount() {

@@ -11,7 +11,8 @@ import net.alis.protocoller.plugin.network.netty.NettyHelper;
 import net.alis.protocoller.plugin.network.netty.initializers.NettyChannelInitializer;
 
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
+import net.alis.protocoller.samples.network.NetworkManager;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
 
     @Override
     public void inject() {
-        List<ChannelFuture> futures = GlobalProvider.instance().getServer().getChannelFutures();
+        List<ChannelFuture> futures = GlobalProvider.instance().getServer().getConnection().getChannels();
         synchronized (futures) {
             for(ChannelFuture channelFuture : futures) {
                 if(!injectedFutures.contains(channelFuture)) {
@@ -31,9 +32,9 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
                 }
             }
         }
-        for (Channel channel : GlobalProvider.instance().getServer().getChannels()) {
-            NettyHelper.ejectChannel(channel);
-            NettyHelper.injectChannel(channel);
+        for(NetworkManager manager : GlobalProvider.instance().getServer().getConnection().getConnections()){
+            NettyHelper.ejectChannel(manager.getChannel());
+            NettyHelper.injectChannel(manager.getChannel());
         }
     }
 
@@ -56,7 +57,7 @@ public class ServerInjector implements ChannelInjector.ServerInjector {
         } catch (Exception e) {
             ClassLoader loader = bootstrapAcceptor.getClass().getClassLoader();
             if (loader.getClass().getName().equalsIgnoreCase("org.bukkit.plugin.java.PluginClassLoader")) {
-                PluginDescriptionFile errorSourceDescription = BaseReflection.readField(loader, "description", false);
+                PluginDescriptionFile errorSourceDescription = Reflect.readField(loader, "description", false);
                 new ExceptionBuilder().getInjectExceptions().defineReason(e).failedChannelFutureInject(errorSourceDescription).throwException();
             } else {
                 new ExceptionBuilder().getInjectExceptions().failedChannelFutureInject().throwException();

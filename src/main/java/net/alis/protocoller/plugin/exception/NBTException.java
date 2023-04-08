@@ -6,25 +6,34 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class NBTException extends RuntimeException {
+public class NBTException extends ProtocollerException {
 
     private NBTException(String s) {
         super(s);
     }
 
-    private NBTException mergeStackTracesIfNeed(StackTraceElement[] traceElements) {
+    protected ProtocollerException mergeStackTracesIfNeed(StackTraceElement[] traceElements) {
         if(traceElements != null && traceElements.length > 0){
             super.setStackTrace(Utils.joinArrays(traceElements, super.getStackTrace()));
         }
         return this;
     }
+
+    @Override
+    protected ProtocollerException changeStackTraceIfNeed(StackTraceElement[] traceElements) {
+        if(traceElements != null && traceElements.length > 0){
+            super.setStackTrace(traceElements);
+        }
+        return this;
+    }
     
-    public static class Builder {
+    public static class Builder implements ExceptionBuilderSource<Builder> {
         private final boolean showStackTrace;
         private final boolean ignore;
         private final boolean saveToFile;
         private @Nullable String definedReason = "";
         private StackTraceElement[] elementsToMerge = null;
+        private StackTraceElement[] newStackTrace;
 
         protected Builder(boolean showStackTrace, boolean saveToFile, boolean ignore) {
             this.showStackTrace = showStackTrace;
@@ -35,7 +44,17 @@ public class NBTException extends RuntimeException {
         public Builder defineReason(@NotNull Throwable throwable) {
             if(throwable.getMessage() != null) {
                 this.definedReason = "\n-> Reason from the branch: " + throwable.getMessage() + "\n";
+            } else {
+                if(throwable.getCause().getMessage() != null) {
+                        this.definedReason = "\n-> Reason from the branch: " + throwable.getCause().getMessage() + "\n";
+                    }
             }
+            return this;
+        }
+
+        @Override
+        public Builder changeStackTrace(StackTraceElement[] newTrace) {
+            this.newStackTrace = newTrace;
             return this;
         }
 
@@ -45,19 +64,19 @@ public class NBTException extends RuntimeException {
         }
 
         public CompletedException customMessage(String message) {
-            return new CompletedException(new NBTException(message).mergeStackTracesIfNeed(elementsToMerge), showStackTrace, saveToFile, ignore);
+            return new CompletedException(new NBTException(message).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
 
         public CompletedException fileRemoveError(File file) {
-            return new CompletedException(new NBTException("Failed to delete tags file: \"" + file + "\"" + definedReason).mergeStackTracesIfNeed(elementsToMerge), showStackTrace, saveToFile, ignore);
+            return new CompletedException(new NBTException("Failed to delete tags file: \"" + file + "\"" + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
 
         public CompletedException byteReadError(byte bytes) {
-            return new CompletedException(new NBTException("Failed to read nbt tag[type=\"" + bytes + "\"] from nbt..." + definedReason).mergeStackTracesIfNeed(elementsToMerge), showStackTrace, saveToFile, ignore);
+            return new CompletedException(new NBTException("Failed to read nbt tag[type=\"" + bytes + "\"] from nbt..." + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
 
         public CompletedException readFromError(String type) {
-            return new CompletedException(new NBTException("Failed to get tag \"" + type + "\" from NBT." + definedReason).mergeStackTracesIfNeed(elementsToMerge), showStackTrace, saveToFile, ignore);
+            return new CompletedException(new NBTException("Failed to get tag \"" + type + "\" from NBT." + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
     }
 

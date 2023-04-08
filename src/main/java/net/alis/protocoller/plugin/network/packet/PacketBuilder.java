@@ -3,7 +3,7 @@ package net.alis.protocoller.plugin.network.packet;
 import net.alis.protocoller.plugin.data.PacketBuilders;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.NotNull;
@@ -23,14 +23,14 @@ public class PacketBuilder {
         this.type = type;
         this.indicator = indicator;
         this.version = latest;
-        this.constructor = BaseReflection.getConstructor(type.getPacketClass(), true, indicator.getTypes());
+        this.constructor = Reflect.getConstructor(type.getPacketClass(), true, indicator.getTypes());
     }
 
     public Object buildPacket(@Nullable IndexedParam<?, ?>[] parameters, @Nullable Object... objects) {
         if(this.indicator.getLevel() > 0) {
-            return BaseReflection.callConstructor(this.constructor, objects);
+            return Reflect.callConstructor(this.constructor, objects);
         } else {
-            AccessedObject accessor = new AccessedObject(BaseReflection.classNewInstance(this.type.getPacketClass()));
+            AccessedObject accessor = new AccessedObject(Reflect.classNewInstance(this.type.getPacketClass()));
             for(IndexedParam<?, ?> param : parameters) {
                 accessor.write(param.getIndex(), param.getObject());
             }

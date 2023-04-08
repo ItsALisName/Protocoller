@@ -5,8 +5,7 @@ import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.plugin.data.InitialData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.managers.LogsManager;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,28 +25,28 @@ public class PacketUtils {
             case PLAY_SERVERBOUND:
             case CLIENTBOUND:
             case PLAY_CLIENTBOUND:
-                return BaseReflection.getClassOr(
+                return Reflect.getClassOr(
                         InitialData.get().getPacketsPackage() + ".game." + packetName,
                         InitialData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case LOGIN_SERVERBOUND:
             case LOGIN_CLIENTBOUND:
-                return BaseReflection.getClassOr(
+                return Reflect.getClassOr(
                         InitialData.get().getPacketsPackage() + ".login." + packetName,
                         InitialData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case HANDSHAKE_CLIENTBOUND:
             case HANDSHAKE_SERVERBOUND:
-                return BaseReflection.getClassOr(
+                return Reflect.getClassOr(
                         InitialData.get().getPacketsPackage() + ".handshake." + packetName,
                         InitialData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case STATUS_CLIENTBOUND:
             case STATUS_SERVERBOUND:
-                return BaseReflection.getClassOr(
+                return Reflect.getClassOr(
                         InitialData.get().getPacketsPackage() + ".status." + packetName,
                         InitialData.get().getPacketsPackage() + "." + packetName,
                         true
@@ -65,7 +64,7 @@ public class PacketUtils {
         report.append("\nPacket data:");
         for(Field field : data.getRawPacket().getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            report.append("\n    Parameter: ").append(field.getName()).append(" <-> ").append(field.getType().getSimpleName()).append(" <-> ").append((Object) BaseReflection.readField(data.getRawPacket(), field, true));
+            report.append("\n    Parameter: ").append(field.getName()).append(" <-> ").append(field.getType().getSimpleName()).append(" <-> ").append((Object) Reflect.readField(data.getRawPacket(), field, true));
         }
         return report.toString();
     }
@@ -79,7 +78,7 @@ public class PacketUtils {
         report.append("\nPacket data:");
         for(Field field : data.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            report.append("\n    Parameter: ").append(field.getName()).append(" <-> ").append(field.getType().getSimpleName()).append(" <-> ").append((Object) BaseReflection.readField(data, field, true));
+            report.append("\n    Parameter: ").append(field.getName()).append(" <-> ").append(field.getType().getSimpleName()).append(" <-> ").append((Object) Reflect.readField(data, field, true));
         }
         return report.toString();
     }

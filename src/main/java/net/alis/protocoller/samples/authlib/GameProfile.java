@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.authlib;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.authlib.properties.PropertyMap;
 import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.lang.StringUtils;
@@ -90,8 +90,8 @@ public class GameProfile {
     }
 
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-            BaseReflection.getConstructor(ClassesContainer.get().getGameProfileClass(), UUID.class, String.class),
+        return Reflect.callConstructor(
+            Reflect.getConstructor(ClassesContainer.get().getGameProfileClass(), UUID.class, String.class),
             this.id, this.name
         );
     }

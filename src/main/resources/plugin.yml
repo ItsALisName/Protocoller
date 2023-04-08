@@ -2,6 +2,7 @@ name: Protocoller
 version: '${project.version}'
 main: net.alis.protocoller.plugin.ProtocollerPlugin
 api-version: 1.13
+loadbefore: [ ViaVersion ]
 load: STARTUP
 authors: [ ALis ]
 description: A simple minecraft packets sniffer

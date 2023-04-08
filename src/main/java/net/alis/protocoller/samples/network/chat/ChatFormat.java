@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.network.chat;
 
 import com.google.common.collect.Lists;
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -165,7 +165,7 @@ public enum ChatFormat {
     }
 
     public Enum<?> original() {
-        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getChatFormatEnum(), this.ordinal());
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getChatFormatEnum(), this.ordinal());
     }
 
     public String asString() {

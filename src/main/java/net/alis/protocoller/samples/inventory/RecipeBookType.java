@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.inventory;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum RecipeBookType {
     CRAFTING(0),
@@ -27,6 +27,6 @@ public enum RecipeBookType {
     }
 
     public Enum<?> original() {
-        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getRecipeBookTypeEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getRecipeBookTypeEnum(), this.id);
     }
 }

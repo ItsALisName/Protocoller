@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.network;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum ProtocolEnum {
 
@@ -35,6 +35,6 @@ public enum ProtocolEnum {
     }
 
     public static Enum<?> original(ProtocolEnum protocolEnum) {
-        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getProtocolEnum(), protocolEnum.ordinal());
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getProtocolEnum(), protocolEnum.ordinal());
     }
 }

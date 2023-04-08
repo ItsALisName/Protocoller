@@ -9,7 +9,7 @@ import net.alis.protocoller.plugin.network.packet.PacketBuilder;
 import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -151,8 +151,8 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
 
         @Override
         public Object createOriginal() {
-            return BaseReflection.callConstructor(
-                    BaseReflection.getConstructor(ClassesContainer.get().getBlockEntityInfoClass(), Integer.TYPE, Integer.TYPE, ClassesContainer.get().getTileEntityTypesClass(), ClassesContainer.get().getNbtTagCompoundClass()),
+            return Reflect.callConstructor(
+                    Reflect.getConstructor(ClassesContainer.get().getBlockEntityInfoClass(), Integer.TYPE, Integer.TYPE, ClassesContainer.get().getTileEntityTypesClass(), ClassesContainer.get().getNbtTagCompoundClass()),
                     this.packedXZ, this.y, this.type, this.tag.toOriginal()
             );
         }

@@ -5,7 +5,7 @@ import net.alis.protocoller.plugin.network.packet.IndexedParam;
 import net.alis.protocoller.plugin.network.packet.PacketBuilder;
 import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -106,7 +106,7 @@ public class PacketPlayInAdvancements implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAdvancementsStatusEnum(), this.id);
+            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAdvancementsStatusEnum(), this.id);
         }
 
     }

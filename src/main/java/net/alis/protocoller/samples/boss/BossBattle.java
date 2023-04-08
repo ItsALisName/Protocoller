@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.boss;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import net.alis.protocoller.util.ObjectSample;
@@ -104,8 +104,8 @@ public abstract class BossBattle implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getBossBattleClass(), UUID.class, ClassesContainer.get().getIChatBaseComponentClass(), ClassesContainer.get().getBarColorEnum(), ClassesContainer.get().getBarStyleEnum()),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getBossBattleClass(), UUID.class, ClassesContainer.get().getIChatBaseComponentClass(), ClassesContainer.get().getBarColorEnum(), ClassesContainer.get().getBarStyleEnum()),
                 this.uuid, this.title.asIChatBaseComponent(), this.color.original(), this.style.original()
         );
     }

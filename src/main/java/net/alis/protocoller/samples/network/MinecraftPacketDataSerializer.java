@@ -10,7 +10,7 @@ import io.netty.handler.codec.EncoderException;
 import io.netty.util.ByteProcessor;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.nbt.CompressedStreamTools;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
@@ -1013,8 +1013,8 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     }
 
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getPacketDataSerializerClass(), ByteBuf.class),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getPacketDataSerializerClass(), ByteBuf.class),
                 this.byteBuf
         );
     }

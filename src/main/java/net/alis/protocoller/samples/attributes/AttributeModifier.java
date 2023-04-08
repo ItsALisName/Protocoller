@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.attributes;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.managers.LogsManager;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -111,8 +111,8 @@ public class AttributeModifier implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getAttributeModifierClass(), UUID.class, Supplier.class, double.class, ClassesContainer.get().getAttributeOperationEnum()),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getAttributeModifierClass(), UUID.class, Supplier.class, double.class, ClassesContainer.get().getAttributeOperationEnum()),
                 this.uuid, this.nameGetter, this.value, this.operation.original()
         );
     }

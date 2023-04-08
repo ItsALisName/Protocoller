@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.entity.player;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum ChatVisibility {
     FULL(0, "options.chat.visibility.full"),
@@ -33,7 +33,7 @@ public enum ChatVisibility {
     }
 
     public Enum<?> original() {
-        return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getChatVisibilityEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getChatVisibilityEnum(), this.id);
     }
 }
 

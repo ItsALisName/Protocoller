@@ -8,10 +8,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Utils {
+
+    public static final UUID NIL_UUID = new UUID(0L, 0L);
 
     public static <T> Set<T> findSimilar(@NotNull List<T> first, @NotNull List<T> second) {
         return first.stream().filter(second::contains).collect(Collectors.toSet());

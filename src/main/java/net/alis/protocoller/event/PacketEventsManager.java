@@ -1,12 +1,12 @@
 package net.alis.protocoller.event;
 
-import net.alis.protocoller.event.manager.AsynchronousEventManager;
-import net.alis.protocoller.event.manager.SynchronousEventManager;
+import net.alis.protocoller.ProtocollerClient;
+import net.alis.protocoller.event.impl.PacketListener;
 
 public interface PacketEventsManager {
 
-    SynchronousEventManager getSynchronousManager();
+    void registerListener(ProtocollerClient client, PacketListener listener);
 
-    AsynchronousEventManager getAsynchronousManager();
+    void registerListeners(ProtocollerClient client, PacketListener... listeners);
 
 }

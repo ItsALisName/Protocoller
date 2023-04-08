@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.network.status;
 
 import com.google.gson.*;
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import net.alis.protocoller.samples.util.ChatDeserializer;
@@ -144,7 +144,7 @@ public class ServerPing {
     }
 
     public Object createOriginal() {
-        AccessedObject accessor = new AccessedObject(BaseReflection.callConstructor(BaseReflection.getConstructor(ClassesContainer.get().getServerPingClass())));
+        AccessedObject accessor = new AccessedObject(Reflect.callConstructor(Reflect.getConstructor(ClassesContainer.get().getServerPingClass())));
         if(this.favicon != null) accessor.write(0, this.favicon);
         if(this.description != null) accessor.writeSpecify(0, ClassesContainer.get().getIChatBaseComponentClass(), this.description.asIChatBaseComponent());
         if(this.version != null) accessor.write(0, this.version.createOriginal());

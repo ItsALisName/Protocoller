@@ -3,7 +3,7 @@ package net.alis.protocoller.samples.resources;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -130,8 +130,8 @@ public class MinecraftKey {
     protected interface ExtraData { }
 
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getMinecraftKeyClass(), String.class, String.class),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getMinecraftKeyClass(), String.class, String.class),
                 this.namespace, this.path
         );
     }

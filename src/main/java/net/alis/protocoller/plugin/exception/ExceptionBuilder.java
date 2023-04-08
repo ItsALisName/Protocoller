@@ -84,6 +84,10 @@ public class ExceptionBuilder {
         return new AttributeException.Builder(showStacktrace, saveToFile, ignore);
     }
 
+    public BannedClientException.Builder getClientExceptions() {
+        return new BannedClientException.Builder(showStacktrace, saveToFile, ignore);
+    }
+
     protected static void writeExceptionFile(@NotNull Throwable e) {
         String serverVersion = GlobalProvider.instance() != null ? GlobalProvider.instance().getServer().getVersion().asString() : InitialData.get().getPreVersion().asString();
         String fileName = e.getClass().getSimpleName() + "_" + Utils.getCurrentDate(false) + "_" + Utils.getCurrentTime(true) + ".txt";

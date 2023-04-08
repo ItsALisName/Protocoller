@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.network.status;
 
 import com.google.gson.*;
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.authlib.GameProfile;
 import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.NotNull;
@@ -112,8 +112,8 @@ public class ServerPingPlayerSample {
     }
 
     public Object createOriginal() {
-        Object response = BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getServerPingPlayerSampleClass(), int.class, int.class),
+        Object response = Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getServerPingPlayerSampleClass(), int.class, int.class),
                 this.max, this.online
         );
         if(this.sample != null && this.sample.length > 0) {

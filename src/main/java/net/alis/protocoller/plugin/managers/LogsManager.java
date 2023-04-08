@@ -67,21 +67,21 @@ public class LogsManager {
         logger.log(Level.INFO, "[*]============================================================[*]");
     }
 
-    public final void sendRegisteredListenerMessage(String user, String version, String lType) {
+    public final void sendRegisteredListenerMessage(String client, String version, String lType) {
         if (ProtocollerConfig.isListenerRegistrationNotify()) {
             logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
             logger.log(Level.INFO, "[*]                 A new packet listener has been registered!");
-            logger.log(Level.INFO, "[*] Who registered: " + user + "(Version: " + version + ")");
+            logger.log(Level.INFO, "[*] Who registered: " + client + "(Version: " + version + ")");
             logger.log(Level.INFO, "[*] Packet listener type: " + lType);
             logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
         }
     }
 
-    public final void sendRegisteredUserNotify(String user, String version, String authors) {
-        if(ProtocollerConfig.isApiUserRegistrationNotify()) {
+    public final void sendRegisteredClientNotify(String client, String version, String authors) {
+        if(ProtocollerConfig.isClientRegistrationNotify()) {
             logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
-            logger.log(Level.INFO, "[*]                          A new api user registered");
-            logger.log(Level.INFO, "[*] Plugin: " + user + "(Version:  " + version + ", Authors: " + authors + ")");
+            logger.log(Level.INFO, "[*]                          A new client registered");
+            logger.log(Level.INFO, "[*] Plugin: " + client + "(Version:  " + version + ", Authors: " + authors + ")");
             logger.log(Level.INFO, "[*]=============================== [Protocoller] =============================[*]");
         }
     }

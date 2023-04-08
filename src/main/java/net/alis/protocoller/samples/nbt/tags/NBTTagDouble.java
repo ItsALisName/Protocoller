@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.nbt.tags;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTPrimitive;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
 import net.alis.protocoller.samples.util.MathHelper;
@@ -77,8 +77,8 @@ public class NBTTagDouble extends NBTPrimitive {
 
     @Override
     public Object toOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getNbtTagDoubleClass(), Double.TYPE),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getNbtTagDoubleClass(), Double.TYPE),
                 this.data
         );
     }

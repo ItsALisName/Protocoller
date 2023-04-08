@@ -2,12 +2,12 @@ package net.alis.protocoller.plugin.data;
 
 public class GlobalData {
 
-    private final UsersContainer usersContainer;
+    private final ClientsList clientsList;
     private final PlayersContainer playersContainer;
     private final EntitiesContainer entitiesContainer;
 
     public GlobalData() {
-        this.usersContainer = new UsersContainer();
+        this.clientsList = new ClientsList();
         this.playersContainer = new PlayersContainer();
         this.entitiesContainer = new EntitiesContainer();
     }
@@ -16,8 +16,8 @@ public class GlobalData {
         return entitiesContainer;
     }
 
-    public UsersContainer getUsersContainer() {
-        return usersContainer;
+    public ClientsList getClients() {
+        return clientsList;
     }
 
     public PlayersContainer getPlayersContainer() {

@@ -1,6 +1,5 @@
 package net.alis.protocoller.plugin;
 
-import net.A.TEST;
 import net.alis.protocoller.Protocoller;
 import net.alis.protocoller.plugin.config.ConfigUtils;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
@@ -11,10 +10,11 @@ import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.network.packet.PacketTypesInitializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.server.UpdatePlayerDataRunner;
-import net.alis.protocoller.plugin.server.UpdateServerDataRunner;
+import net.alis.protocoller.plugin.server.UpdateServerRunner;
 import net.alis.protocoller.plugin.server.listeners.InjectionListener;
 import net.alis.protocoller.plugin.util.FastUtilLegacyAdapter;
 import net.alis.protocoller.plugin.util.Metrics;
+import net.alis.protocoller.plugin.util.ProtocolUtil;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import net.alis.protocoller.samples.attributes.GenericAttributes;
 import net.alis.protocoller.samples.craftbukkit.MagicNumbersSample;
@@ -77,7 +77,7 @@ public class ProtocollerInitializer {
             }
         }
         TaskSimplifier.init(this.plugin);
-        UpdateServerDataRunner.start();
+        UpdateServerRunner.start();
         UpdatePlayerDataRunner.start();
         Bukkit.getPluginManager().registerEvents(new InjectionListener(), this.plugin);
         if(ProtocollerConfig.isForceBStatsEnabled()) {
@@ -87,7 +87,7 @@ public class ProtocollerInitializer {
                 new Metrics((JavaPlugin) this.plugin, 17877);
             }
         }
-        new TEST(this.plugin);
+        ProtocolUtil.viaVersionInstalled = this.plugin.getServer().getPluginManager().isPluginEnabled("ViaVersion");
     }
 
     protected void unload() {

@@ -1,22 +1,24 @@
 package net.alis.protocoller.plugin.exception;
 
+import lombok.SneakyThrows;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
 import net.alis.protocoller.plugin.managers.LogsManager;
 
 public class CompletedException {
 
-    private final RuntimeException exception;
+    private final ProtocollerException exception;
     private final boolean saveToFile;
     private final boolean showStacktrace;
     private final boolean ignore;
 
-    protected CompletedException(RuntimeException exception, boolean showStacktrace, boolean saveToFile, boolean ignore) {
+    protected CompletedException(ProtocollerException exception, boolean showStacktrace, boolean saveToFile, boolean ignore) {
         this.exception = exception;
         this.saveToFile = saveToFile;
         this.showStacktrace = showStacktrace;
         this.ignore = ignore;
     }
 
+    @SneakyThrows
     public <F> F throwException() {
         if(!ignore){
             if (saveToFile) {

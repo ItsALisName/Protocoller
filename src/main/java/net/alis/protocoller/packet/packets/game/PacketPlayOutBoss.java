@@ -3,7 +3,7 @@ package net.alis.protocoller.packet.packets.game;
 import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -123,11 +123,11 @@ public class PacketPlayOutBoss implements PlayOutPacket {
         }
 
         public static Action fromModernPacket(Object action) {
-            return Action.getById(((Enum<?>) BaseReflection.callMethod(action, BaseReflection.getMethod(action.getClass(), 0, ClassesContainer.get().getBossActionEnum()), false)).ordinal());
+            return Action.getById(((Enum<?>) Reflect.callMethod(action, Reflect.getMethod(action.getClass(), 0, ClassesContainer.get().getBossActionEnum()), false)).ordinal());
         }
 
         public @NotNull Enum<?> original() {
-            return BaseReflection.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum(), this.id);
+            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum(), this.id);
         }
 
     }

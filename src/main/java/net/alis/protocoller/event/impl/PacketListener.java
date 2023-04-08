@@ -1,7 +1,7 @@
 package net.alis.protocoller.event.impl;
 
-import net.alis.protocoller.event.synchronous.*;
-import net.alis.protocoller.event.asynchronous.*;
+import net.alis.protocoller.event.sync.*;
+import net.alis.protocoller.event.async.*;
 
 public interface PacketListener {
 

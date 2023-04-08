@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.phys;
 
 import com.google.common.annotations.VisibleForTesting;
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.util.Direction;
 import net.alis.protocoller.util.AccessedObject;
@@ -354,8 +354,8 @@ public class AxisAligned implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return BaseReflection.callConstructor(
-                BaseReflection.getConstructor(ClassesContainer.get().getAxisAlignedClass(), double.class, double.class, double.class, double.class, double.class, double.class),
+        return Reflect.callConstructor(
+                Reflect.getConstructor(ClassesContainer.get().getAxisAlignedClass(), double.class, double.class, double.class, double.class, double.class, double.class),
                 this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ
         );
     }

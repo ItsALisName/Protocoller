@@ -1,5 +1,8 @@
 package net.alis.protocoller.plugin.server;
 
+import net.alis.protocoller.NetworkPlayer;
+import net.alis.protocoller.Protocoller;
+import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.network.netty.injectors.PlayersInjector;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
@@ -16,14 +19,14 @@ public class UpdatePlayerDataRunner implements Runnable {
             TaskSimplifier.get().preformAsyncTimerTask(new UpdatePlayerDataRunner(), 0, 25L);
             isStarted = true;
         } else {
-            Bukkit.getConsoleSender().sendMessage("[Protocoller] Task 'UpdateServerInfo' already started!");
+            LogsManager.get().getLogger().warn("Task 'UpdateServerInfo' already started!");
         }
     }
 
     @Override
     public void run() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            ((PlayersInjector)GlobalProvider.instance().getServer().getPlayersInjector()).refreshInterceptor(player, MinecraftReflection.getPlayerChannel(player));
+        for(NetworkPlayer player : GlobalProvider.instance().getServer().getOnlinePlayers()) {
+            ((PlayersInjector)GlobalProvider.instance().getServer().getPlayersInjector()).refreshInterceptor(player);
         }
     }
 }

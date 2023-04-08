@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.nbt.tags;
 
 import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTBase;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
 
@@ -30,6 +30,6 @@ public class NBTTagEnd extends NBTBase {
 
     @Override
     public Object toOriginal() {
-        return BaseReflection.classNewInstance(ClassesContainer.get().getNbtTagEndClass());
+        return Reflect.classNewInstance(ClassesContainer.get().getNbtTagEndClass());
     }
 }

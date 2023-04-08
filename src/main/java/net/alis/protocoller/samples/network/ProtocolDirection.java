@@ -1,5 +1,8 @@
 package net.alis.protocoller.samples.network;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 public enum ProtocolDirection {
 
     SERVERBOUND(0), CLIENTBOUND(1);
@@ -18,7 +21,8 @@ public enum ProtocolDirection {
         return this == CLIENTBOUND ? SERVERBOUND : CLIENTBOUND;
     }
 
-    public static ProtocolDirection getById(int id) {
+    @Contract(pure = true)
+    public static @Nullable ProtocolDirection getById(int id) {
         for(ProtocolDirection s : ProtocolDirection.values())
             if(s.id == id) return s;
         return null;

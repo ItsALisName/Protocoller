@@ -1,28 +1,25 @@
 package net.alis.protocoller.plugin.providers;
 
-import net.alis.protocoller.plugin.config.ProtocollerConfig;
-import net.alis.protocoller.plugin.config.ConfigUtils;
+import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.plugin.data.GlobalData;
 import net.alis.protocoller.plugin.server.ProtocollerServer;
+import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 public class GlobalProvider {
 
-    private static GlobalProvider instance;
-
     private final GlobalData data;
     private final ProtocollerServer server;
     private final EventManagersProvider eventManager;
 
-
     private GlobalProvider() {
         this.data = new GlobalData();
-        this.server = new ProtocollerServer(Bukkit.getServer());
+        this.server = new ProtocollerServer(Bukkit.getServer(), MinecraftReflection.getMinecraftServer());
         this.eventManager = new EventManagersProvider();
     }
 
-    public EventManagersProvider getEventManager() {
+    public EventManagersProvider getEventManagers() {
         return eventManager;
     }
 
@@ -37,9 +34,9 @@ public class GlobalProvider {
     public @Nullable static GlobalProvider instance() {
         return instance;
     }
-
     public static void init() {
         instance = new GlobalProvider();
         instance.server.getServerInjector().inject();
     }
+    private static GlobalProvider instance;
 }

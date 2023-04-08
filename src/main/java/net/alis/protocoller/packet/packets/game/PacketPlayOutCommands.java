@@ -4,7 +4,7 @@ import net.alis.protocoller.plugin.data.ClassesContainer;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
-import net.alis.protocoller.plugin.util.reflection.BaseReflection;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
@@ -31,12 +31,12 @@ public class PacketPlayOutCommands implements PlayOutPacket {
         if (!legacyPacket) {
             this.rootCommands = packetData.readList(0);
             for(Object o : this.rootCommands) {
-                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(BaseReflection.readField(o, 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
-                this.nodes.add(BaseReflection.readField(clsA, 0, String.class, false));
+                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(Reflect.readField(o, 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
+                this.nodes.add(Reflect.readField(clsA, 0, String.class, false));
             }
         } else {
             this.rootCommandNode = packetData.readObject(0, ClassesContainer.get().getRootCommandNodeClass());
-            Map<Object, Object> nods = BaseReflection.readSuperclassField(this.rootCommandNode, 0, Map.class, false);
+            Map<Object, Object> nods = Reflect.readSuperclassField(this.rootCommandNode, 0, Map.class, false);
             for(Map.Entry<Object, Object> entry : nods.entrySet()) this.nodes.add((String) entry.getKey());
         }
     }
@@ -48,14 +48,14 @@ public class PacketPlayOutCommands implements PlayOutPacket {
     public void removeCommand(String node) {
         if(!legacyPacket) {
             for(int i = this.rootCommands.size() - 1; i >= 0; i--) {
-                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(BaseReflection.readField(this.rootCommands.get(i), 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
-                if(((String) BaseReflection.readField(clsA, 0, String.class, false)).equalsIgnoreCase(node)) {
+                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(Reflect.readField(this.rootCommands.get(i), 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
+                if(((String) Reflect.readField(clsA, 0, String.class, false)).equalsIgnoreCase(node)) {
                     this.rootCommands.remove(i);
                 }
             }
             this.packetData.writeList(0, this.rootCommands);
         } else {
-            BaseReflection.callMethod(this.rootCommandNode, BaseReflection.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), false, node);
+            Reflect.callMethod(this.rootCommandNode, Reflect.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), false, node);
         }
         this.nodes.remove(node);
     }
@@ -66,7 +66,7 @@ public class PacketPlayOutCommands implements PlayOutPacket {
                 if(!legacyPacket) {
                     this.rootCommands.remove(i);
                 } else {
-                    BaseReflection.callMethod(this.rootCommandNode, BaseReflection.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), false, this.nodes.get(i));
+                    Reflect.callMethod(this.rootCommandNode, Reflect.getSuperclassMethod(this.rootCommandNode.getClass(), "removeCommand", new Class[]{String.class}), false, this.nodes.get(i));
                 }
                 this.nodes.remove(i);
             }
