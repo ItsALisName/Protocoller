@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.nbt.tags;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTBase;
 import net.alis.protocoller.samples.nbt.NBTSizeTracker;
@@ -82,7 +82,7 @@ public class NBTTagByteArray extends NBTBase {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getNbtTagByteArrayClass(), byte[].class),
+                Reflect.getConstructor(ClassAccessor.get().getNbtTagByteArrayClass(), byte[].class),
                 this.data
         );
     }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTBase;
@@ -218,7 +218,7 @@ public class NBTTagList extends NBTBase {
 
     @Override
     public Object toOriginal() {
-        AccessedObject object = new AccessedObject(Reflect.classNewInstance(ClassesContainer.get().getNbtTagListClass()));
+        AccessedObject object = new AccessedObject(Reflect.classNewInstance(ClassAccessor.get().getNbtTagListClass()));
         List<Object> tagL = new ArrayList<>();
         for(NBTBase base : this.tagList) tagL.add(NBTUtil.readOriginalBase(base));
         object.writeSpecify(0, List.class, tagL);

@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -20,7 +20,7 @@ public class PacketPlayOutCollect implements PlayOutPacket {
     private int collectorId;
     private int stackAmount;
 
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_9);
+    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_9);
 
     public PacketPlayOutCollect(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
@@ -74,7 +74,7 @@ public class PacketPlayOutCollect implements PlayOutPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public int getStackAmount() {

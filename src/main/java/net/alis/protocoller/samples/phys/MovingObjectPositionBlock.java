@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.phys;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.util.Direction;
@@ -25,9 +25,9 @@ public class MovingObjectPositionBlock extends RayTraceResult implements ObjectS
 
     public MovingObjectPositionBlock(Object originalObject) {
         AccessedObject accessor = new AccessedObject(originalObject);
-        this.vector = new Vector3D(accessor.read(0, ClassesContainer.get().getVector3dClass()));
-        this.position = new BlockPosition(new BaseBlockPosition(accessor.read(0, ClassesContainer.get().getBlockPositionClass()), false));
-        this.direction = Direction.getById(((Enum<?>)accessor.read(0, ClassesContainer.get().getDirectionEnum())).ordinal());
+        this.vector = new Vector3D(accessor.read(0, ClassAccessor.get().getVector3dClass()));
+        this.position = new BlockPosition(new BaseBlockPosition(accessor.read(0, ClassAccessor.get().getBlockPositionClass()), false));
+        this.direction = Direction.getById(((Enum<?>)accessor.read(0, ClassAccessor.get().getDirectionEnum())).ordinal());
         this.missed = accessor.read(0, Boolean.TYPE);
         this.insideBlock = accessor.read(1, Boolean.TYPE);
     }
@@ -71,7 +71,7 @@ public class MovingObjectPositionBlock extends RayTraceResult implements ObjectS
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getMovingObjectPositionBlockClass(), Boolean.TYPE, ClassesContainer.get().getVector3dClass(), ClassesContainer.get().getDirectionEnum(), ClassesContainer.get().getBlockPositionClass(), Boolean.TYPE),
+                Reflect.getConstructor(ClassAccessor.get().getMovingObjectPositionBlockClass(), Boolean.TYPE, ClassAccessor.get().getVector3dClass(), ClassAccessor.get().getDirectionEnum(), ClassAccessor.get().getBlockPositionClass(), Boolean.TYPE),
                 this.missed, this.vector.createOriginal(), this.direction.original(), this.position.createOriginal(), this.insideBlock
         );
     }

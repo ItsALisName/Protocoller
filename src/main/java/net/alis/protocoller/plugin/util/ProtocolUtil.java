@@ -1,7 +1,6 @@
 package net.alis.protocoller.plugin.util;
 
 import com.viaversion.viaversion.api.Via;
-import net.alis.protocoller.plugin.network.ProtocollerPlayer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import org.bukkit.entity.Player;
 
@@ -18,7 +17,7 @@ public class ProtocolUtil {
             return Via.getAPI().getPlayerVersion(player.getUniqueId());
         } else {
             if(!TEMP_PROTOCOL_MAP.containsKey(player.getAddress().getAddress().getHostAddress())) {
-                return GlobalProvider.instance().getServer().getVersion().getProtocol();
+                return GlobalProvider.get().getServer().getVersion().getProtocol();
             }
             return TEMP_PROTOCOL_MAP.get(player.getAddress().getAddress().getHostAddress());
         }

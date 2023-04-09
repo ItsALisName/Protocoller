@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.network.chat;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,10 +134,10 @@ public class ChatSerializer {
 
     public static void init() {
         gson = new Gson();
-        fromJson = Reflect.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromJSON", ClassesContainer.get().getIChatBaseComponentClass(), true, String.class);
-        fromString$1 = Reflect.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass(), true, String.class, Boolean.TYPE);
-        fromString$2 = Reflect.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass(), true, String.class, Boolean.TYPE, Boolean.TYPE);
-        fromComponent = Reflect.getMethod(ClassesContainer.get().getCraftChatMessageClass(), "fromComponent", String.class, true, ClassesContainer.get().getIChatBaseComponentClass());
+        fromJson = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromJSON", ClassAccessor.get().getIChatBaseComponentClass(), true, String.class);
+        fromString$1 = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassAccessor.get().getIChatBaseComponentClass(), 1).getClass(), true, String.class, Boolean.TYPE);
+        fromString$2 = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassAccessor.get().getIChatBaseComponentClass(), 1).getClass(), true, String.class, Boolean.TYPE, Boolean.TYPE);
+        fromComponent = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromComponent", String.class, true, ClassAccessor.get().getIChatBaseComponentClass());
     }
 
     private static Method fromString$1, fromString$2, fromComponent, fromJson;

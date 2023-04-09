@@ -3,7 +3,7 @@ package net.alis.protocoller.plugin.util;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.plugin.data.InitialData;
+import net.alis.protocoller.plugin.memory.InitialData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.NotNull;

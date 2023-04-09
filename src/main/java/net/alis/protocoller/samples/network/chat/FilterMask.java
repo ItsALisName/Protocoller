@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.network.chat;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -18,7 +18,7 @@ public class FilterMask implements ObjectSample {
     public FilterMask(Object filterMask) {
         AccessedObject object = new AccessedObject(filterMask);
         this.mask = object.read(0, BitSet.class);
-        this.type = FilterMaskType.getById(((Enum<?>)object.read(0, ClassesContainer.get().getFilterMaskTypeEnum())).ordinal());
+        this.type = FilterMaskType.getById(((Enum<?>)object.read(0, ClassAccessor.get().getFilterMaskTypeEnum())).ordinal());
     }
 
     public FilterMask(BitSet mask, FilterMaskType type) {
@@ -83,7 +83,7 @@ public class FilterMask implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getFilterMaskClass(), BitSet.class, ClassesContainer.get().getFilterMaskTypeEnum()),
+                Reflect.getConstructor(ClassAccessor.get().getFilterMaskClass(), BitSet.class, ClassAccessor.get().getFilterMaskTypeEnum()),
                 this.mask, this.type.original()
         );
     }

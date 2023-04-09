@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -28,7 +28,7 @@ public class PacketPlayInSetCommandBlock implements PlayInPacket {
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.command = packetData.readString(0);
-        this.type = TileEntityCommandType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityCommandTypeEnum()).ordinal());
+        this.type = TileEntityCommandType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getTileEntityCommandTypeEnum()).ordinal());
         this.trackOutput = packetData.readBoolean(0);
         this.conditional = packetData.readBoolean(1);
         this.alwaysActive = packetData.readBoolean(2);

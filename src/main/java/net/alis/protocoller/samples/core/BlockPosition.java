@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.core;
 
 import com.google.common.collect.AbstractIterator;
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.phys.BaseBlockPosition;
 import net.alis.protocoller.samples.phys.Vector3D;
@@ -277,7 +277,7 @@ public class BlockPosition extends BaseBlockPosition implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getBlockPositionClass(), int.class, int.class, int.class),
+                Reflect.getConstructor(ClassAccessor.get().getBlockPositionClass(), int.class, int.class, int.class),
                 getX(), getY(), getZ()
         );
     }

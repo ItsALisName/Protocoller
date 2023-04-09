@@ -3,15 +3,16 @@ package net.alis.protocoller.plugin;
 import net.alis.protocoller.Protocoller;
 import net.alis.protocoller.plugin.config.ConfigUtils;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.data.InitialData;
-import net.alis.protocoller.plugin.data.PacketBuilders;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.memory.InitialData;
+import net.alis.protocoller.plugin.memory.PacketBuilders;
 import net.alis.protocoller.plugin.managers.LogsManager;
-import net.alis.protocoller.plugin.network.packet.PacketTypesInitializer;
+import net.alis.protocoller.plugin.util.reflection.Reflect;
+import net.alis.protocoller.plugin.v0_0_3.api.ProtocollerApi;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketTypesInitializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.server.UpdatePlayerDataRunner;
-import net.alis.protocoller.plugin.server.UpdateServerRunner;
-import net.alis.protocoller.plugin.server.listeners.InjectionListener;
+import net.alis.protocoller.plugin.v0_0_3.server.UpdatePlayerDataRunner;
+import net.alis.protocoller.plugin.v0_0_3.server.UpdateServerRunner;
 import net.alis.protocoller.plugin.util.FastUtilLegacyAdapter;
 import net.alis.protocoller.plugin.util.Metrics;
 import net.alis.protocoller.plugin.util.ProtocolUtil;
@@ -21,6 +22,8 @@ import net.alis.protocoller.samples.craftbukkit.MagicNumbersSample;
 import net.alis.protocoller.samples.crafting.CRecipe;
 import net.alis.protocoller.samples.effect.MobEffects;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
+import net.alis.protocoller.plugin.v0_0_3.server.bukkit.InjectionListener;
+import net.md_5.bungee.api.chat.Ext;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,15 +43,16 @@ public class ProtocollerInitializer {
         GenericAttributes.init();
         MobEffects.init();
         InitialData.init(Bukkit.getServer());
-        ClassesContainer.init();
+        ClassAccessor.init();
         MagicNumbersSample.init();
         ChatSerializer.init();
         ConfigUtils.createFiles(this.plugin, false);
         ProtocollerConfig.load(this.plugin, ConfigUtils.getConfigurationFile("general.yml"));
+        /* ! */ Ext.Hover.getOriginalByName = Reflect.getMethod(ClassAccessor.get().getChatHoverActionEnumClass(), "a", ClassAccessor.get().getChatHoverActionEnumClass(), false, String.class);
         PacketTypesInitializer.init();
         CRecipe.RecipeSerializer.init();
         GlobalProvider.init();
-        if(GlobalProvider.instance() != null){
+        if(GlobalProvider.get() != null){
             Protocoller.protocoller.setProtocoller$provider(new ProtocollerApi());
             PacketBuilders.init();
             Metrics.forceBStatsEnable();
@@ -61,11 +65,11 @@ public class ProtocollerInitializer {
     }
 
     protected void syncLoad() {
-        if(GlobalProvider.instance() == null) {
+        if(GlobalProvider.get() == null) {
             try {
                 Bukkit.getLogger().info("[Protocoller] For some unknown reason Protocoller hasn't loaded yet... Please wait!");
                 Thread.sleep(5000L);
-                if(GlobalProvider.instance() == null) {
+                if(GlobalProvider.get() == null) {
                     Bukkit.getPluginManager().disablePlugin(this.plugin);
                     return;
                 }
@@ -76,6 +80,7 @@ public class ProtocollerInitializer {
                 return;
             }
         }
+        LogsManager.get().info("Protocoller enabled and ready for work!");
         TaskSimplifier.init(this.plugin);
         UpdateServerRunner.start();
         UpdatePlayerDataRunner.start();
@@ -87,7 +92,7 @@ public class ProtocollerInitializer {
                 new Metrics((JavaPlugin) this.plugin, 17877);
             }
         }
-        ProtocolUtil.viaVersionInstalled = this.plugin.getServer().getPluginManager().isPluginEnabled("ViaVersion");
+        /* ! */ ProtocolUtil.viaVersionInstalled = this.plugin.getServer().getPluginManager().isPluginEnabled("ViaVersion");
     }
 
     protected void unload() {

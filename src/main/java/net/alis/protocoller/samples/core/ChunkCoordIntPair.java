@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.core;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -15,22 +15,22 @@ public class ChunkCoordIntPair implements ObjectSample {
 
     public ChunkCoordIntPair(Object chunkCoordIntPair) {
         AccessedObject object = new AccessedObject(chunkCoordIntPair);
-        if(GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_16_4n5)) {
+        if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_16_4n5)) {
             this.x = object.read(0, Integer.TYPE);
             this.z = object.read(1, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
             return;
-        } else if(GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_17_1)) {
+        } else if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_17_1)) {
             this.x = object.read(2, Integer.TYPE);
             this.z = object.read(3, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
             return;
-        } else if(GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_18_2)) {
+        } else if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_18_2)) {
             this.x = object.read(3, Integer.TYPE);
             this.z = object.read(4, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
             return;
-        } else if(GlobalProvider.instance().getServer().getVersion().lessThanOrEqualTo(Version.v1_19_3)) {
+        } else if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_19_3)) {
             this.x = object.read(5, Integer.TYPE);
             this.z = object.read(6, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
@@ -89,7 +89,7 @@ public class ChunkCoordIntPair implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getChunkCoordIntPairClass(), Integer.TYPE, Integer.TYPE),
+                Reflect.getConstructor(ClassAccessor.get().getChunkCoordIntPairClass(), Integer.TYPE, Integer.TYPE),
                 this.x, this.z
         );
     }

@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.resources;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -27,7 +27,7 @@ public class MinecraftKey {
 
     public MinecraftKey(Object originalKey) {
         AccessedObject accessor = new AccessedObject(originalKey);
-        if(GlobalProvider.instance().getServer().isLegacy()) {
+        if(GlobalProvider.get().getServer().isLegacy()) {
             this.namespace = accessor.read(0, String.class);
             this.path = accessor.read(1, String.class);
         } else {
@@ -131,7 +131,7 @@ public class MinecraftKey {
 
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getMinecraftKeyClass(), String.class, String.class),
+                Reflect.getConstructor(ClassAccessor.get().getMinecraftKeyClass(), String.class, String.class),
                 this.namespace, this.path
         );
     }

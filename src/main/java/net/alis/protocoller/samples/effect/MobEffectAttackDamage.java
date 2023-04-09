@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.effect;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.attributes.AttributeBase;
 import net.alis.protocoller.samples.attributes.AttributeModifier;
@@ -27,7 +27,7 @@ public class MobEffectAttackDamage extends MobEffectList {
         for(Map.Entry<Object, Object> en : attMap.entrySet()) {
             this.attributeModifierMap.put(new AttributeBase(en.getKey()), new AttributeModifier(en.getValue()));
         }
-        this.category = MobEffectInfo.getById(((Enum<?>)accessor.readSuperclass(0, ClassesContainer.get().getMobEffectInfoEnum())).ordinal());
+        this.category = MobEffectInfo.getById(((Enum<?>)accessor.readSuperclass(0, ClassAccessor.get().getMobEffectInfoEnum())).ordinal());
         this.color = accessor.readSuperclass(0, int.class);
     }
 
@@ -43,7 +43,7 @@ public class MobEffectAttackDamage extends MobEffectList {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getMobEffectAttackDamageClass(), ClassesContainer.get().getMobEffectInfoEnum(), int.class, double.class),
+                Reflect.getConstructor(ClassAccessor.get().getMobEffectAttackDamageClass(), ClassAccessor.get().getMobEffectInfoEnum(), int.class, double.class),
                 this.getCategory().original(), this.getColor(), this.modifier
         );
     }

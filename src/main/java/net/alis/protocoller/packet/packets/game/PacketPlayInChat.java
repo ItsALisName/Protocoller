@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.*;
@@ -34,24 +34,24 @@ public class PacketPlayInChat implements PlayInPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.message = packetData.readString(0);
-        if(GlobalProvider.instance().getServer().getVersion().equals(Version.v1_19)) {
+        if(GlobalProvider.get().getServer().getVersion().equals(Version.v1_19)) {
             this.timestamp = packetData.readObject(0, Instant.class);
-            this.data = new MinecraftEncryption.SignatureData(packetData.readObject(0, ClassesContainer.get().getMinecraftEncryptionSignatureDataClass()));
+            this.data = new MinecraftEncryption.SignatureData(packetData.readObject(0, ClassAccessor.get().getMinecraftEncryptionSignatureDataClass()));
             this.flag = packetData.readBoolean(0);
-        } else if(GlobalProvider.instance().getServer().getVersion().equals(Version.v1_19_1n2)) {
+        } else if(GlobalProvider.get().getServer().getVersion().equals(Version.v1_19_1n2)) {
             this.timestamp = packetData.readObject(0, Instant.class);
             this.salt = packetData.readLong(0);
-            this.signature = new MessageSignature((Object) packetData.readObject(0, ClassesContainer.get().getMessageSignatureClass()));
+            this.signature = new MessageSignature((Object) packetData.readObject(0, ClassAccessor.get().getMessageSignatureClass()));
             this.flag = packetData.readBoolean(0);
-            this.update = new LastSeenMessages.Updater(packetData.readObject(0, ClassesContainer.get().getLastSeenMessagesUpdaterClass()));
-        } else if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+            this.update = new LastSeenMessages.Updater(packetData.readObject(0, ClassAccessor.get().getLastSeenMessagesUpdaterClass()));
+        } else if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
             this.timestamp = packetData.readObject(0, Instant.class);
             this.salt = packetData.readLong(0);
-            Object msgSignature = packetData.readObject(0, ClassesContainer.get().getMessageSignatureClass());
+            Object msgSignature = packetData.readObject(0, ClassAccessor.get().getMessageSignatureClass());
             if(msgSignature != null){
                 this.signature = new MessageSignature(msgSignature);
             }
-            this.update = new LastSeenMessages.Updater(packetData.readObject(0, ClassesContainer.get().getLastSeenMessagesUpdaterClass()));
+            this.update = new LastSeenMessages.Updater(packetData.readObject(0, ClassAccessor.get().getLastSeenMessagesUpdaterClass()));
         }
     }
 

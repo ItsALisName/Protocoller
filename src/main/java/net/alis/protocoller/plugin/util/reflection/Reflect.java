@@ -1,8 +1,8 @@
 package net.alis.protocoller.plugin.util.reflection;
 
-import net.alis.protocoller.plugin.data.InitialData;
+import net.alis.protocoller.plugin.memory.InitialData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
+import net.alis.protocoller.util.IndexedParam;
 import net.alis.protocoller.util.AccessedObject;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

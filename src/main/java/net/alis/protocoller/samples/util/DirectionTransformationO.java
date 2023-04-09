@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.util;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum DirectionTransformationO {
@@ -95,6 +95,6 @@ public enum DirectionTransformationO {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPointOEnum(), this.ordinal());
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getPointOEnum(), this.ordinal());
     }
 }

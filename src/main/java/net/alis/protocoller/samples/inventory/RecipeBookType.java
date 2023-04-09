@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.inventory;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum RecipeBookType {
@@ -27,6 +27,6 @@ public enum RecipeBookType {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getRecipeBookTypeEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getRecipeBookTypeEnum(), this.id);
     }
 }

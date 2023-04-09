@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -14,13 +14,10 @@ import net.alis.protocoller.packet.type.PlayInPacket;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.entity.block.TileEntityJigsawJointType;
 import net.alis.protocoller.samples.resources.MinecraftKey;
-import net.alis.protocoller.util.annotations.AddedSince;
+
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import static net.alis.protocoller.plugin.enums.Version.v1_14;
-
-@AddedSince(v1_14)
 public class PacketPlayInSetJigsaw implements PlayInPacket {
 
     private final PacketDataContainer packetData;
@@ -31,7 +28,7 @@ public class PacketPlayInSetJigsaw implements PlayInPacket {
     private String finalState;
     private @Nullable TileEntityJigsawJointType jointType;
     
-    private final boolean modernPacket = GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16);
+    private final boolean modernPacket = GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16);
 
     public PacketPlayInSetJigsaw(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
@@ -42,7 +39,7 @@ public class PacketPlayInSetJigsaw implements PlayInPacket {
         this.finalState = packetData.readString(0);
         if(modernPacket) {
             this.pool = packetData.readMinecraftKey(2);
-            this.jointType = TileEntityJigsawJointType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityJigsawJointypeEnum()).ordinal());
+            this.jointType = TileEntityJigsawJointType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getTileEntityJigsawJointypeEnum()).ordinal());
         } else {
             this.pool = new MinecraftKey("unsupported:old_version");
             this.jointType = TileEntityJigsawJointType.ROLLABLE;
@@ -54,7 +51,7 @@ public class PacketPlayInSetJigsaw implements PlayInPacket {
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
+                if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
                     params = new IndexedParam[]{
                             new IndexedParam<>(position.createOriginal(), 0),
                             new IndexedParam<>(name.createOriginal(), 0),

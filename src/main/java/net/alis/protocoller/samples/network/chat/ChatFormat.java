@@ -1,8 +1,9 @@
 package net.alis.protocoller.samples.network.chat;
 
 import com.google.common.collect.Lists;
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -33,7 +34,7 @@ public enum ChatFormat {
     UNDERLINE("UNDERLINE", 'n', true),
     ITALIC("ITALIC", 'o', true),
     RESET("RESET", 'r', -1, (Integer)null);
-    private static final Map<String, ChatFormat> y = Arrays.stream(values()).collect(Collectors.toMap((f) -> c(f.name), (f) -> f));
+    private static final Map<String, ChatFormat> y = Arrays.stream(values()).collect(Collectors.toMap((f) -> name(f.name), (f) -> f));
     private static final Pattern COMPILE = Pattern.compile("(?i)§[0-9A-FK-OR]");
     private final String name;
     public final char code;
@@ -43,7 +44,7 @@ public enum ChatFormat {
     @Nullable
     private final Integer colorValue;
 
-    private static String c(String name) {
+    private static String name(String name) {
         return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
     }
 
@@ -63,6 +64,13 @@ public enum ChatFormat {
         this.colorValue = colorValue;
         this.colorFormat = "§" + code;
     }
+
+    @Contract(pure = true)
+    public static @org.jetbrains.annotations.Nullable ChatFormat getById(int id) {
+        for(ChatFormat format : values()) if(format.colorIndex == id) return format;
+        return null;
+    }
+
 
     public char getCode() {
         return this.code;
@@ -100,7 +108,7 @@ public enum ChatFormat {
 
     @Nullable
     public static ChatFormat getFormat(@Nullable String name) {
-        return name == null ? null : y.get(c(name));
+        return name == null ? null : y.get(name(name));
     }
 
     @Nullable
@@ -165,7 +173,7 @@ public enum ChatFormat {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getChatFormatEnum(), this.ordinal());
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getChatFormatEnum(), this.ordinal());
     }
 
     public String asString() {

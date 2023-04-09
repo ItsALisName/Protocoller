@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -15,12 +15,9 @@ import net.alis.protocoller.samples.entity.block.BlockRotation;
 import net.alis.protocoller.samples.entity.block.TileEntityStructureUpdateType;
 import net.alis.protocoller.samples.entity.block.properties.BlockPropertyStructureMode;
 import net.alis.protocoller.samples.phys.BaseBlockPosition;
-import net.alis.protocoller.util.annotations.AddedSince;
+
 import org.jetbrains.annotations.NotNull;
 
-import static net.alis.protocoller.plugin.enums.Version.v1_13;
-
-@AddedSince(v1_13)
 public class PacketPlayInStruct implements PlayInPacket {
 
     private final PacketDataContainer packetData;
@@ -43,13 +40,13 @@ public class PacketPlayInStruct implements PlayInPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
-        this.action = TileEntityStructureUpdateType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityStructureUpdateType()).ordinal());
-        this.mode = BlockPropertyStructureMode.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBlockPropertyStructureModeEnum()).ordinal());
+        this.action = TileEntityStructureUpdateType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getTileEntityStructureUpdateType()).ordinal());
+        this.mode = BlockPropertyStructureMode.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBlockPropertyStructureModeEnum()).ordinal());
         this.templateName = packetData.readString(0);
         this.offset = packetData.readBlockPosition(1);
         this.size = packetData.readBaseBlockPosition(0);
-        this.mirror = BlockMirror.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBlockMirrorEnum()).ordinal());
-        this.rotation = BlockRotation.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBlockRotationEnum()).ordinal());
+        this.mirror = BlockMirror.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBlockMirrorEnum()).ordinal());
+        this.rotation = BlockRotation.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBlockRotationEnum()).ordinal());
         this.metadata = packetData.readString(1);
         this.ignoreEntities = packetData.readBoolean(0);
         this.showAir = packetData.readBoolean(1);

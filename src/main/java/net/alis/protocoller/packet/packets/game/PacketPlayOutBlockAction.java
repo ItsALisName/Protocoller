@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -25,7 +25,7 @@ public class PacketPlayOutBlockAction implements PlayOutPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
-        this.block = MagicNumbersSample.getMaterialFromBlock(packetData.readObject(0, ClassesContainer.get().getMinecraftBlockClass()));
+        this.block = MagicNumbersSample.getMaterialFromBlock(packetData.readObject(0, ClassAccessor.get().getMinecraftBlockClass()));
         this.type = packetData.readInt(0);
         this.dataId = packetData.readInt(1);
     }

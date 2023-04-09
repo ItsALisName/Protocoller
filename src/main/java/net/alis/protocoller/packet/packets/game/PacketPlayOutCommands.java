@@ -1,6 +1,6 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
@@ -22,20 +22,20 @@ public class PacketPlayOutCommands implements PlayOutPacket {
     private @Nullable Object rootCommandNode;
     private @Nullable List<Object> rootCommands;
 
-    private boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_19);
+    private boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_19);
 
     public PacketPlayOutCommands(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.nodes = new ArrayList<>();
         if (!legacyPacket) {
-            this.rootCommands = packetData.readList(0);
+            this.rootCommands = (List<Object>) packetData.readList(0);
             for(Object o : this.rootCommands) {
-                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(Reflect.readField(o, 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
+                Object clsA = ClassAccessor.get().getOutCommandClassA().cast(Reflect.readField(o, 0, ClassAccessor.get().getOutCommandInterfaceE(), false));
                 this.nodes.add(Reflect.readField(clsA, 0, String.class, false));
             }
         } else {
-            this.rootCommandNode = packetData.readObject(0, ClassesContainer.get().getRootCommandNodeClass());
+            this.rootCommandNode = packetData.readObject(0, ClassAccessor.get().getRootCommandNodeClass());
             Map<Object, Object> nods = Reflect.readSuperclassField(this.rootCommandNode, 0, Map.class, false);
             for(Map.Entry<Object, Object> entry : nods.entrySet()) this.nodes.add((String) entry.getKey());
         }
@@ -48,7 +48,7 @@ public class PacketPlayOutCommands implements PlayOutPacket {
     public void removeCommand(String node) {
         if(!legacyPacket) {
             for(int i = this.rootCommands.size() - 1; i >= 0; i--) {
-                Object clsA = ClassesContainer.get().getOutCommandClassA().cast(Reflect.readField(this.rootCommands.get(i), 0, ClassesContainer.get().getOutCommandInterfaceE(), false));
+                Object clsA = ClassAccessor.get().getOutCommandClassA().cast(Reflect.readField(this.rootCommands.get(i), 0, ClassAccessor.get().getOutCommandInterfaceE(), false));
                 if(((String) Reflect.readField(clsA, 0, String.class, false)).equalsIgnoreCase(node)) {
                     this.rootCommands.remove(i);
                 }

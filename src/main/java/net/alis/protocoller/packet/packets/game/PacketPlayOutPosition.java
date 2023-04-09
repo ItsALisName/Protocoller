@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -209,7 +209,7 @@ public class PacketPlayOutPosition implements PlayOutPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerTeleportFlagsEnum(), this.ordinal());
+            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getPlayerTeleportFlagsEnum(), this.ordinal());
         }
     }
 }

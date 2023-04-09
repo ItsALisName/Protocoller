@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
@@ -20,7 +20,7 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
     private int entityId;
     private int animationId;
 
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_17);
+    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_17);
 
     public PacketPlayOutAnimation(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
@@ -35,7 +35,7 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
     }
 
     public PacketPlayOutAnimation(int entityId, int animationId) {
-        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId)), animationId));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(entityId)), animationId));
         this.entityId = entityId;
         this.animationId = animationId;
     }
@@ -49,7 +49,7 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
     }
 
     public void setEntityId(int entityId) {
-        if(GlobalProvider.instance().getData().getEntitiesContainer().isIdPresent(entityId)) {
+        if(GlobalProvider.get().getServer().getEntityList().isIdPresent(entityId)) {
             this.packetData.writeInt(0, entityId);
             this.entityId = entityId;
         }
@@ -66,7 +66,7 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     @Override

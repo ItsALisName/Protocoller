@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -29,7 +29,7 @@ public class PacketPlayInBeacon implements PlayInPacket {
     public PacketPlayInBeacon(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
             this.primaryEffect = new MobEffectList(((Optional<Object>)packetData.readOptional(0)).get());
             this.secondaryEffect = new MobEffectList(((Optional<Object>)packetData.readOptional(1)).get());
             this.primaryId = MobEffects.instance().idFromEffect(this.primaryEffect);
@@ -88,7 +88,7 @@ public class PacketPlayInBeacon implements PlayInPacket {
 
     public void setPrimaryEffect(MobEffectList primaryEffect) {
         this.primaryId = MobEffects.instance().idFromEffect(primaryEffect);
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
             this.packetData.writeOptional(0, Optional.of(primaryEffect.createOriginal()));
         } else {
             this.packetData.writeInt(0, this.primaryId);
@@ -102,7 +102,7 @@ public class PacketPlayInBeacon implements PlayInPacket {
 
     public void setSecondaryEffect(MobEffectList secondaryEffect) {
         this.secondaryId = MobEffects.instance().idFromEffect(secondaryEffect);
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
             this.packetData.writeOptional(1, Optional.of(primaryEffect.createOriginal()));
         } else {
             this.packetData.writeInt(1, this.secondaryId);

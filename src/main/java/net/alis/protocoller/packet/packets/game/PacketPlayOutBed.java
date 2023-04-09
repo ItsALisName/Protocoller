@@ -1,7 +1,7 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -27,14 +27,14 @@ public class PacketPlayOutBed implements PlayOutPacket {
     }
 
     public PacketPlayOutBed(@NotNull BlockPosition position, int entityId) {
-        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId), position.createOriginal()));
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, GlobalProvider.get().getServer().getEntityList().getEntity(entityId), position.createOriginal()));
         this.position = position;
         this.entityId = entityId;
     }
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public BlockPosition getPosition() {

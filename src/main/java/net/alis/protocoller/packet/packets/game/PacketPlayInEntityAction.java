@@ -1,11 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.managers.LogsManager;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
@@ -28,43 +26,39 @@ public class PacketPlayInEntityAction implements PlayInPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
-        this.action = PlayerAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getPlayerActionEnum()).ordinal());
+        this.action = PlayerAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getPlayerActionEnum()).ordinal());
         this.mountJumpHeight = packetData.readInt(1);
     }
 
     public PacketPlayInEntityAction(int entityId, PlayerAction action, int mountJumpHeight) {
-        if(GlobalProvider.instance().getData().getEntitiesContainer().isIdPresent(entityId)) {
-            PacketBuilder creator = PacketBuilder.get(getPacketType());
-            switch (creator.getConstructorIndicator().getLevel()) {
-                case 0: {
-                    IndexedParam<?,?>[] params = {
+        PacketBuilder creator = PacketBuilder.get(getPacketType());
+        switch (creator.getConstructorIndicator().getLevel()) {
+            case 0: {
+                IndexedParam<?,?>[] params = {
                         new IndexedParam<>(entityId, 0),
                         new IndexedParam<>(action.original(), 0),
                         new IndexedParam<>(mountJumpHeight, 1)
-                    };
-                    this.packetData = new PacketDataSerializer(creator.buildPacket(params));
-                    break;
-                }
-                case 1: {
-                    this.packetData = new PacketDataSerializer(creator.buildPacket(null,
-                            MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(entityId)),
-                            action.original(),
-                            mountJumpHeight
-                    ));
-                    break;
-                }
-                default: {
-                    this.packetData = null;
-                    break;
-                }
+                };
+                this.packetData = new PacketDataSerializer(creator.buildPacket(params));
+                break;
             }
-            this.entityId = entityId;
-            this.action = action;
-            this.mountJumpHeight = mountJumpHeight;
-            return;
+            case 1: {
+                this.packetData = new PacketDataSerializer(creator.buildPacket(null,
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(entityId)),
+                        action.original(),
+                        mountJumpHeight
+                ));
+                break;
+            }
+            default: {
+                this.packetData = null;
+                break;
+            }
         }
-        this.packetData = null;
-        ExceptionBuilder.throwException(new RuntimeException("Entity with id " + entityId + " not founded!"), true);
+        this.entityId = entityId;
+        this.action = action;
+        this.mountJumpHeight = mountJumpHeight;
+        return;
     }
 
     public int getEntityId() {
@@ -72,16 +66,12 @@ public class PacketPlayInEntityAction implements PlayInPacket {
     }
 
     public Entity getEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public void setEntityId(int entityId) {
-        if(GlobalProvider.instance().getData().getEntitiesContainer().isIdPresent(entityId)) {
-            this.packetData.writeInt(0, entityId);
-            this.entityId = entityId;
-            return;
-        }
-        LogsManager.get().getLogger().warn("Entity with id " + entityId + " not founded!");
+        this.packetData.writeInt(0, entityId);
+        this.entityId = entityId;
     }
 
     public PlayerAction getAction() {

@@ -1,6 +1,6 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -10,16 +10,13 @@ import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.samples.boss.BarColor;
 import net.alis.protocoller.samples.boss.BarStyle;
-import net.alis.protocoller.util.annotations.AddedSince;
+
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static net.alis.protocoller.plugin.enums.Version.v1_9;
-
-@AddedSince(v1_9)
 public class PacketPlayOutBoss implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
@@ -31,12 +28,12 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     public PacketPlayOutBoss(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(GlobalProvider.instance().getServer().isLegacy()) {
-            this.action = Action.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum()).ordinal());
-            this.color = BarColor.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBarColorEnum()).ordinal());
-            this.style = BarStyle.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getBarStyleEnum()).ordinal());
+        if(GlobalProvider.get().getServer().isLegacy()) {
+            this.action = Action.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBossActionEnum()).ordinal());
+            this.color = BarColor.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBarColorEnum()).ordinal());
+            this.style = BarStyle.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBarStyleEnum()).ordinal());
         } else {
-            this.action = Action.fromModernPacket(packetData.readObject(0, ClassesContainer.get().getBossActionInterface()));
+            this.action = Action.fromModernPacket(packetData.readObject(0, ClassAccessor.get().getBossActionInterface()));
         }
         this.uuid = packetData.readUUID(0);
     }
@@ -46,7 +43,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     }
 
     public void setAction(Action action) {
-        if(GlobalProvider.instance().getServer().isLegacy()) {
+        if(GlobalProvider.get().getServer().isLegacy()) {
             this.packetData.writeEnumConstant(0, action.original());
         }
         this.action = action;
@@ -67,7 +64,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     }
 
     public void setColor(@Nullable BarColor color) {
-        if(GlobalProvider.instance().getServer().isLegacy()) this.packetData.writeEnumConstant(0, color.original());
+        if(GlobalProvider.get().getServer().isLegacy()) this.packetData.writeEnumConstant(0, color.original());
         this.color = color;
     }
 
@@ -77,7 +74,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     }
 
     public void setStyle(@Nullable BarStyle style) {
-        if(GlobalProvider.instance().getServer().isLegacy()) this.packetData.writeEnumConstant(0, style.original());
+        if(GlobalProvider.get().getServer().isLegacy()) this.packetData.writeEnumConstant(0, style.original());
         this.style = style;
     }
 
@@ -123,11 +120,11 @@ public class PacketPlayOutBoss implements PlayOutPacket {
         }
 
         public static Action fromModernPacket(Object action) {
-            return Action.getById(((Enum<?>) Reflect.callMethod(action, Reflect.getMethod(action.getClass(), 0, ClassesContainer.get().getBossActionEnum()), false)).ordinal());
+            return Action.getById(((Enum<?>) Reflect.callMethod(action, Reflect.getMethod(action.getClass(), 0, ClassAccessor.get().getBossActionEnum()), false)).ordinal());
         }
 
         public @NotNull Enum<?> original() {
-            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBossActionEnum(), this.id);
+            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getBossActionEnum(), this.id);
         }
 
     }

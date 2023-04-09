@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.entity;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +27,6 @@ public enum Hand {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getHandEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getHandEnum(), this.id);
     }
 }

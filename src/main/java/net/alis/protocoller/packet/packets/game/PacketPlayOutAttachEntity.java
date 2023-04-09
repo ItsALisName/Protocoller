@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
@@ -19,7 +19,7 @@ public class PacketPlayOutAttachEntity implements PlayOutPacket {
     private int attachedEntityId;
     private int holdingEntityId;
 
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9);
+    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9);
 
     public PacketPlayOutAttachEntity(PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
@@ -39,15 +39,15 @@ public class PacketPlayOutAttachEntity implements PlayOutPacket {
             case 1: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null,
                         1,
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(attachedEntityId)),
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(holdingEntityId))
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(attachedEntityId)),
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(holdingEntityId))
                 ));
                 break;
             }
             case 2: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null,
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(attachedEntityId)),
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.instance().getData().getEntitiesContainer().getEntity(holdingEntityId))
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(attachedEntityId)),
+                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(holdingEntityId))
                 ));
                 break;
             }
@@ -93,12 +93,12 @@ public class PacketPlayOutAttachEntity implements PlayOutPacket {
 
     @Nullable
     public Entity getAttachedEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.attachedEntityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.attachedEntityId);
     }
 
     @Nullable
     public Entity getHoldingEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.holdingEntityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.holdingEntityId);
     }
 
     @Override

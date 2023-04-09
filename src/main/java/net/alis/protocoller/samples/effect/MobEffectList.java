@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.effect;
 
 import com.google.common.collect.Maps;
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.attributes.AttributeBase;
 import net.alis.protocoller.samples.attributes.AttributeModifier;
@@ -31,7 +31,7 @@ public class MobEffectList implements ObjectSample {
         for(Map.Entry<Object, Object> en : attMap.entrySet()) {
             this.attributeModifierMap.put(new AttributeBase(en.getKey()), new AttributeModifier(en.getValue()));
         }
-        this.category = MobEffectInfo.getById(((Enum<?>)accessor.read(0, ClassesContainer.get().getMobEffectInfoEnum())).ordinal());
+        this.category = MobEffectInfo.getById(((Enum<?>)accessor.read(0, ClassAccessor.get().getMobEffectInfoEnum())).ordinal());
         this.color = accessor.read(0, int.class);
     }
 
@@ -71,7 +71,7 @@ public class MobEffectList implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        Object original = Reflect.callConstructor(Reflect.getConstructor(ClassesContainer.get().getMobEffectListClass(), ClassesContainer.get().getMobEffectInfoEnum(), int.class), this.category.original(), this.color);
+        Object original = Reflect.callConstructor(Reflect.getConstructor(ClassAccessor.get().getMobEffectListClass(), ClassAccessor.get().getMobEffectInfoEnum(), int.class), this.category.original(), this.color);
         if(this.attributeModifierMap.size() > 0) {
             Map<Object, Object> atrMap = new HashMap<>();
             for(Map.Entry<AttributeBase, AttributeModifier> e : this.attributeModifierMap.entrySet()) {

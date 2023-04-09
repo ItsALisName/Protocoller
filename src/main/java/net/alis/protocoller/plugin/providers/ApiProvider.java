@@ -1,5 +1,6 @@
 package net.alis.protocoller.plugin.providers;
 
+import net.alis.protocoller.Protocoller;
 import net.alis.protocoller.ProtocollerClient;
 import net.alis.protocoller.event.impl.ManagerType;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
@@ -8,6 +9,7 @@ import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.NetworkServer;
+import net.alis.protocoller.plugin.v0_0_3.api.ProtocollerApi;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,7 @@ public class ApiProvider implements ProtocollerClient {
             new ExceptionBuilder().getClientExceptions().bannedAuthor(client).throwException();
             return;
         }
-        GlobalProvider.instance().getData().getClients().get().add(this);
+        ((ProtocollerApi) Protocoller.get()).getClients().get().add(this);
         LogsManager.get().sendRegisteredClientNotify(client.getName(), client.getDescription().getVersion(), String.join(", ", client.getDescription().getAuthors()));
         this.name = client.getName();
         this.version = client.getDescription().getVersion();
@@ -39,14 +41,14 @@ public class ApiProvider implements ProtocollerClient {
 
     @Override
     public NetworkServer getServer() {
-        return GlobalProvider.instance().getServer();
+        return GlobalProvider.get().getServer();
     }
 
     @Override
     public PacketEventsManager getEventManager(ManagerType type) {
         switch (type) {
-            case SYNCHRONOUS: return GlobalProvider.instance().getEventManagers().getSync();
-            case ASYNCHRONOUS: return GlobalProvider.instance().getEventManagers().getAsync();
+            case SYNCHRONOUS: return GlobalProvider.get().getEventManagers().getSync();
+            case ASYNCHRONOUS: return GlobalProvider.get().getEventManagers().getAsync();
             default: return new ExceptionBuilder().getEventsExceptions().customMessage("Can't get packet event manager").throwException();
         }
     }

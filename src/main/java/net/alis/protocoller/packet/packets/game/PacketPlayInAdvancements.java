@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -24,7 +24,7 @@ public class PacketPlayInAdvancements implements PlayInPacket {
     public PacketPlayInAdvancements(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.status = Status.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getAdvancementsStatusEnum()).ordinal());
+        this.status = Status.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getAdvancementsStatusEnum()).ordinal());
         this.minecraftKey = packetData.readMinecraftKey(0);
     }
 
@@ -106,7 +106,7 @@ public class PacketPlayInAdvancements implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getAdvancementsStatusEnum(), this.id);
+            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getAdvancementsStatusEnum(), this.id);
         }
 
     }

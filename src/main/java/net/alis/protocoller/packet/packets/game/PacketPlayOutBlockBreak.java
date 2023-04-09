@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -25,8 +25,8 @@ public class PacketPlayOutBlockBreak implements PlayOutPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
-        this.state = MagicNumbersSample.getMaterialFromBlockData(packetData.readObject(0, ClassesContainer.get().getIBlockDataClass()));
-        this.action = PacketPlayInBlockDig.PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getPlayerDigTypeEnum()).ordinal());
+        this.state = MagicNumbersSample.getMaterialFromBlockData(packetData.readObject(0, ClassAccessor.get().getIBlockDataClass()));
+        this.action = PacketPlayInBlockDig.PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getPlayerDigTypeEnum()).ordinal());
         this.approved = packetData.readBoolean(0);
     }
 

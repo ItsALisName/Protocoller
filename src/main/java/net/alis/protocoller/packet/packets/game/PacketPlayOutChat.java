@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -29,12 +29,12 @@ public class PacketPlayOutChat implements PlayOutPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.message = new ChatComponent(ChatSerializer.fromComponent(packetData.readIChatBaseComponent(0)));
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)){
-            this.messageType = MessageType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getChatMessageTypeEnum()).ordinal());
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)){
+            this.messageType = MessageType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getChatMessageTypeEnum()).ordinal());
         } else {
             this.messageType = MessageType.getById(packetData.readInt(0));
         }
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
             this.sender = packetData.readUUID(0);
         }
     }
@@ -82,7 +82,7 @@ public class PacketPlayOutChat implements PlayOutPacket {
     }
 
     public void setMessageType(MessageType messageType) {
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)) {
             this.packetData.writeEnumConstant(0, messageType.original());
         } else {
             this.packetData.writeInt(0, messageType.getId());
@@ -96,7 +96,7 @@ public class PacketPlayOutChat implements PlayOutPacket {
     }
 
     public void setSender(@Nullable UUID sender) {
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
             this.packetData.writeUUID(0, sender);
         }
         this.sender = sender;

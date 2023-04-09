@@ -1,7 +1,7 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -14,7 +14,7 @@ public class PacketPlayOutKeepAlive implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private long id;
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().isVeryLegacy();
+    private final boolean legacyPacket = GlobalProvider.get().getServer().isVeryLegacy();
 
     public PacketPlayOutKeepAlive(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());

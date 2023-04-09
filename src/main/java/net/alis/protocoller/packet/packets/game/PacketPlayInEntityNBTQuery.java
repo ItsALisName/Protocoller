@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -49,7 +49,7 @@ public class PacketPlayInEntityNBTQuery implements PlayInPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public int getTransactionId() {

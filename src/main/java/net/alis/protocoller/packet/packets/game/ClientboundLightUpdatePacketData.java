@@ -4,7 +4,7 @@ import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,8 +29,8 @@ public class ClientboundLightUpdatePacketData implements PlayOutPacket {
         this.blockYMask = packetData.readObject(1, BitSet.class);
         this.emptySkyYMask = packetData.readObject(2, BitSet.class);
         this.emptyBlockYMask = packetData.readObject(3, BitSet.class);
-        this.skyUpdates = packetData.readList(0);
-        this.blockUpdates = packetData.readList(1);
+        this.skyUpdates = (List<byte[]>) packetData.readList(0);
+        this.blockUpdates = (List<byte[]>) packetData.readList(1);
         this.trustEdges = packetData.readBoolean(0);
     }
 
@@ -40,8 +40,8 @@ public class ClientboundLightUpdatePacketData implements PlayOutPacket {
         this.blockYMask = this.packetData.readObject(1, BitSet.class);
         this.emptySkyYMask = this.packetData.readObject(2, BitSet.class);
         this.emptyBlockYMask = this.packetData.readObject(3, BitSet.class);
-        this.skyUpdates = this.packetData.readList(0);
-        this.blockUpdates = this.packetData.readList(1);
+        this.skyUpdates = (List<byte[]>) this.packetData.readList(0);
+        this.blockUpdates = (List<byte[]>) this.packetData.readList(1);
         this.trustEdges = this.packetData.readBoolean(0);
     }
 

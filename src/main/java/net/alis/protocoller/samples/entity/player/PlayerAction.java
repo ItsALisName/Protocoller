@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.entity.player;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum PlayerAction {
@@ -33,7 +33,7 @@ public enum PlayerAction {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerActionEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getPlayerActionEnum(), this.id);
     }
 
 }

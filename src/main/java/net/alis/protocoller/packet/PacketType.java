@@ -166,7 +166,7 @@ public abstract class PacketType {
             public static MinecraftPacketType SET_TITLE_TEXT_PACKET;
             public static MinecraftPacketType SET_TITLES_ANIMATION_PACKET;
             public static MinecraftPacketType BLOCK_CHANGED_ACK_PACKET;
-            public static MinecraftPacketType CUSTOM_CHAT_COMPLETIONS;
+            public static MinecraftPacketType CUSTOM_CHAT_COMPLETIONS_PACKET;
             public static MinecraftPacketType DELETE_CHAT_PACKET;
             public static MinecraftPacketType DISGUISED_CHAT_PACKET;
             public static MinecraftPacketType LEVEL_CHUNK_PACKET_DATA;
@@ -179,6 +179,9 @@ public abstract class PacketType {
             public static MinecraftPacketType SET_SIMULATION_DISTANCE_PACKET;
             public static MinecraftPacketType SYSTEM_CHAT_PACKET;
             public static MinecraftPacketType UPDATE_ENABLED_FEATURES;
+            public static MinecraftPacketType CHUNK_BIOMES_PACKET;
+            public static MinecraftPacketType DAMAGE_EVENT_PACKET;
+            public static MinecraftPacketType HURT_ANIMATION_PACKET;
         }
 
     }

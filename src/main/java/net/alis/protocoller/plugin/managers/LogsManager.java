@@ -1,7 +1,7 @@
 package net.alis.protocoller.plugin.managers;
 
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
-import net.alis.protocoller.plugin.data.InitialData;
+import net.alis.protocoller.plugin.memory.InitialData;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +58,7 @@ public class LogsManager {
         logger.log(Level.INFO, "[*]============================================================[*]");
         logger.log(Level.INFO, "[*]                      Preloading finished.                     ");
         logger.log(Level.INFO, "[*] Information:                                                  ");
-        logger.log(Level.INFO, "[*]  * Server Version: " + GlobalProvider.instance().getServer().getVersion().asString() + "(Protocol: " + GlobalProvider.instance().getServer().getVersion().getProtocol() + ")");
+        logger.log(Level.INFO, "[*]  * Server Version: " + GlobalProvider.get().getServer().getVersion().asString() + "(Protocol: " + GlobalProvider.get().getServer().getVersion().getProtocol() + ")");
         logger.log(Level.INFO, "[*]  * Plugin Version: " + pluginVersion);
         logger.log(Level.INFO, "[*]  * Java Version: " + InitialData.get().getJavaVersion());
         logger.log(Level.INFO, "[*]  * JDK Version: " + InitialData.get().getJdkVersion());

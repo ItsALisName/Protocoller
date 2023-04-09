@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.server.rcon;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -61,7 +61,7 @@ public class RemoteStatusReply implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getRemoteStatusReplyClass(), Integer.TYPE),
+                Reflect.getConstructor(ClassAccessor.get().getRemoteStatusReplyClass(), Integer.TYPE),
                 this.outputStream.size()
         );
     }

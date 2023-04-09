@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -26,14 +26,14 @@ public class PacketPlayInBlockDig implements PlayInPacket {
     private Direction direction;
     private int sequence;
     
-    private final boolean modernPacket = GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
+    private final boolean modernPacket = GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
 
     public PacketPlayInBlockDig(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.digType = PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getPlayerDigTypeEnum()).ordinal());
+        this.digType = PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getPlayerDigTypeEnum()).ordinal());
         this.blockPosition = packetData.readBlockPosition(0);
-        this.direction = Direction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getDirectionEnum()).ordinal());
+        this.direction = Direction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getDirectionEnum()).ordinal());
         if(modernPacket) {
             this.sequence = packetData.readInt(0);
         } else {
@@ -152,7 +152,7 @@ public class PacketPlayInBlockDig implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getPlayerDigTypeEnum(), this.id);
+            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getPlayerDigTypeEnum(), this.id);
         }
     }
 

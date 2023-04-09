@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -22,7 +22,7 @@ public class PacketPlayInResourcePackStatus implements PlayInPacket {
     private @Nullable String decodedString;
     private ResourcePackStatus resourcePackStatus;
 
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_11);
+    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_11);
 
     public PacketPlayInResourcePackStatus(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
@@ -32,7 +32,7 @@ public class PacketPlayInResourcePackStatus implements PlayInPacket {
         } else {
             this.decodedString = "Not supported by this version";
         }
-        this.resourcePackStatus = ResourcePackStatus.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getResourcePackStatusEnum()).ordinal());
+        this.resourcePackStatus = ResourcePackStatus.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getResourcePackStatusEnum()).ordinal());
     }
 
     public PacketPlayInResourcePackStatus(@Nullable String decodedString, ResourcePackStatus resourcePackStatus) {
@@ -118,7 +118,7 @@ public class PacketPlayInResourcePackStatus implements PlayInPacket {
         }
 
         public @NotNull Enum<?> original() {
-            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getResourcePackStatusEnum(), this.id);
+            return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getResourcePackStatusEnum(), this.id);
         }
     }
 }

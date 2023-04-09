@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.network.chat;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,7 @@ public enum FilterMaskType {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getFilterMaskTypeEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getFilterMaskTypeEnum(), this.id);
     }
 
 }

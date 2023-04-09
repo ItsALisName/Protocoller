@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.network.status;
 
 import com.google.gson.*;
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.ChatDeserializer;
 import net.alis.protocoller.util.AccessedObject;
@@ -60,7 +60,7 @@ public class ServerData {
 
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getServerDataClass(), String.class, int.class),
+                Reflect.getConstructor(ClassAccessor.get().getServerDataClass(), String.class, int.class),
                 this.gameVersion, this.protocolVersion);
     }
 }

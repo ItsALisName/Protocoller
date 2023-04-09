@@ -1,6 +1,6 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
@@ -10,27 +10,24 @@ import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayInPacket;
 import net.alis.protocoller.samples.crafting.CRecipe;
 import net.alis.protocoller.samples.resources.MinecraftKey;
-import net.alis.protocoller.util.annotations.AddedSince;
+
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import static net.alis.protocoller.plugin.enums.Version.v1_12;
-
-@AddedSince(v1_12)
 public class PacketPlayInRecipeDisplayed implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private @Nullable MinecraftKey recipeKey;
     private @Nullable CRecipe recipe;
     
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_13);
+    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_13);
 
     public PacketPlayInRecipeDisplayed(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Play.Client.RECIPE_DISPLAYED);
         this.packetData = packetData;
         if(legacyPacket) {
             this.recipeKey = null;
-            this.recipe = CRecipe.RecipeSerializer.fromIRecipe(packetData.readObject(0, ClassesContainer.get().getIRecipeClass()));
+            this.recipe = CRecipe.RecipeSerializer.fromIRecipe(packetData.readObject(0, ClassAccessor.get().getIRecipeClass()));
         } else {
             this.recipeKey = packetData.readMinecraftKey(0);
             this.recipe = null;

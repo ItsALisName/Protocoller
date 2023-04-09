@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.network.chat;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -17,7 +17,7 @@ public class LastSeenMessages implements ObjectSample {
 
     public LastSeenMessages(Object lastSeenMessages) {
         AccessedObject object = new AccessedObject(lastSeenMessages);
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
             this.messageSignatureList = new ArrayList<>();
             this.cacheList = null;
             for(Object obj : (List<?>) object.read(0, List.class)) {
@@ -33,7 +33,7 @@ public class LastSeenMessages implements ObjectSample {
     }
 
     public LastSeenMessages(List<?> list) {
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
             this.messageSignatureList = (List<MessageSignature>) list;
             this.cacheList = null;
         } else {
@@ -55,7 +55,7 @@ public class LastSeenMessages implements ObjectSample {
     @Override
     public Object createOriginal() {
         List<Object> list = new ArrayList<>();
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
             for(MessageSignature s : this.messageSignatureList) {
                 list.add(s.createOriginal());
             }
@@ -65,7 +65,7 @@ public class LastSeenMessages implements ObjectSample {
             }
         }
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesClass(), List.class),
+                Reflect.getConstructor(ClassAccessor.get().getLastSeenMessagesClass(), List.class),
                 list
         );
     }
@@ -78,7 +78,7 @@ public class LastSeenMessages implements ObjectSample {
         public Cache(Object cache) {
             AccessedObject object = new AccessedObject(cache);
             this.uuid = object.read(0, UUID.class);
-            this.signature = new MessageSignature(object.read(0, ClassesContainer.get().getMessageSignatureClass()));
+            this.signature = new MessageSignature(object.read(0, ClassAccessor.get().getMessageSignatureClass()));
         }
 
         public Cache(UUID uuid, MessageSignature signature) {
@@ -105,7 +105,7 @@ public class LastSeenMessages implements ObjectSample {
         @Override
         public Object createOriginal() {
             return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesCacheClass(), UUID.class, ClassesContainer.get().getMessageSignatureClass()),
+                    Reflect.getConstructor(ClassAccessor.get().getLastSeenMessagesCacheClass(), UUID.class, ClassAccessor.get().getMessageSignatureClass()),
                     this.uuid, this.signature.createOriginal()
             );
         }
@@ -120,26 +120,26 @@ public class LastSeenMessages implements ObjectSample {
 
         public Updater(Object updater) {
             AccessedObject object = new AccessedObject(updater);
-            if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+            if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
                 this.i = object.read(0, Integer.TYPE);
                 this.bitSet = object.read(0, BitSet.class);
             } else {
-                this.lastSeenMessages = new LastSeenMessages((Object) object.read(0, ClassesContainer.get().getLastSeenMessagesClass()));
-                this.updater = Optional.of(new Updater(object.read(0, ClassesContainer.get().getLastSeenMessagesUpdaterClass())));
+                this.lastSeenMessages = new LastSeenMessages((Object) object.read(0, ClassAccessor.get().getLastSeenMessagesClass()));
+                this.updater = Optional.of(new Updater(object.read(0, ClassAccessor.get().getLastSeenMessagesUpdaterClass())));
             }
         }
 
         @Override
         public Object createOriginal() {
             Object response = null;
-            if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+            if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
                 response = Reflect.callConstructor(
-                        Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesUpdaterClass(), Integer.TYPE, BitSet.class),
+                        Reflect.getConstructor(ClassAccessor.get().getLastSeenMessagesUpdaterClass(), Integer.TYPE, BitSet.class),
                         this.i, this.bitSet
                 );
             } else {
                 response = Reflect.callConstructor(
-                        Reflect.getConstructor(ClassesContainer.get().getLastSeenMessagesUpdaterClass(), ClassesContainer.get().getLastSeenMessagesClass(), Optional.class),
+                        Reflect.getConstructor(ClassAccessor.get().getLastSeenMessagesUpdaterClass(), ClassAccessor.get().getLastSeenMessagesClass(), Optional.class),
                         this.lastSeenMessages, Optional.of(this.updater.get().createOriginal())
                 );
             }

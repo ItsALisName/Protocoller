@@ -7,14 +7,13 @@ import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.samples.resources.MinecraftKey;
-import net.alis.protocoller.util.annotations.AddedSince;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static net.alis.protocoller.plugin.enums.Version.v1_13;
 
-@AddedSince(v1_13)
 @VisibleForTesting
 public class PacketPlayOutAdvancements implements PlayOutPacket {
 

@@ -62,7 +62,7 @@ public interface PacketDataContainer {
 
     boolean[] readBooleanArray(int index);
 
-    <T> T readList(int index);
+    List<?> readList(int index);
 
     PublicKey readPublicKey(int index);
 

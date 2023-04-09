@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.crafting;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.resources.MinecraftKey;
@@ -45,8 +45,8 @@ public class CRecipe implements Recipe {
 
         private static Method getKeyMethod, getItemStackMethod;
         public static void init() {
-            getKeyMethod = Reflect.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftKeyClass());
-            getItemStackMethod = Reflect.getMethod(ClassesContainer.get().getIRecipeClass(), ClassesContainer.get().getMinecraftItemStackClass());
+            getKeyMethod = Reflect.getMethod(ClassAccessor.get().getIRecipeClass(), ClassAccessor.get().getMinecraftKeyClass());
+            getItemStackMethod = Reflect.getMethod(ClassAccessor.get().getIRecipeClass(), ClassAccessor.get().getMinecraftItemStackClass());
         }
 
         public static CRecipe fromIRecipe(Object iRecipe) {

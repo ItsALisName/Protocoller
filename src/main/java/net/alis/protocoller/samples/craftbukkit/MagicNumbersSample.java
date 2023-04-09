@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.craftbukkit;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -101,27 +101,27 @@ public class MagicNumbersSample {
     }
 
     public static void init() {
-        iBlockDataFromMaterial = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getBlock", ClassesContainer.get().getIBlockDataClass(), true, Material.class, byte.class);
-        materialDataFromIBlockData = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterial", MaterialData.class, true, ClassesContainer.get().getIBlockDataClass());
-        itemFromMaterial = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getItem", ClassesContainer.get().getMinecraftItemClass(), true, Material.class, short.class);
-        materialDataFromItem = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterialData", MaterialData.class, true, ClassesContainer.get().getMinecraftItemClass());
-        materialFromMinecraftBlock = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, true, ClassesContainer.get().getMinecraftBlockClass());
-        materialFromMinecraftItem = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, true, ClassesContainer.get().getMinecraftItemClass());
-        itemFromMaterial$1 = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getItem", ClassesContainer.get().getMinecraftItemClass(), true, Material.class);
-        minecraftBlockFromMaterial = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getBlock", ClassesContainer.get().getMinecraftBlockClass(), true, Material.class);
-        minecraftEntityTypesFromEntityType = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getEntityTypes", ClassesContainer.get().getEntityTypesClass(), true, EntityType.class);
-        entityTypeFromMinecraftEntityTypes = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getEntityType", EntityType.class, true, ClassesContainer.get().getEntityTypesClass());
-        toLegacyMaterial = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "toLegacy", Material.class, true, Material.class);
-        fromLegacyMaterial = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "fromLegacy", Material.class, true, Material.class);
-        fromLegacyMaterialData = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "fromLegacy", Material.class, true, MaterialData.class);
-        fromLegacyMaterialData$1 = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "fromLegacy", Material.class, true, MaterialData.class, boolean.class);
-        //fromLegacyBlockData = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "fromLegacy", BlockData.class, Material.class, byte.class);
-        materialFromVersion = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, true, String.class, int.class);
-        getMappingsVersion = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getMappingsVersion", String.class, true);
-        getDataVersion = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "getDataVersion", int.class, true);
-        serializeItem = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "serializeItem", byte[].class, true, ItemStack.class);
-        deserializeItem = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "deserializeItem", ItemStack.class, true, byte[].class);
-        serializeEntity = Reflect.getMethod(ClassesContainer.get().getCraftMagicNumbersClass(), "serializeEntity", byte[].class, true, Entity.class);
+        iBlockDataFromMaterial = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getBlock", ClassAccessor.get().getIBlockDataClass(), true, Material.class, byte.class);
+        materialDataFromIBlockData = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getMaterial", MaterialData.class, true, ClassAccessor.get().getIBlockDataClass());
+        itemFromMaterial = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getItem", ClassAccessor.get().getMinecraftItemClass(), true, Material.class, short.class);
+        materialDataFromItem = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getMaterialData", MaterialData.class, true, ClassAccessor.get().getMinecraftItemClass());
+        materialFromMinecraftBlock = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, true, ClassAccessor.get().getMinecraftBlockClass());
+        materialFromMinecraftItem = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, true, ClassAccessor.get().getMinecraftItemClass());
+        itemFromMaterial$1 = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getItem", ClassAccessor.get().getMinecraftItemClass(), true, Material.class);
+        minecraftBlockFromMaterial = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getBlock", ClassAccessor.get().getMinecraftBlockClass(), true, Material.class);
+        minecraftEntityTypesFromEntityType = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getEntityTypes", ClassAccessor.get().getEntityTypesClass(), true, EntityType.class);
+        entityTypeFromMinecraftEntityTypes = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getEntityType", EntityType.class, true, ClassAccessor.get().getEntityTypesClass());
+        toLegacyMaterial = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "toLegacy", Material.class, true, Material.class);
+        fromLegacyMaterial = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "fromLegacy", Material.class, true, Material.class);
+        fromLegacyMaterialData = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "fromLegacy", Material.class, true, MaterialData.class);
+        fromLegacyMaterialData$1 = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "fromLegacy", Material.class, true, MaterialData.class, boolean.class);
+        //fromLegacyBlockData = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "fromLegacy", BlockData.class, Material.class, byte.class);
+        materialFromVersion = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getMaterial", Material.class, true, String.class, int.class);
+        getMappingsVersion = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getMappingsVersion", String.class, true);
+        getDataVersion = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "getDataVersion", int.class, true);
+        serializeItem = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "serializeItem", byte[].class, true, ItemStack.class);
+        deserializeItem = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "deserializeItem", ItemStack.class, true, byte[].class);
+        serializeEntity = Reflect.getMethod(ClassAccessor.get().getCraftMagicNumbersClass(), "serializeEntity", byte[].class, true, Entity.class);
     }
 
     private static Method materialDataFromIBlockData, iBlockDataFromMaterial, itemFromMaterial, materialDataFromItem, materialFromMinecraftBlock, materialFromMinecraftItem,

@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.FastUtilLegacyAdapter;
 import net.alis.protocoller.plugin.util.PacketUtils;
@@ -27,7 +27,7 @@ public class PacketPlayInWindowClick implements PlayInPacket {
     private InventoryClickType actionType;
     private ItemStack stack;
 
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().isLegacy();
+    private final boolean legacyPacket = GlobalProvider.get().getServer().isLegacy();
 
     public PacketPlayInWindowClick(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Play.Client.WINDOW_CLICK);
@@ -38,17 +38,17 @@ public class PacketPlayInWindowClick implements PlayInPacket {
             this.revision = packetData.readInt(0);
             this.slot = packetData.readInt(1);
             this.button = packetData.readInt(2);
-            if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9)) {
+            if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9)) {
                 this.actionType = InventoryClickType.getById(packetData.readInt(3));
             } else {
-                this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getInventoryClickTypeEnum()).ordinal());
+                this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getInventoryClickTypeEnum()).ordinal());
             }
         } else {
             this.syncId = packetData.readInt(1);
             this.revision = packetData.readInt(2);
             this.slot = packetData.readInt(3);
             this.button = packetData.readInt(4);
-            this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getInventoryClickTypeEnum()).ordinal());
+            this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getInventoryClickTypeEnum()).ordinal());
         }
     }
 
@@ -57,7 +57,7 @@ public class PacketPlayInWindowClick implements PlayInPacket {
         switch (packetBuilder.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9)) {
+                if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9)) {
                     params = new IndexedParam[] {
                         new IndexedParam<>(revision, 0),
                         new IndexedParam<>(Integer.valueOf(syncId).shortValue(), 0),
@@ -153,7 +153,7 @@ public class PacketPlayInWindowClick implements PlayInPacket {
     }
 
     public void setActionType(InventoryClickType actionType) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9)) {
+        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9)) {
             this.packetData.writeInt(3, actionType.getId());
         } else {
             this.packetData.writeEnumConstant(0, actionType.original());

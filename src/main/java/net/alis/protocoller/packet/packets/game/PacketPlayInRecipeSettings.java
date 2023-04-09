@@ -1,20 +1,18 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayInPacket;
 import net.alis.protocoller.samples.inventory.RecipeBookType;
-import net.alis.protocoller.util.annotations.AddedSince;
+
 import org.jetbrains.annotations.NotNull;
 
-@AddedSince(Version.v1_16_4n5)
 public class PacketPlayInRecipeSettings implements PlayInPacket {
 
     private final PacketDataContainer packetData;
@@ -25,7 +23,7 @@ public class PacketPlayInRecipeSettings implements PlayInPacket {
     public PacketPlayInRecipeSettings(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.category = RecipeBookType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getRecipeBookTypeEnum()).ordinal());
+        this.category = RecipeBookType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getRecipeBookTypeEnum()).ordinal());
         this.guiOpen = packetData.readBoolean(0);
         this.filteringCraftable = packetData.readBoolean(1);
     }

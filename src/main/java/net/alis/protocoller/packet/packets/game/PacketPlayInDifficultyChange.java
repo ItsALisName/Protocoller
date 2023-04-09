@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -19,7 +19,7 @@ public class PacketPlayInDifficultyChange implements PlayInPacket {
     public PacketPlayInDifficultyChange(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.difficulty = Difficulty.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getDifficultyEnum()).ordinal());
+        this.difficulty = Difficulty.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getDifficultyEnum()).ordinal());
     }
 
     public PacketPlayInDifficultyChange(@NotNull Difficulty difficulty) {

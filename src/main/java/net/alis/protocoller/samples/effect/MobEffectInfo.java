@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.effect;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatFormat;
 
@@ -33,7 +33,7 @@ public enum MobEffectInfo {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getMobEffectInfoEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getMobEffectInfoEnum(), this.id);
     }
 }
 

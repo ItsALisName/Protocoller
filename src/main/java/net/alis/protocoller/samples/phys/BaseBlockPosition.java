@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.phys;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.MathHelper;
 import net.alis.protocoller.util.AccessedObject;
@@ -114,7 +114,7 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition>, ObjectS
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getBaseBlockPositionClass(), int.class, int.class, int.class),
+                Reflect.getConstructor(ClassAccessor.get().getBaseBlockPositionClass(), int.class, int.class, int.class),
                 this.x, this.y, this.z
         );
     }

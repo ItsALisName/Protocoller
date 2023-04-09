@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.entity.block;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum TileEntityCommandType {
@@ -26,6 +26,6 @@ public enum TileEntityCommandType {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityCommandTypeEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getTileEntityCommandTypeEnum(), this.id);
     }
 }

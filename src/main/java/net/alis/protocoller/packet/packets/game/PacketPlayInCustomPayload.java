@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -19,7 +19,7 @@ public class PacketPlayInCustomPayload implements PlayInPacket {
     private MinecraftKey key;
     private MinecraftPacketDataSerializer data;
 
-    private final boolean veryLegacy = GlobalProvider.instance().getServer().isVeryLegacy();
+    private final boolean veryLegacy = GlobalProvider.get().getServer().isVeryLegacy();
 
     public PacketPlayInCustomPayload(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());

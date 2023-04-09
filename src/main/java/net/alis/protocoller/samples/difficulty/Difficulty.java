@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.difficulty;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +49,6 @@ public enum Difficulty {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getDifficultyEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getDifficultyEnum(), this.id);
     }
 }

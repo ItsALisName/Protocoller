@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.tags.*;
@@ -379,7 +379,7 @@ public class NBTTagCompound extends NBTBase {
 
     @Override
     public Object toOriginal() {
-        AccessedObject object = new AccessedObject(Reflect.classNewInstance(ClassesContainer.get().getNbtTagCompoundClass()));
+        AccessedObject object = new AccessedObject(Reflect.classNewInstance(ClassAccessor.get().getNbtTagCompoundClass()));
         Map<String, Object> nbtMap = new HashMap<>();
         for(Map.Entry<String, NBTBase> e : this.tagMap.entrySet()) nbtMap.put(e.getKey(), e.getValue().toOriginal());
         object.writeSpecify(0, Map.class, nbtMap);

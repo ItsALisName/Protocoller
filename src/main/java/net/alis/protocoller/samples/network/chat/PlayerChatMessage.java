@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.network.chat;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.Utils;
@@ -23,16 +23,16 @@ public class PlayerChatMessage implements ObjectSample {
 
     public PlayerChatMessage(Object playerChatMessage) {
         AccessedObject object = new AccessedObject(playerChatMessage);
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
-            this.link = new SignedMessageLink(object.read(0, ClassesContainer.get().getSignedMessageLinkClass()));
-            this.signature = new MessageSignature((Object) object.read(0, ClassesContainer.get().getMessageSignatureClass()));
-            this.signedBody = new SignedMessageBody(object.read(0, ClassesContainer.get().getSignedMessageBodyClass()));
-            if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
-                this.unsignedContent = new ChatComponent(ChatSerializer.fromComponent(object.read(0, ClassesContainer.get().getIChatBaseComponentClass())));
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
+            this.link = new SignedMessageLink(object.read(0, ClassAccessor.get().getSignedMessageLinkClass()));
+            this.signature = new MessageSignature((Object) object.read(0, ClassAccessor.get().getMessageSignatureClass()));
+            this.signedBody = new SignedMessageBody(object.read(0, ClassAccessor.get().getSignedMessageBodyClass()));
+            if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+                this.unsignedContent = new ChatComponent(ChatSerializer.fromComponent(object.read(0, ClassAccessor.get().getIChatBaseComponentClass())));
             } else {
                 this.unsignedContent = new ChatComponent(ChatSerializer.fromComponent(((Optional<?>)object.read(0, Optional.class)).get()));
             }
-            this.filterMask = new FilterMask(object.read(0, ClassesContainer.get().getFilterMaskClass()));
+            this.filterMask = new FilterMask(object.read(0, ClassAccessor.get().getFilterMaskClass()));
         }
     }
 
@@ -46,14 +46,14 @@ public class PlayerChatMessage implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        if(GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
             return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassesContainer.get().getPlayerChatMessageClass(), ClassesContainer.get().getSignedMessageLinkClass(), ClassesContainer.get().getMessageSignatureClass(), ClassesContainer.get().getSignedMessageBodyClass(), ClassesContainer.get().getIChatBaseComponentClass(), ClassesContainer.get().getFilterMaskClass()),
+                    Reflect.getConstructor(ClassAccessor.get().getPlayerChatMessageClass(), ClassAccessor.get().getSignedMessageLinkClass(), ClassAccessor.get().getMessageSignatureClass(), ClassAccessor.get().getSignedMessageBodyClass(), ClassAccessor.get().getIChatBaseComponentClass(), ClassAccessor.get().getFilterMaskClass()),
                         this.link.createOriginal(), this.signature.createOriginal(), this.signedBody.createOriginal(), this.unsignedContent.asIChatBaseComponent(), this.filterMask.createOriginal()
                     );
         } else {
             return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassesContainer.get().getPlayerChatMessageClass(), ClassesContainer.get().getSignedMessageLinkClass(), ClassesContainer.get().getMessageSignatureClass(), ClassesContainer.get().getSignedMessageBodyClass(), Optional.class, ClassesContainer.get().getFilterMaskClass()),
+                    Reflect.getConstructor(ClassAccessor.get().getPlayerChatMessageClass(), ClassAccessor.get().getSignedMessageLinkClass(), ClassAccessor.get().getMessageSignatureClass(), ClassAccessor.get().getSignedMessageBodyClass(), Optional.class, ClassAccessor.get().getFilterMaskClass()),
                     this.link.createOriginal(), this.signature.createOriginal(), this.signedBody.createOriginal(), Optional.of(this.unsignedContent.asIChatBaseComponent()), this.filterMask.createOriginal()
             );
         }

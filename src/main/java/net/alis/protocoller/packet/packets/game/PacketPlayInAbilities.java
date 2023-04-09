@@ -1,8 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -25,7 +25,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     public PacketPlayInAbilities(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(!GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) {
+        if(!GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_16)) {
             this.isFlying = packetData.readBoolean(0);
         } else {
             this.isInvulnerable = packetData.readBoolean(0);
@@ -52,7 +52,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     }
 
     public void setInvulnerable(boolean invulnerable) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(0, invulnerable);
+        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(0, invulnerable);
         isInvulnerable = invulnerable;
     }
 
@@ -61,7 +61,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     }
 
     public void setFlying(boolean flying) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) {
+        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_16)) {
             this.packetData.writeBoolean(1, flying);
         } else {
             this.packetData.writeBoolean(0, flying);
@@ -74,7 +74,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     }
 
     public void setCanFly(boolean canFly) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(2, canFly);
+        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(2, canFly);
         this.canFly = canFly;
     }
 
@@ -83,7 +83,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     }
 
     public void setCanInstantlyBuild(boolean canInstantlyBuild) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(3, canInstantlyBuild);
+        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeBoolean(3, canInstantlyBuild);
         this.canInstantlyBuild = canInstantlyBuild;
     }
 
@@ -92,7 +92,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     }
 
     public void setFlySpeed(float flySpeed) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeFloat(0, flySpeed);
+        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeFloat(0, flySpeed);
         this.flySpeed = flySpeed;
     }
 
@@ -101,7 +101,7 @@ public class PacketPlayInAbilities implements PlayInPacket {
     }
 
     public void setWalkSpeed(float walkSpeed) {
-        if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeFloat(1, walkSpeed);
+        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_16)) this.packetData.writeFloat(1, walkSpeed);
         this.walkSpeed = walkSpeed;
     }
 

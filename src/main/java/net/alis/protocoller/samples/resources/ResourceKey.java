@@ -1,7 +1,7 @@
 package net.alis.protocoller.samples.resources;
 
 import com.google.common.collect.Maps;
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -28,8 +28,8 @@ public class ResourceKey<T> implements ObjectSample {
 
     public ResourceKey(Object original) {
         AccessedObject accessor = new AccessedObject(original);
-        this.registry = new MinecraftKey((Object) accessor.read(0, ClassesContainer.get().getMinecraftKeyClass()));
-        this.value = new MinecraftKey((Object) accessor.read(1, ClassesContainer.get().getMinecraftKeyClass()));
+        this.registry = new MinecraftKey((Object) accessor.read(0, ClassAccessor.get().getMinecraftKeyClass()));
+        this.value = new MinecraftKey((Object) accessor.read(1, ClassAccessor.get().getMinecraftKeyClass()));
     }
 
     public String toString() {
@@ -47,7 +47,7 @@ public class ResourceKey<T> implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getResourceKeyClass(), ClassesContainer.get().getMinecraftKeyClass(), ClassesContainer.get().getMinecraftKeyClass()),
+                Reflect.getConstructor(ClassAccessor.get().getResourceKeyClass(), ClassAccessor.get().getMinecraftKeyClass(), ClassAccessor.get().getMinecraftKeyClass()),
                 this.registry.createOriginal(), this.value.createOriginal()
         );
     }

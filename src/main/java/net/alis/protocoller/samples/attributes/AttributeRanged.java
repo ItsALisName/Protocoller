@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.attributes;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.MathHelper;
@@ -56,7 +56,7 @@ public class AttributeRanged extends AttributeBase {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getAttributeRangedClass(), String.class, double.class, double.class, double.class),
+                Reflect.getConstructor(ClassAccessor.get().getAttributeRangedClass(), String.class, double.class, double.class, double.class),
                 this.getTranslationKey(), this.getFallback(), this.min, this.max
         );
     }

@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.entity.block;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +32,6 @@ public enum TileEntityStructureUpdateType {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getTileEntityStructureUpdateType(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getTileEntityStructureUpdateType(), this.id);
     }
 }

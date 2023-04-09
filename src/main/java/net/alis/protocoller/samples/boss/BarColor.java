@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.boss;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatFormat;
 
@@ -43,7 +43,7 @@ public enum BarColor {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBarColorEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getBarColorEnum(), this.id);
     }
 
 }

@@ -4,9 +4,9 @@ import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -31,7 +31,7 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
         PacketUtils.checkPacketCompatibility(packetData.getType(), getPacketType());
         this.packetData = packetData;
         this.heightmaps = new NBTTagCompound();
-        heightmaps.merge(packetData.readObject(0, ClassesContainer.get().getNbtTagCompoundClass()));
+        heightmaps.merge(packetData.readObject(0, ClassAccessor.get().getNbtTagCompoundClass()));
         this.buffer = packetData.readByteArray(0);
         this.blockEntityData = new ArrayList<>();
         for(Object blockentdata : (List<Object>)packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
@@ -40,7 +40,7 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
     public ClientboundLevelChunkPacketData(Chunk chunk) {
         this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, MinecraftReflection.getMinecraftChunk(chunk)));
         this.heightmaps = new NBTTagCompound();
-        heightmaps.merge(packetData.readObject(0, ClassesContainer.get().getNbtTagCompoundClass()));
+        heightmaps.merge(packetData.readObject(0, ClassAccessor.get().getNbtTagCompoundClass()));
         this.buffer = packetData.readByteArray(0);
         this.blockEntityData = new ArrayList<>();
         for(Object blockentdata : (List<Object>)packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
@@ -49,7 +49,7 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
     public ClientboundLevelChunkPacketData(@NotNull Object rawPacketData) {
         this.packetData = new PacketDataSerializer(rawPacketData);
         this.heightmaps = new NBTTagCompound();
-        heightmaps.merge(packetData.readObject(0, ClassesContainer.get().getNbtTagCompoundClass()));
+        heightmaps.merge(packetData.readObject(0, ClassAccessor.get().getNbtTagCompoundClass()));
         this.buffer = packetData.readByteArray(0);
         this.blockEntityData = new ArrayList<>();
         for(Object blockentdata : (List<Object>)packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
@@ -109,9 +109,9 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
             AccessedObject object = new AccessedObject(blockEntityInfo);
             this.packedXZ = object.read(0, Integer.TYPE);
             this.y = object.read(1, Integer.TYPE);
-            this.type = object.read(0, ClassesContainer.get().getTileEntityTypesClass());
+            this.type = object.read(0, ClassAccessor.get().getTileEntityTypesClass());
             try {
-                Object rawNbt = object.read(0, ClassesContainer.get().getNbtTagCompoundClass());
+                Object rawNbt = object.read(0, ClassAccessor.get().getNbtTagCompoundClass());
                 NBTTagCompound nbt = new NBTTagCompound();
                 nbt.merge(rawNbt);
                 this.tag = nbt;
@@ -152,7 +152,7 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
         @Override
         public Object createOriginal() {
             return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassesContainer.get().getBlockEntityInfoClass(), Integer.TYPE, Integer.TYPE, ClassesContainer.get().getTileEntityTypesClass(), ClassesContainer.get().getNbtTagCompoundClass()),
+                    Reflect.getConstructor(ClassAccessor.get().getBlockEntityInfoClass(), Integer.TYPE, Integer.TYPE, ClassAccessor.get().getTileEntityTypesClass(), ClassAccessor.get().getNbtTagCompoundClass()),
                     this.packedXZ, this.y, this.type, this.tag.toOriginal()
             );
         }

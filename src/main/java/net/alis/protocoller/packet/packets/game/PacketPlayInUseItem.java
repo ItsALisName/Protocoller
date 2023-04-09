@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -16,13 +16,10 @@ import net.alis.protocoller.samples.entity.Hand;
 import net.alis.protocoller.samples.phys.MovingObjectPositionBlock;
 import net.alis.protocoller.samples.phys.Vector3D;
 import net.alis.protocoller.samples.util.Direction;
-import net.alis.protocoller.util.annotations.AddedSince;
+
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import static net.alis.protocoller.plugin.enums.Version.v1_9;
-
-@AddedSince(v1_9)
 public class PacketPlayInUseItem implements PlayInPacket {
 
     private final PacketDataContainer packetData;
@@ -35,19 +32,19 @@ public class PacketPlayInUseItem implements PlayInPacket {
 
     private @Nullable int sequence;
 
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14);
-    private final boolean modernPacket = GlobalProvider.instance().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
+    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_14);
+    private final boolean modernPacket = GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
     
     public PacketPlayInUseItem(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getHandEnum()).ordinal());
+        this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getHandEnum()).ordinal());
         if(legacyPacket) {
             BlockPosition pos = packetData.readBlockPosition(0);
             this.blockHitResult = new MovingObjectPositionBlock(
                     false,
                     new Vector3D(pos.getX(), pos.getY(), pos.getZ()),
-                    Direction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getDirectionEnum()).ordinal()),
+                    Direction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getDirectionEnum()).ordinal()),
                     pos,
                     false
             );
@@ -57,7 +54,7 @@ public class PacketPlayInUseItem implements PlayInPacket {
             this.sequence = 0;
         } else {
             this.decodedFloat$0 = 0.0F; this.decodedFloat$1 = 0.0F; this.decodedFloat$2 = 0.0F;
-            this.blockHitResult = new MovingObjectPositionBlock(packetData.readObject(0, ClassesContainer.get().getMovingObjectPositionBlockClass()));
+            this.blockHitResult = new MovingObjectPositionBlock(packetData.readObject(0, ClassAccessor.get().getMovingObjectPositionBlockClass()));
             if(modernPacket) {
                 this.sequence = packetData.readInt(0);
             } else {
@@ -74,7 +71,7 @@ public class PacketPlayInUseItem implements PlayInPacket {
         switch (creator.getConstructorIndicator().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_14)) {
+                if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_14)) {
                     params = new IndexedParam[] {
                         new IndexedParam<>(blockHitResult.getPosition().createOriginal(), 0),
                         new IndexedParam<>(blockHitResult.getFacing().original(), 0),

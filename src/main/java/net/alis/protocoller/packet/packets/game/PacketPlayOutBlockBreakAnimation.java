@@ -1,7 +1,7 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -37,7 +37,7 @@ public class PacketPlayOutBlockBreakAnimation implements PlayOutPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.instance().getData().getEntitiesContainer().getEntity(this.entityId);
+        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public int getEntityId() {
@@ -45,7 +45,7 @@ public class PacketPlayOutBlockBreakAnimation implements PlayOutPacket {
     }
 
     public void setEntityId(int entityId) {
-        if(GlobalProvider.instance().getData().getEntitiesContainer().isIdPresent(entityId)){
+        if(GlobalProvider.get().getServer().getEntityList().isIdPresent(entityId)){
             this.packetData.writeInt(0, entityId);
             this.entityId = entityId;
         }

@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.phys;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.MathHelper;
 import net.alis.protocoller.util.AccessedObject;
@@ -194,7 +194,7 @@ public class Vector3D implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getVector3dClass(), double.class, double.class, double.class),
+                Reflect.getConstructor(ClassAccessor.get().getVector3dClass(), double.class, double.class, double.class),
                 this.x, this.y, this.z
         );
     }

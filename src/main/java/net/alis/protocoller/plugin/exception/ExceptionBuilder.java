@@ -2,7 +2,7 @@ package net.alis.protocoller.plugin.exception;
 
 import lombok.SneakyThrows;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
-import net.alis.protocoller.plugin.data.InitialData;
+import net.alis.protocoller.plugin.memory.InitialData;
 import net.alis.protocoller.plugin.managers.FileWorker;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
@@ -89,7 +89,7 @@ public class ExceptionBuilder {
     }
 
     protected static void writeExceptionFile(@NotNull Throwable e) {
-        String serverVersion = GlobalProvider.instance() != null ? GlobalProvider.instance().getServer().getVersion().asString() : InitialData.get().getPreVersion().asString();
+        String serverVersion = GlobalProvider.get() != null ? GlobalProvider.get().getServer().getVersion().asString() : InitialData.get().getPreVersion().asString();
         String fileName = e.getClass().getSimpleName() + "_" + Utils.getCurrentDate(false) + "_" + Utils.getCurrentTime(true) + ".txt";
         if(TaskSimplifier.get() != null) {
             TaskSimplifier.get().preformAsync(() -> {

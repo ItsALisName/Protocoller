@@ -1,10 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -23,7 +23,7 @@ public class PacketPlayInUpdateSign implements PlayInPacket {
     private BlockPosition position;
     private String[] lines;
 
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().getVersion().lessThan(Version.v1_9);
+    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9);
 
     public PacketPlayInUpdateSign(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
@@ -31,7 +31,7 @@ public class PacketPlayInUpdateSign implements PlayInPacket {
         this.position = packetData.readBlockPosition(0);
         this.lines = new String[4];
         if(legacyPacket) {
-            Object[] components = packetData.readObject(0, Array.newInstance(ClassesContainer.get().getIChatBaseComponentClass(), 1).getClass());
+            Object[] components = packetData.readObject(0, Array.newInstance(ClassAccessor.get().getIChatBaseComponentClass(), 1).getClass());
             if(components.length > 0){
                 for (int i = 0; i < 4; i++) {
                     if(components[i] != null){

@@ -20,7 +20,7 @@ public class ProtocollerConfig {
 
     public static void load(Plugin plugin, FileConfiguration file) {
         String configVersion = ConfigUtils.getConfigVersion(file);
-        if(configVersion == null || !configVersion.equalsIgnoreCase("0.0.2")) {
+        if(configVersion == null || !configVersion.equalsIgnoreCase("0.0.3")) {
             ConfigUpdater.updateConfiguration(plugin, "general.yml", ConfigUtils.getFile("general.yml"));
             file = ConfigUtils.getConfigurationFile("general.yml");
         }
@@ -35,8 +35,8 @@ public class ProtocollerConfig {
 
     public static void reload(FileConfiguration file) {
         String configVersion = ConfigUtils.getConfigVersion(file);
-        if(configVersion == null || !configVersion.equalsIgnoreCase("0.0.2")) {
-            new ExceptionBuilder().getConfigExceptions().differentVersionsError("general.yml", configVersion == null ? "N/A" : configVersion, "0.0.2").throwException();
+        if(configVersion == null || !configVersion.equalsIgnoreCase("0.0.3")) {
+            new ExceptionBuilder().getConfigExceptions().differentVersionsError("general.yml", configVersion == null ? "N/A" : configVersion, "0.0.3").throwException();
         }
         bannedPlugin.clear(); bannedAuthors.clear();
         bannedPlugin.addAll(ConfigUtils.getIfNotNull(file, "banned-plugins", List.class));

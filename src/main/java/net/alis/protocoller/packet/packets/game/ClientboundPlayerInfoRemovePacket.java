@@ -1,7 +1,7 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -20,7 +20,7 @@ public class ClientboundPlayerInfoRemovePacket implements PlayOutPacket {
     public ClientboundPlayerInfoRemovePacket(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.playersList = packetData.readList(0);
+        this.playersList = (List<UUID>) packetData.readList(0);
     }
 
     public ClientboundPlayerInfoRemovePacket(List<UUID> playersList) {

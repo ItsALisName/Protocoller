@@ -1,9 +1,9 @@
 package net.alis.protocoller.packet.packets.handshake;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
-import net.alis.protocoller.plugin.network.packet.IndexedParam;
-import net.alis.protocoller.plugin.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.util.IndexedParam;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -20,13 +20,13 @@ public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
     private int protocolVersion;
     private int port;
     private ProtocolEnum intendedState;
-    private final boolean legacyPacket = GlobalProvider.instance().getServer().isLegacy();
+    private final boolean legacyPacket = GlobalProvider.get().getServer().isLegacy();
 
     public PacketHandshakingInSetProtocol(@NotNull PacketDataContainer packetData) {
         PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Handshake.Client.SET_PROTOCOL);
         this.packetData = packetData;
         this.address = packetData.readString(0);
-        this.intendedState = ProtocolEnum.get(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassesContainer.get().getProtocolEnum()).ordinal());
+        this.intendedState = ProtocolEnum.get(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getProtocolEnum()).ordinal());
         if(legacyPacket) {
             this.protocolVersion = packetData.readInt(0);
             this.port = packetData.readInt(1);
@@ -59,7 +59,7 @@ public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
         }
         this.intendedState = intendedState;
         this.address = address;
-        this.protocolVersion = GlobalProvider.instance().getServer().getVersion().getProtocol();
+        this.protocolVersion = GlobalProvider.get().getServer().getVersion().getProtocol();
         this.port = port;
     }
 

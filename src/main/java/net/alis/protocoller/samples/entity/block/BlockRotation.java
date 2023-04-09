@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.entity.block;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.DirectionTransformationO;
 import org.jetbrains.annotations.Contract;
@@ -44,6 +44,6 @@ public enum BlockRotation {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassesContainer.get().getBlockRotationEnum(), this.id);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getBlockRotationEnum(), this.id);
     }
 }

@@ -1,6 +1,6 @@
 package net.alis.protocoller.samples.network.chat;
 
-import net.alis.protocoller.plugin.data.ClassesContainer;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -13,7 +13,7 @@ public class ChatMessageContent implements ObjectSample {
     public ChatMessageContent(Object chatMessageContent) {
         AccessedObject object = new AccessedObject(chatMessageContent);
         this.content = object.read(0, String.class);
-        this.component$content = new ChatComponent(ChatSerializer.fromComponent(object.read(0, ClassesContainer.get().getIChatBaseComponentClass())));
+        this.component$content = new ChatComponent(ChatSerializer.fromComponent(object.read(0, ClassAccessor.get().getIChatBaseComponentClass())));
     }
 
     public ChatMessageContent(String content, ChatComponent component$content) {
@@ -41,7 +41,7 @@ public class ChatMessageContent implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassesContainer.get().getChatMessageContentClass(), String.class, ClassesContainer.get().getIChatBaseComponentClass()),
+                Reflect.getConstructor(ClassAccessor.get().getChatMessageContentClass(), String.class, ClassAccessor.get().getIChatBaseComponentClass()),
                 this.content, this.component$content.asIChatBaseComponent()
         );
     }

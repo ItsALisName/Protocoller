@@ -36,13 +36,22 @@ public class AccessedObject {
         }
         for(Field field : object.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            if(ignoreStatic && field.toGenericString().contains(" static ")) continue;
+            if(ignoreStatic && field.toGenericString().contains("static ")) continue;
             this.fields.add(field);
         }
     }
 
     public Object getObject() {
         return object;
+    }
+
+    public <PARAM> PARAM read(int index) {
+        int start = 0;
+        for(Field field : this.fields) {
+            if(start == index) return Reflect.readField(this.object, field, false);
+            start += 1;
+        }
+        return null;
     }
 
     public <PARAM> PARAM read(int index, Class<?> type) {
