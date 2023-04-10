@@ -3,7 +3,7 @@ package net.alis.protocoller.plugin.exception;
 import lombok.SneakyThrows;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
 import net.alis.protocoller.plugin.memory.InitialData;
-import net.alis.protocoller.plugin.managers.FileWorker;
+import net.alis.protocoller.util.FileWorker;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.TaskSimplifier;
 import net.alis.protocoller.plugin.util.Utils;
@@ -88,10 +88,14 @@ public class ExceptionBuilder {
         return new BannedClientException.Builder(showStacktrace, saveToFile, ignore);
     }
 
+    public UpdaterException.Builder getUpdaterExceptions() {
+        return new UpdaterException.Builder(showStacktrace, saveToFile, ignore);
+    }
+
     protected static void writeExceptionFile(@NotNull Throwable e) {
         String serverVersion = GlobalProvider.get() != null ? GlobalProvider.get().getServer().getVersion().asString() : InitialData.get().getPreVersion().asString();
         String fileName = e.getClass().getSimpleName() + "_" + Utils.getCurrentDate(false) + "_" + Utils.getCurrentTime(true) + ".txt";
-        if(TaskSimplifier.get() != null) {
+        if(TaskSimplifier.get() != null && ProtocollerConfig.isAsyncFilesWorking()) {
             TaskSimplifier.get().preformAsync(() -> {
                 FileWorker fileWorker = new FileWorker(ExceptionBuilder.path, fileName);
                 fileWorker.startWriting()

@@ -6,8 +6,8 @@ import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

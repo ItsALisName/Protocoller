@@ -9,7 +9,7 @@ import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.NetworkServer;
-import net.alis.protocoller.plugin.v0_0_3.api.ProtocollerApi;
+import net.alis.protocoller.plugin.v0_0_4.api.ProtocollerApi;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 

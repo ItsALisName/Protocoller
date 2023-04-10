@@ -1,7 +1,7 @@
 package net.alis.protocoller.packet.packets.login;
 
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;

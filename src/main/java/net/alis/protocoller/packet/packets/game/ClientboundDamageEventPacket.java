@@ -4,8 +4,8 @@ import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
 import net.alis.protocoller.samples.phys.Vector3D;
 import org.jetbrains.annotations.NotNull;
 

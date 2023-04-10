@@ -1,15 +1,20 @@
-config-version: "0.0.3"
-
+config-version: "0.0.4"
+async:
+  file-working: true
+  update-checking: true
 banned-plugins: []
-
 banned-authors: []
-
 listeners-registration-notify: true
-
 client-registration-notify: true
-
 save-errors: true
-
 bstats:
   allow-force-enable: true
   enabled: true
+auto-update:
+  enabled: true
+  notify-operators: true
+  #Time in seconds(21600 seconds = 6 hours)
+  check-interval: 21600
+  auto-download:
+    enabled: false
+    path: "plugins/Protocoller/updates/"

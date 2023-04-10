@@ -3,8 +3,6 @@ package net.alis.protocoller.samples.util;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.alis.protocoller.plugin.config.ProtocollerConfig;
-import net.alis.protocoller.plugin.exception.CompletedException;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
@@ -19,9 +17,7 @@ import java.util.*;
 
 public class ChatDeserializer {
 
-    private static final Gson gson = (new GsonBuilder()).create();
-
-    public ChatDeserializer() { }
+    public static final Gson GSON = new Gson();
 
     public static boolean isJsonPrimitiveString(JsonObject object, String element) {
         return isJsonPrimitive(object, element) && object.getAsJsonPrimitive(element).isString();

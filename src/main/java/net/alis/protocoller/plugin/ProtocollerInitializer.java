@@ -3,16 +3,18 @@ package net.alis.protocoller.plugin;
 import net.alis.protocoller.Protocoller;
 import net.alis.protocoller.plugin.config.ConfigUtils;
 import net.alis.protocoller.plugin.config.ProtocollerConfig;
+import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.memory.InitialData;
 import net.alis.protocoller.plugin.memory.PacketBuilders;
 import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.updater.ProtocollerUpdater;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
-import net.alis.protocoller.plugin.v0_0_3.api.ProtocollerApi;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketTypesInitializer;
+import net.alis.protocoller.plugin.v0_0_4.api.ProtocollerApi;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketTypesInitializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.v0_0_3.server.UpdatePlayerDataRunner;
-import net.alis.protocoller.plugin.v0_0_3.server.UpdateServerRunner;
+import net.alis.protocoller.plugin.v0_0_4.server.UpdatePlayerDataRunner;
+import net.alis.protocoller.plugin.v0_0_4.server.UpdateServerRunner;
 import net.alis.protocoller.plugin.util.FastUtilLegacyAdapter;
 import net.alis.protocoller.plugin.util.Metrics;
 import net.alis.protocoller.plugin.util.ProtocolUtil;
@@ -22,11 +24,13 @@ import net.alis.protocoller.samples.craftbukkit.MagicNumbersSample;
 import net.alis.protocoller.samples.crafting.CRecipe;
 import net.alis.protocoller.samples.effect.MobEffects;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
-import net.alis.protocoller.plugin.v0_0_3.server.bukkit.InjectionListener;
+import net.alis.protocoller.plugin.v0_0_4.server.bukkit.InjectionListener;
 import net.md_5.bungee.api.chat.Ext;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.IOException;
 
 public class ProtocollerInitializer {
 
@@ -47,7 +51,7 @@ public class ProtocollerInitializer {
         MagicNumbersSample.init();
         ChatSerializer.init();
         ConfigUtils.createFiles(this.plugin, false);
-        ProtocollerConfig.load(this.plugin, ConfigUtils.getConfigurationFile("general.yml"));
+        ProtocollerConfig.load((ProtocollerPlugin) this.plugin);
         /* ! */ Ext.Hover.getOriginalByName = Reflect.getMethod(ClassAccessor.get().getChatHoverActionEnumClass(), "a", ClassAccessor.get().getChatHoverActionEnumClass(), false, String.class);
         PacketTypesInitializer.init();
         CRecipe.RecipeSerializer.init();
@@ -93,6 +97,7 @@ public class ProtocollerInitializer {
             }
         }
         /* ! */ ProtocolUtil.viaVersionInstalled = this.plugin.getServer().getPluginManager().isPluginEnabled("ViaVersion");
+        ProtocollerUpdater.init();
     }
 
     protected void unload() {

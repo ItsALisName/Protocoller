@@ -1,6 +1,6 @@
 package net.alis.protocoller.plugin.providers;
 
-import net.alis.protocoller.plugin.v0_0_3.server.ProtocolServer;
+import net.alis.protocoller.plugin.v0_0_4.server.ProtocolServer;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;

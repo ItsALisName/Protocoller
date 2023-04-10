@@ -2,8 +2,8 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_3.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
