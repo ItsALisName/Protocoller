@@ -1,14 +1,13 @@
 package ExamplePlugin;
 
+import libraries.net.md_5.bungee.api.MessageType;
+import libraries.net.md_5.bungee.api.chat.HoverEvent;
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.NetworkServer;
 import net.alis.protocoller.packet.packets.game.PacketPlayOutChat;
-import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.samples.network.NetworkManager;
 import net.alis.protocoller.samples.network.PlayerConnection;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
-import net.md_5.bungee.api.MessageType;
-import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;
