@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.phys;
 
 import com.google.common.annotations.VisibleForTesting;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.util.Direction;
@@ -19,6 +20,7 @@ public class AxisAligned implements ObjectSample {
     public final double maxZ;
 
     public AxisAligned(double x1, double y1, double z1, double x2, double y2, double z2) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.minX = Math.min(x1, x2);
         this.minY = Math.min(y1, y2);
         this.minZ = Math.min(z1, z2);
@@ -28,13 +30,14 @@ public class AxisAligned implements ObjectSample {
     }
 
     public AxisAligned(Object original) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(original);
-        this.minX = accessor.read(0, double.class);
-        this.minY = accessor.read(1, double.class);
-        this.minZ = accessor.read(2, double.class);
-        this.maxX = accessor.read(3, double.class);
-        this.maxY = accessor.read(4, double.class);
-        this.maxZ = accessor.read(5, double.class);
+        this.minX = accessor.readField(0, double.class);
+        this.minY = accessor.readField(1, double.class);
+        this.minZ = accessor.readField(2, double.class);
+        this.maxX = accessor.readField(3, double.class);
+        this.maxY = accessor.readField(4, double.class);
+        this.maxZ = accessor.readField(5, double.class);
     }
 
     public AxisAligned(BlockPosition pos) {
@@ -355,8 +358,12 @@ public class AxisAligned implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getAxisAlignedClass(), double.class, double.class, double.class, double.class, double.class, double.class),
+                Reflect.getConstructor(clazz(), false, double.class, double.class, double.class, double.class, double.class, double.class),
                 this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getAxisAlignedClass();
     }
 }

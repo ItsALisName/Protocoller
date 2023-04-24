@@ -1,19 +1,20 @@
 package net.alis.protocoller.samples.network.chat;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
-import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
+import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
+import libraries.net.md_5.bungee.api.chat.BaseComponent;
+import libraries.net.md_5.bungee.api.chat.ClickEvent;
+import libraries.net.md_5.bungee.api.chat.HoverEvent;
+import libraries.net.md_5.bungee.api.chat.TextComponent;
+import libraries.net.md_5.bungee.api.chat.hover.content.Text;
+import libraries.net.md_5.bungee.chat.ComponentSerializer;
+import net.alis.protocoller.plugin.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import static net.alis.protocoller.plugin.util.Utils.setColors;
 
 public class ChatComponent {
 
@@ -35,7 +36,7 @@ public class ChatComponent {
             this.component = new TextComponent("");
             return;
         }
-        this.component = new TextComponent(setColors(text));
+        this.component = new TextComponent(Utils.colors(text));
         this.string = component.getText();
     }
 
@@ -89,7 +90,7 @@ public class ChatComponent {
     }
 
     public ChatComponent appendOnStart(String extra) {
-        TextComponent n = new TextComponent(setColors(extra));
+        TextComponent n = new TextComponent(Utils.colors(extra));
         n.addExtra(component);
         this.string = extra + this.string;
         this.component = n;
@@ -98,7 +99,7 @@ public class ChatComponent {
 
     public ChatComponent setHoverEvent(HoverEvent.Action action, @NotNull String extra) {
         if (hasHoverEvents()) return this;
-        HoverEvent event = new HoverEvent(action, new Text(setColors(extra)));
+        HoverEvent event = new HoverEvent(action, new Text(Utils.colors(extra)));
         this.component.setHoverEvent(event);
         this.hoverEvents.add(event);
         return this;
@@ -155,7 +156,7 @@ public class ChatComponent {
         StringBuilder builder = new StringBuilder(this.string);
         for(ChatComponent c : extra) {
             component.append(delimiter).append(c);
-            builder.append(delimiter).append(c.string);
+            builder.append(delimiter).append(Utils.colors(c.string));
         }
         this.component.addExtra(component.component);
         this.string = builder.toString();
@@ -163,8 +164,14 @@ public class ChatComponent {
     }
 
     public ChatComponent append(String extra) {
-        this.component.addExtra(extra);
+        this.component.addExtra(Utils.colors(extra));
         this.string = this.string + extra;
+        return this;
+    }
+
+    public ChatComponent newLine() {
+        this.component.addExtra("\n");
+        this.string = this.string + "\n";
         return this;
     }
 
@@ -172,8 +179,8 @@ public class ChatComponent {
         ChatComponent component = new ChatComponent();
         StringBuilder builder = new StringBuilder(this.string);
         for(String s : extra) {
-            component.append(delimiter).append(s);
-            builder.append(delimiter).append(s);
+            component.append(delimiter).append(Utils.colors(s));
+            builder.append(delimiter).append(Utils.colors(s));
         }
         this.string = builder.toString();
         this.component.addExtra(component.component);
@@ -191,7 +198,7 @@ public class ChatComponent {
         StringBuilder builder = new StringBuilder(this.string);
         for(TextComponent c : extra) {
             component1.append(delimiter).append(c);
-            builder.append(delimiter).append(c.toPlainText());
+            builder.append(delimiter).append(Utils.colors(c.toPlainText()));
         }
         this.string = builder.toString();
         this.component.addExtra(component1.component);
@@ -210,7 +217,8 @@ public class ChatComponent {
         return this;
     }
 
-    public ChatComponent translateDefaultColorCodes() {
+    @Deprecated
+    private ChatComponent translateDefaultColorCodes() {
         if(getString().contains("&") || getString().contains("§")) this.component.setText(pasteColorCodes(getString()));
         return this;
     }
@@ -239,7 +247,7 @@ public class ChatComponent {
             if(is) {is = false; continue;}
             newBuilder.append(code + Character.toString(old.charAt(i)));
         }
-        return newBuilder.toString();
+        return Utils.colors(newBuilder.toString());
     }
 
     @Override
@@ -248,7 +256,19 @@ public class ChatComponent {
     }
 
     public Object asIChatBaseComponent() {
-        return ChatSerializer.fromJSONOrString(ComponentSerializer.toString(get()), true, true);
+        Object output = ChatSerializer.fromJSON0(ComponentSerializer.toString(get()));
+        /*output = ChatSerializer.fromJSONOrString(ComponentSerializer.toString(get()), true, true);
+        if(IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_16_4n5)) {
+            output = ChatSerializer.fromJSON0(ComponentSerializer.toString(get()));
+        } else {
+            output = ChatSerializer.fromJSONOrString(ComponentSerializer.toString(get()), true, true);
+        }*/
+        if(output.getClass() == ClassAccessor.arrayOfClass(clazz())) return ((Object[])output)[0];
+        return output;
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getIChatBaseComponentClass();
     }
 
 }

@@ -1,7 +1,11 @@
 package net.alis.protocoller.samples.entity.player;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum PlayerAction {
 
@@ -25,15 +29,22 @@ public enum PlayerAction {
         return id;
     }
 
-    public static PlayerAction getById(int id) {
+    @Contract(pure = true)
+    public static @Nullable PlayerAction getById(int id) {
+        Utils.checkClassSupportability(clazz(), "PlayerAction", false);
         for(PlayerAction action : values()) {
             if(action.id == id) return action;
         }
         return null;
     }
 
-    public Enum<?> original() {
+    public @NotNull Enum<?> original() {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getPlayerActionEnum(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getPlayerActionEnum();
     }
 
 }

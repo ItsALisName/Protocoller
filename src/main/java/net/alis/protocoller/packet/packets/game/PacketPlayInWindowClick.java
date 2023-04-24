@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.FastUtilLegacyAdapter;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
@@ -27,9 +28,10 @@ public class PacketPlayInWindowClick implements PlayInPacket {
     private InventoryClickType actionType;
     private ItemStack stack;
 
-    private final boolean legacyPacket = GlobalProvider.get().getServer().isLegacy();
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().isLegacy();
 
     public PacketPlayInWindowClick(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Play.Client.WINDOW_CLICK);
         this.packetData = packetData;
         this.stack = packetData.readMinecraftItemStack(0);
@@ -38,7 +40,7 @@ public class PacketPlayInWindowClick implements PlayInPacket {
             this.revision = packetData.readInt(0);
             this.slot = packetData.readInt(1);
             this.button = packetData.readInt(2);
-            if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9)) {
+            if(IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_9)) {
                 this.actionType = InventoryClickType.getById(packetData.readInt(3));
             } else {
                 this.actionType = InventoryClickType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getInventoryClickTypeEnum()).ordinal());
@@ -53,11 +55,12 @@ public class PacketPlayInWindowClick implements PlayInPacket {
     }
 
     public PacketPlayInWindowClick(int syncId, int revision, int slot, int button, InventoryClickType actionType, ItemStack stack) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder packetBuilder = PacketBuilder.get(getPacketType());
-        switch (packetBuilder.getConstructorIndicator().getLevel()) {
+        switch (packetBuilder.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9)) {
+                if(IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_9)) {
                     params = new IndexedParam[] {
                         new IndexedParam<>(revision, 0),
                         new IndexedParam<>(Integer.valueOf(syncId).shortValue(), 0),
@@ -153,7 +156,7 @@ public class PacketPlayInWindowClick implements PlayInPacket {
     }
 
     public void setActionType(InventoryClickType actionType) {
-        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9)) {
+        if(IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_9)) {
             this.packetData.writeInt(3, actionType.getId());
         } else {
             this.packetData.writeEnumConstant(0, actionType.original());

@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
@@ -33,15 +34,16 @@ public class PacketPlayInUseEntity implements PlayInPacket {
     private final PacketBuilder creator = PacketBuilder.get(getPacketType());
 
     public PacketPlayInUseEntity(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
         this.entityUseAction = EntityUseAction.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getEntityUseActionEnum()).ordinal());
-        if(creator.getConstructorIndicator().getLevel() < 2) {
+        if(creator.getPacketLevel().getLevel() < 2) {
             this.vector = new Vector3D(packetData.readObject(0, ClassAccessor.get().getVector3dClass()));
-            if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
+            if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
                 this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getHandEnum()).ordinal());
-                if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
+                if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
                     this.sneaking = packetData.readBoolean(0);
                 }
             } else {
@@ -55,10 +57,11 @@ public class PacketPlayInUseEntity implements PlayInPacket {
     }
 
     public PacketPlayInUseEntity(Entity entity, boolean sneaking, EntityUseAction entityUseAction, @Nullable Vector3D vector, @Nullable Hand hand) {
-        switch (creator.getConstructorIndicator().getLevel()) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
+                if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
                     params = new IndexedParam[] {
                         new IndexedParam<>(entity.getEntityId(), 0),
                         new IndexedParam<>(entityUseAction.original(), 0),
@@ -97,23 +100,23 @@ public class PacketPlayInUseEntity implements PlayInPacket {
     }
 
     public PacketPlayInUseEntity(int entityId, boolean sneaking, EntityUseAction entityUseAction, @Nullable Vector3D vector, @Nullable Hand hand) {
-        this(GlobalProvider.get().getServer().getEntityList().getEntity(entityId), sneaking, entityUseAction, vector, hand);
+        this(IProtocolAccess.get().getServer().getEntityList().getEntity(entityId), sneaking, entityUseAction, vector, hand);
     }
 
     public PacketPlayInUseEntity(int entityId, EntityUseAction entityUseAction, @Nullable Vector3D vector) {
-        this(GlobalProvider.get().getServer().getEntityList().getEntity(entityId), true, entityUseAction, vector, Hand.MAIN_HAND);
+        this(IProtocolAccess.get().getServer().getEntityList().getEntity(entityId), true, entityUseAction, vector, Hand.MAIN_HAND);
     }
 
     /*
      * 1.17 and bigger
      */
     public PacketPlayInUseEntity(int entityId, boolean sneaking, EntityUseAction entityUseAction) {
-        this(GlobalProvider.get().getServer().getEntityList().getEntity(entityId), sneaking, entityUseAction, Vector3D.ZERO, Hand.MAIN_HAND);
+        this(IProtocolAccess.get().getServer().getEntityList().getEntity(entityId), sneaking, entityUseAction, Vector3D.ZERO, Hand.MAIN_HAND);
     }
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public int getEntityId() {
@@ -135,7 +138,7 @@ public class PacketPlayInUseEntity implements PlayInPacket {
     }
 
     public void setSneaking(boolean sneaking) {
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) this.packetData.writeBoolean(0, sneaking);
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) this.packetData.writeBoolean(0, sneaking);
         this.sneaking = sneaking;
     }
 
@@ -154,7 +157,7 @@ public class PacketPlayInUseEntity implements PlayInPacket {
     }
 
     public void setVector(@Nullable Vector3D vector) {
-        if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_17)) this.packetData.writeObject(0, vector.createOriginal());
+        if(IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_17)) this.packetData.writeObject(0, vector.createOriginal());
         this.vector = vector;
     }
 
@@ -164,7 +167,7 @@ public class PacketPlayInUseEntity implements PlayInPacket {
     }
 
     public void setHand(@Nullable Hand hand) {
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9) && GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_17)) this.packetData.writeEnumConstant(0, hand.original());
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9) && IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_17)) this.packetData.writeEnumConstant(0, hand.original());
         this.hand = hand;
     }
 

@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.authlib;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.authlib.properties.PropertyMap;
 import net.alis.protocoller.util.AccessedObject;
@@ -17,6 +18,7 @@ public class GameProfile {
     private boolean legacy;
 
     public GameProfile(UUID id, String name) {
+        Utils.checkClassSupportability(clazz(), "GameProfile", false);
         if (id == null && StringUtils.isBlank(name)) {
             ExceptionBuilder.throwException(new IllegalArgumentException("Name and ID cannot both be blank"), true);
         } else {
@@ -26,10 +28,11 @@ public class GameProfile {
     }
 
     public GameProfile(Object gameProfile) {
+        Utils.checkClassSupportability(clazz(), "GameProfile", false);
         AccessedObject oa = new AccessedObject(gameProfile);
-        this.id = oa.read(0, UUID.class);
-        this.name = oa.read(0, String.class);
-        this.properties = new PropertyMap(oa.read(0, ClassAccessor.get().getPropertyMapClass()));
+        this.id = oa.readField(0, UUID.class);
+        this.name = oa.readField(0, String.class);
+        this.properties = new PropertyMap(oa.readField(0, PropertyMap.clazz()));
     }
 
     public UUID getId() {
@@ -90,10 +93,17 @@ public class GameProfile {
     }
 
     public Object createOriginal() {
-        return Reflect.callConstructor(
-            Reflect.getConstructor(ClassAccessor.get().getGameProfileClass(), UUID.class, String.class),
-            this.id, this.name
-        );
+        AccessedObject object = new AccessedObject(Reflect.callConstructor(
+                Reflect.getConstructor(clazz(), false, UUID.class, String.class),
+                this.id, this.name
+        ));
+        Object pMap = getProperties().createOriginal();
+        object.write(0, pMap);
+        return object.getOriginal();
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getGameProfileClass();
     }
 
 }

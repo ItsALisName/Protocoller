@@ -5,8 +5,10 @@ import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.samples.network.chat.ChatBoundNetwork;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
@@ -19,12 +21,15 @@ public class ClientboundDisguisedChatPacket implements PlayOutPacket {
     private ChatBoundNetwork chatType;
 
     public ClientboundDisguisedChatPacket(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        PacketUtils.checkPacketCompatibility(packetData.getType(), getPacketType());
         this.packetData = packetData;
         this.message = new ChatComponent(ChatSerializer.fromComponent(packetData.readIChatBaseComponent(0)));
         this.chatType = new ChatBoundNetwork((Object) packetData.readObject(0, ClassAccessor.get().getChatBoundNetworkClass()));
     }
 
     public ClientboundDisguisedChatPacket(@NotNull ChatComponent message, @NotNull ChatBoundNetwork chatType) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, message.asIChatBaseComponent(), chatType.createOriginal()));
         this.message = message;
         this.chatType = chatType;

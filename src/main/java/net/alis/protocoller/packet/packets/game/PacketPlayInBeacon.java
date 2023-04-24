@@ -1,10 +1,11 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -27,9 +28,10 @@ public class PacketPlayInBeacon implements PlayInPacket {
     private int secondaryId;
 
     public PacketPlayInBeacon(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
             this.primaryEffect = new MobEffectList(((Optional<Object>)packetData.readOptional(0)).get());
             this.secondaryEffect = new MobEffectList(((Optional<Object>)packetData.readOptional(1)).get());
             this.primaryId = MobEffects.instance().idFromEffect(this.primaryEffect);
@@ -50,11 +52,13 @@ public class PacketPlayInBeacon implements PlayInPacket {
         }
     }
 
-    public PacketPlayInBeacon(MobEffectList primaryEffect, MobEffectList secondaryEffect) {
+    public PacketPlayInBeacon(MobEffectList primaryEffect, @Nullable MobEffectList secondaryEffect) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder builder = PacketBuilder.get(getPacketType());
         int primaryId = MobEffects.instance().idFromEffect(primaryEffect);
-        int secondaryId = MobEffects.instance().idFromEffect(secondaryEffect);
-        switch (builder.getConstructorIndicator().getLevel()) {
+        int secondaryId = -1;
+        if(secondaryEffect != null) secondaryId = MobEffects.instance().idFromEffect(secondaryEffect);
+        switch (builder.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                     new IndexedParam<>(primaryId, 0),
@@ -68,7 +72,7 @@ public class PacketPlayInBeacon implements PlayInPacket {
                 break;
             }
             case 2: {
-                this.packetData = new PacketDataSerializer(builder.buildPacket(null, Optional.of(primaryEffect.createOriginal()), Optional.of(secondaryEffect.createOriginal())));
+                this.packetData = new PacketDataSerializer(builder.buildPacket(null, Optional.of(primaryEffect.createOriginal()), secondaryEffect != null ? Optional.of(secondaryEffect.createOriginal()) : null));
                 break;
             }
             default: {
@@ -88,7 +92,7 @@ public class PacketPlayInBeacon implements PlayInPacket {
 
     public void setPrimaryEffect(MobEffectList primaryEffect) {
         this.primaryId = MobEffects.instance().idFromEffect(primaryEffect);
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
             this.packetData.writeOptional(0, Optional.of(primaryEffect.createOriginal()));
         } else {
             this.packetData.writeInt(0, this.primaryId);
@@ -102,7 +106,7 @@ public class PacketPlayInBeacon implements PlayInPacket {
 
     public void setSecondaryEffect(MobEffectList secondaryEffect) {
         this.secondaryId = MobEffects.instance().idFromEffect(secondaryEffect);
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19)) {
             this.packetData.writeOptional(1, Optional.of(primaryEffect.createOriginal()));
         } else {
             this.packetData.writeInt(1, this.secondaryId);

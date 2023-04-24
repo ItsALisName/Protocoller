@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.util;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum DirectionTransformationS {
@@ -22,6 +23,7 @@ public enum DirectionTransformationS {
     }
 
     public static DirectionTransformationS getById(int id) {
+        Utils.checkClassSupportability(clazz(), "DirectionTransformationS", false);
         for(DirectionTransformationS s : values()) {
             if(s.ordinal() == id) return s;
         }
@@ -29,6 +31,11 @@ public enum DirectionTransformationS {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getPointSEnum(), this.ordinal());
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.ordinal());
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getPointSEnum();
     }
 }

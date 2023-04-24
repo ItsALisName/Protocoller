@@ -2,7 +2,8 @@ package net.alis.protocoller.samples.network.chat;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -18,19 +19,21 @@ public class ChatBoundNetwork implements ObjectSample {
     private @Nullable ChatComponent targetName; //On 1.19.1 and higher
 
     public ChatBoundNetwork(Object chatBoundNetwork) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject object = new AccessedObject(chatBoundNetwork);
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)){
-            this.chatType = object.read(0, Integer.TYPE);
-            this.name = new ChatComponent(ChatSerializer.fromComponent(object.read(0, ClassAccessor.get().getIChatBaseComponentClass())));
-            Object tName = object.read(1, ClassAccessor.get().getIChatBaseComponentClass());
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)){
+            this.chatType = object.readField(0, Integer.TYPE);
+            this.name = new ChatComponent(ChatSerializer.fromComponent(object.readField(0, ChatComponent.clazz())));
+            Object tName = object.readField(1, ChatComponent.clazz());
             if(tName != null) this.targetName = new ChatComponent(ChatSerializer.fromComponent(tName));
         } else {
-            this.chatDecoration = Optional.of(new ChatModifier(((Optional<Object>)object.read(0, Optional.class)).get()));
+            this.chatDecoration = Optional.of(new ChatModifier(((Optional<Object>)object.readField(0, Optional.class)).get()));
         }
     }
 
     //For 1.19.1 and higher
     public ChatBoundNetwork(int chatType, ChatComponent name, @Nullable ChatComponent targetName) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.chatType = chatType;
         this.name = name;
         this.targetName = targetName;
@@ -76,16 +79,20 @@ public class ChatBoundNetwork implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)){
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)){
             return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getChatBoundNetworkClass(), int.class, ClassAccessor.get().getIChatBaseComponentClass(), ClassAccessor.get().getIChatBaseComponentClass()),
-                this.chatType, this.name.asIChatBaseComponent(), this.targetName.asIChatBaseComponent()
+                Reflect.getConstructor(clazz(), false, int.class, ChatComponent.clazz(), ChatComponent.clazz()),
+                this.chatType, this.name.asIChatBaseComponent(), this.targetName != null ? this.targetName.asIChatBaseComponent() : null
             );
         } else {
             return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getChatBoundNetworkClass(), Optional.class),
+                    Reflect.getConstructor(clazz(), false, Optional.class),
                     Optional.of(this.chatDecoration.get().createOriginal())
             );
         }
+    }
+    
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getChatBoundNetworkClass();
     }
 }

@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -14,9 +15,10 @@ public class PacketPlayOutKeepAlive implements PlayOutPacket {
 
     private final PacketDataContainer packetData;
     private long id;
-    private final boolean legacyPacket = GlobalProvider.get().getServer().isVeryLegacy();
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().isVeryLegacy();
 
     public PacketPlayOutKeepAlive(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(legacyPacket) {
@@ -27,6 +29,7 @@ public class PacketPlayOutKeepAlive implements PlayOutPacket {
     }
 
     public PacketPlayOutKeepAlive(long id) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
         if(legacyPacket) {
             this.packetData = new PacketDataSerializer(converter.buildPacket(null, Math.toIntExact(id)));

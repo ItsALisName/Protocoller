@@ -1,7 +1,6 @@
 package net.alis.protocoller.plugin.exception;
 
 import lombok.SneakyThrows;
-import net.alis.protocoller.plugin.config.ProtocollerConfig;
 import net.alis.protocoller.plugin.managers.LogsManager;
 
 public class CompletedException {

@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.network.chat;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -16,17 +17,20 @@ public class FilterMask implements ObjectSample {
     private FilterMaskType type;
 
     public FilterMask(Object filterMask) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject object = new AccessedObject(filterMask);
-        this.mask = object.read(0, BitSet.class);
-        this.type = FilterMaskType.getById(((Enum<?>)object.read(0, ClassAccessor.get().getFilterMaskTypeEnum())).ordinal());
+        this.mask = object.readField(0, BitSet.class);
+        this.type = FilterMaskType.getById(((Enum<?>)object.readField(0, FilterMaskType.clazz())).ordinal());
     }
 
     public FilterMask(BitSet mask, FilterMaskType type) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.mask = mask;
         this.type = type;
     }
 
     public FilterMask(BitSet mask) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.mask = mask;
         this.type = FilterMaskType.PARTIALLY_FILTERED;
     }
@@ -83,8 +87,12 @@ public class FilterMask implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getFilterMaskClass(), BitSet.class, ClassAccessor.get().getFilterMaskTypeEnum()),
+                Reflect.getConstructor(clazz(), false, BitSet.class, FilterMaskType.clazz()),
                 this.mask, this.type.original()
         );
+    }
+    
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getFilterMaskClass();
     }
 }

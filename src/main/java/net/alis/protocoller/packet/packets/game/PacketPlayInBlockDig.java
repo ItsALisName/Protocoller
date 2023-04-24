@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -26,9 +27,10 @@ public class PacketPlayInBlockDig implements PlayInPacket {
     private Direction direction;
     private int sequence;
     
-    private final boolean modernPacket = GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
+    private final boolean modernPacket = IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
 
     public PacketPlayInBlockDig(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.digType = PlayerDigType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getPlayerDigTypeEnum()).ordinal());
@@ -42,8 +44,9 @@ public class PacketPlayInBlockDig implements PlayInPacket {
     }
 
     public PacketPlayInBlockDig(PlayerDigType digType, BlockPosition blockPosition, Direction direction, int sequence) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                         new IndexedParam<>(blockPosition.createOriginal(), 0),

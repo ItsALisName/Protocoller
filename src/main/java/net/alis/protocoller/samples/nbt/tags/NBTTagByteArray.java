@@ -82,8 +82,12 @@ public class NBTTagByteArray extends NBTBase {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagByteArrayClass(), byte[].class),
+                Reflect.getConstructor(clazz(), false, byte[].class),
                 this.data
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagByteArrayClass();
     }
 }

@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -18,14 +19,16 @@ public class PacketPlayInArmAnimation implements PlayInPacket {
     private Hand hand;
 
     public PacketPlayInArmAnimation(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getHandEnum()).ordinal());
     }
 
     public PacketPlayInArmAnimation(Hand hand) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {new IndexedParam<>(hand.original(), 0)};
                 this.packetData = new PacketDataSerializer(converter.buildPacket(params));

@@ -2,8 +2,10 @@ package net.alis.protocoller.samples.network.chat;
 
 import com.google.common.collect.Lists;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -57,6 +59,7 @@ public enum ChatFormat {
     }
 
     ChatFormat(String name, char code, boolean modifier, int colorIndex, @Nullable Integer colorValue) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.name = name;
         this.code = code;
         this.modifier = modifier;
@@ -161,6 +164,7 @@ public enum ChatFormat {
     }
 
     public static Collection<String> getNames(boolean colors, boolean modifiers) {
+        Utils.checkClassSupportability(clazz(), "ChatFormat", false);
         List<String> list = Lists.newArrayList();
         ChatFormat[] chatFormats = values();
         int length = chatFormats.length;
@@ -172,12 +176,13 @@ public enum ChatFormat {
         return list;
     }
 
-    public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getChatFormatEnum(), this.ordinal());
+    public @NotNull Enum<?> original() {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) clazz(), this.ordinal());
     }
 
-    public String asString() {
-        return this.getName();
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getChatFormatEnum();
     }
 
 }

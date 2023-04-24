@@ -1,7 +1,11 @@
 package net.alis.protocoller.samples.boss;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum BarStyle {
     PROGRESS(0, "progress"),
@@ -26,14 +30,21 @@ public enum BarStyle {
         return id;
     }
 
-    public static BarStyle getById(int id) {
+    @Contract(pure = true)
+    public static @Nullable BarStyle getById(int id) {
+        Utils.checkClassSupportability(clazz(), "BarStyle", false);
         for(BarStyle style : values()) {
             if(style.id == id) return style;
         }
         return null;
     }
 
-    public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getBarStyleEnum(), this.id);
+    public @NotNull Enum<?> original() {
+        Utils.checkClassSupportability(clazz(), "BarStyle", false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getBarStyleEnum();
     }
 }

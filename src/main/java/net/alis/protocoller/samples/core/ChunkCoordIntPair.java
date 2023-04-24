@@ -2,7 +2,8 @@ package net.alis.protocoller.samples.core;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -14,31 +15,33 @@ public class ChunkCoordIntPair implements ObjectSample {
     private long longKey;
 
     public ChunkCoordIntPair(Object chunkCoordIntPair) {
+        Utils.checkClassSupportability(clazz(), "ChunkCoordIntPair", false);
         AccessedObject object = new AccessedObject(chunkCoordIntPair);
-        if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_16_4n5)) {
-            this.x = object.read(0, Integer.TYPE);
-            this.z = object.read(1, Integer.TYPE);
+        if(IProtocolAccess.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_16_4n5)) {
+            this.x = object.readField(0, Integer.TYPE);
+            this.z = object.readField(1, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
             return;
-        } else if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_17_1)) {
-            this.x = object.read(2, Integer.TYPE);
-            this.z = object.read(3, Integer.TYPE);
+        } else if(IProtocolAccess.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_17_1)) {
+            this.x = object.readField(2, Integer.TYPE);
+            this.z = object.readField(3, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
             return;
-        } else if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_18_2)) {
-            this.x = object.read(3, Integer.TYPE);
-            this.z = object.read(4, Integer.TYPE);
+        } else if(IProtocolAccess.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_18_2)) {
+            this.x = object.readField(3, Integer.TYPE);
+            this.z = object.readField(4, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
             return;
-        } else if(GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_19_3)) {
-            this.x = object.read(5, Integer.TYPE);
-            this.z = object.read(6, Integer.TYPE);
+        } else if(IProtocolAccess.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_19_3)) {
+            this.x = object.readField(5, Integer.TYPE);
+            this.z = object.readField(6, Integer.TYPE);
             this.longKey = getLongKey(this.x, this.z);
             return;
         }
     }
 
     public ChunkCoordIntPair(int x, int z) {
+        Utils.checkClassSupportability(clazz(), "ChunkCoordIntPair", false);
         this.x = x;
         this.z = z;
         this.longKey = getLongKey(this.x, this.z);
@@ -89,8 +92,12 @@ public class ChunkCoordIntPair implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getChunkCoordIntPairClass(), Integer.TYPE, Integer.TYPE),
+                Reflect.getConstructor(clazz(), false, Integer.TYPE, Integer.TYPE),
                 this.x, this.z
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getChunkCoordIntPairClass();
     }
 }

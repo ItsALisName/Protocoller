@@ -5,7 +5,7 @@ import net.alis.protocoller.event.PacketEventsManager;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.managers.LogsManager;
 import net.alis.protocoller.plugin.providers.ApiProvider;
-import net.alis.protocoller.plugin.util.TaskSimplifier;
+import net.alis.protocoller.plugin.util.ITaskAccess;
 import net.alis.protocoller.ProtocollerClient;
 import net.alis.protocoller.NetworkPlayer;
 import net.alis.protocoller.event.RegisteredPacketListener;
@@ -25,7 +25,7 @@ public class SyncPacketEventManager implements PacketEventsManager {
 
     @Override
     public void registerListener(ProtocollerClient client, PacketListener listener) {
-        TaskSimplifier.get().preformAsync(() -> {
+        ITaskAccess.get().doAsync(() -> {
             int methodsCount = 0;
             for(Method method : listener.getClass().getDeclaredMethods()) {
                 method.setAccessible(true);
@@ -48,7 +48,6 @@ public class SyncPacketEventManager implements PacketEventsManager {
                         case HRE: PacketHandshakeReceiveEvent.getHandlerList().getRegisteredListeners().add(protocollerListener); break;
                     }
                     LogsManager.get().sendRegisteredListenerMessage(client.getName(), ((ApiProvider)client).getVersion(), lt.inName);
-                    ((ApiProvider)client).addListenerCount();
                     methodsCount += 1;
 
                 }

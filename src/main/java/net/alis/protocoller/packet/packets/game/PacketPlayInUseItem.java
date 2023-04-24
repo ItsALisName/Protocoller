@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -32,10 +33,11 @@ public class PacketPlayInUseItem implements PlayInPacket {
 
     private @Nullable int sequence;
 
-    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_14);
-    private final boolean modernPacket = GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_14);
+    private final boolean modernPacket = IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19);
     
     public PacketPlayInUseItem(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.hand = Hand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getHandEnum()).ordinal());
@@ -67,11 +69,12 @@ public class PacketPlayInUseItem implements PlayInPacket {
      * For versions less than 1.14
      */
     public PacketPlayInUseItem(MovingObjectPositionBlock blockHitResult, Hand hand, int sequence, float f1, float f2, float f3) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_14)) {
+                if(IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_14)) {
                     params = new IndexedParam[] {
                         new IndexedParam<>(blockHitResult.getPosition().createOriginal(), 0),
                         new IndexedParam<>(blockHitResult.getFacing().original(), 0),

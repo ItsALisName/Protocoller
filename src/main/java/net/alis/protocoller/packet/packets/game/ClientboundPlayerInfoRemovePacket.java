@@ -1,7 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -14,16 +15,18 @@ import java.util.UUID;
 
 public class ClientboundPlayerInfoRemovePacket implements PlayOutPacket {
 
-    private final PacketDataContainer packetData;
+    private PacketDataContainer packetData;
     private List<UUID> playersList;
 
     public ClientboundPlayerInfoRemovePacket(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.playersList = (List<UUID>) packetData.readList(0);
     }
 
     public ClientboundPlayerInfoRemovePacket(List<UUID> playersList) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, playersList));
         this.playersList = playersList;
     }
@@ -33,7 +36,7 @@ public class ClientboundPlayerInfoRemovePacket implements PlayOutPacket {
     }
 
     public void setPlayersList(List<UUID> playersList) {
-        this.packetData.writeList(0, playersList);
+        this.packetData = new ClientboundPlayerInfoRemovePacket(playersList).packetData;
         this.playersList = playersList;
     }
 

@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.network.status;
 
 import com.google.gson.*;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.ChatDeserializer;
 import net.alis.protocoller.util.AccessedObject;
@@ -14,14 +15,16 @@ public class ServerData {
     private int protocolVersion;
 
     public ServerData(String gameVersion, int protocolVersion) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.gameVersion = gameVersion;
         this.protocolVersion = protocolVersion;
     }
 
     public ServerData(Object serverData) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(serverData);
-        this.gameVersion = accessor.read(0, String.class);
-        this.protocolVersion = accessor.read(0, int.class);
+        this.gameVersion = accessor.readField(0, String.class);
+        this.protocolVersion = accessor.readField(0, int.class);
     }
 
     public String getGameVersion() {
@@ -59,8 +62,11 @@ public class ServerData {
     }
 
     public Object createOriginal() {
-        return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getServerDataClass(), String.class, int.class),
-                this.gameVersion, this.protocolVersion);
+        return Reflect.callConstructor(Reflect.getConstructor(clazz(), false, String.class, int.class), this.gameVersion, this.protocolVersion);
     }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getServerDataClass();
+    }
+
 }

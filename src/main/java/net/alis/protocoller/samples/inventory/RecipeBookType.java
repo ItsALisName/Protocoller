@@ -1,7 +1,10 @@
 package net.alis.protocoller.samples.inventory;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum RecipeBookType {
     CRAFTING(0),
@@ -19,14 +22,20 @@ public enum RecipeBookType {
         return id;
     }
 
-    public static RecipeBookType getById(int id) {
+    public static @Nullable RecipeBookType getById(int id) {
+        Utils.checkClassSupportability(clazz(), "RecipeBookType", false);
         for(RecipeBookType type : values()) {
             if(type.id == id) return type;
         }
         return null;
     }
 
-    public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getRecipeBookTypeEnum(), this.id);
+    public @NotNull Enum<?> original() {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getRecipeBookTypeEnum();
     }
 }

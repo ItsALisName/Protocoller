@@ -29,6 +29,10 @@ public class MathHelper {
         return (float)Math.sqrt((double)value);
     }
 
+    public static float invsqrt(float r) {
+        return 1.0f / (float) Math.sqrt(r);
+    }
+
     public static float sqrt(double value) {
         return (float)Math.sqrt(value);
     }
@@ -436,6 +440,10 @@ public class MathHelper {
         i = i | i >> 8;
         i = i | i >> 16;
         return i + 1;
+    }
+
+    public static int round(float v) {
+        return Math.round(v);
     }
 
     public static int calculateLogBaseTwoDeBruijn(int value) {

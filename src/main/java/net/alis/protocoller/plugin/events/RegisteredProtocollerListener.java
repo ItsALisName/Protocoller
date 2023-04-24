@@ -4,6 +4,8 @@ import net.alis.protocoller.ProtocollerClient;
 import net.alis.protocoller.event.impl.PacketEventPriority;
 import net.alis.protocoller.event.RegisteredPacketListener;
 import net.alis.protocoller.event.impl.PacketListener;
+import net.alis.protocoller.plugin.providers.ApiProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 
@@ -21,6 +23,7 @@ public class RegisteredProtocollerListener implements RegisteredPacketListener {
         this.ignoreCancelled = ignoreCancelled;
         this.priority = priority;
         this.method = method;
+        ((ApiProvider)client).addListener(this);
     }
 
     @Override
@@ -44,5 +47,9 @@ public class RegisteredProtocollerListener implements RegisteredPacketListener {
 
     public PacketListener getListener() {
         return listener;
+    }
+
+    public boolean equals(@NotNull RegisteredProtocollerListener listener) {
+        return listener.method.getName().equalsIgnoreCase(getMethod().getName());
     }
 }

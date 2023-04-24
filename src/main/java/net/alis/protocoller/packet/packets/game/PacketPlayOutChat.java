@@ -2,9 +2,10 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -14,7 +15,7 @@ import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.md_5.bungee.api.MessageType;
+import libraries.net.md_5.bungee.api.MessageType;
 
 import java.util.UUID;
 
@@ -26,22 +27,24 @@ public class PacketPlayOutChat implements PlayOutPacket {
     private @Nullable UUID sender;
 
     public PacketPlayOutChat(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.message = new ChatComponent(ChatSerializer.fromComponent(packetData.readIChatBaseComponent(0)));
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)){
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)){
             this.messageType = MessageType.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getChatMessageTypeEnum()).ordinal());
         } else {
             this.messageType = MessageType.getById(packetData.readInt(0));
         }
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
             this.sender = packetData.readUUID(0);
         }
     }
 
     public PacketPlayOutChat(ChatComponent message, MessageType messageType, @Nullable UUID sender) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder builder = PacketBuilder.get(getPacketType());
-        switch (builder.getConstructorIndicator().getLevel()) {
+        switch (builder.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null, message.asIChatBaseComponent(), messageType.getId()));
                 break;
@@ -82,7 +85,7 @@ public class PacketPlayOutChat implements PlayOutPacket {
     }
 
     public void setMessageType(MessageType messageType) {
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)) {
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_12)) {
             this.packetData.writeEnumConstant(0, messageType.original());
         } else {
             this.packetData.writeInt(0, messageType.getId());
@@ -96,7 +99,7 @@ public class PacketPlayOutChat implements PlayOutPacket {
     }
 
     public void setSender(@Nullable UUID sender) {
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16_4n5)) {
             this.packetData.writeUUID(0, sender);
         }
         this.sender = sender;

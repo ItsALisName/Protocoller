@@ -1,5 +1,7 @@
 package net.alis.protocoller.samples.phys;
 
+import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.samples.core.BlockPosition;
 import net.alis.protocoller.samples.util.Direction;
 import org.bukkit.entity.Entity;
@@ -11,7 +13,7 @@ public class RayTraceResult {
     protected Vector3D vector;
     protected Entity entityHit;
 
-    public RayTraceResult() { }
+    public RayTraceResult() {}
 
     public RayTraceResult(Vector3D hitVecIn, Direction sideHitIn, BlockPosition blockPosIn) {
         this(RayTraceResult.Type.BLOCK, hitVecIn, sideHitIn, blockPosIn);

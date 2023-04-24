@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -19,9 +20,10 @@ public class PacketPlayInCustomPayload implements PlayInPacket {
     private MinecraftKey key;
     private MinecraftPacketDataSerializer data;
 
-    private final boolean veryLegacy = GlobalProvider.get().getServer().isVeryLegacy();
+    private final boolean veryLegacy = IProtocolAccess.get().getServer().isVeryLegacy();
 
     public PacketPlayInCustomPayload(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(!veryLegacy){
@@ -34,8 +36,9 @@ public class PacketPlayInCustomPayload implements PlayInPacket {
     }
 
     public PacketPlayInCustomPayload(MinecraftKey key, MinecraftPacketDataSerializer data) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                         new IndexedParam<>(key.toLegacyString(), 0),

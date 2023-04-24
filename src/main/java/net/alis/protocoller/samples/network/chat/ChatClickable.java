@@ -1,11 +1,12 @@
 package net.alis.protocoller.samples.network.chat;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.Ext;
+import libraries.net.md_5.bungee.api.chat.ClickEvent;
+import libraries.net.md_5.bungee.api.chat.Ext;
 
 public class ChatClickable implements ObjectSample {
 
@@ -13,9 +14,10 @@ public class ChatClickable implements ObjectSample {
     private String value;
 
     public ChatClickable(Object chatClickable) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject object = new AccessedObject(chatClickable);
-        this.action = Ext.Click.getById(((Enum<?>)object.read(0, ClassAccessor.get().getClickActionEnum())).ordinal());
-        this.value = object.read(0, String.class);
+        this.action = Ext.Click.getById(((Enum<?>)object.readField(0, ClassAccessor.get().getClickActionEnum())).ordinal());
+        this.value = object.readField(0, String.class);
     }
 
     public ChatClickable(ClickEvent.Action action, String value) {
@@ -42,8 +44,12 @@ public class ChatClickable implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getChatClickableClass(), ClassAccessor.get().getClickActionEnum(), String.class),
+                Reflect.getConstructor(clazz(), false, ClassAccessor.get().getClickActionEnum(), String.class),
                 Ext.Click.original(this.action), this.value
         );
+    }
+    
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getChatClickableClass();
     }
 }

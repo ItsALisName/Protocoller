@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.effect;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
 import net.alis.protocoller.util.AccessedObject;
@@ -21,15 +22,16 @@ public class MobEffect implements ObjectSample {
     protected MobEffect hiddenEffect;
 
     public MobEffect(Object original) {
+        Utils.checkClassSupportability(clazz(), "MobEffect", false);
         AccessedObject accessor = new AccessedObject(original);
-        this.type = new MobEffectList(accessor.read(0, ClassAccessor.get().getMobEffectListClass()));
-        this.duration = accessor.read(0, int.class);
-        this.ambient = accessor.read(1, int.class);
-        this.ambient = accessor.read(0, boolean.class);
-        this.showParticles = accessor.read(1, boolean.class);
-        this.showIcon = accessor.read(2, boolean.class);
-        if(accessor.read(0, ClassAccessor.get().getMobEffectClass()) != null) {
-            this.hiddenEffect = new MobEffect((Object) accessor.read(0, ClassAccessor.get().getMobEffectClass()));
+        this.type = new MobEffectList(accessor.readField(0, MobEffectList.clazz()));
+        this.duration = accessor.readField(0, int.class);
+        this.ambient = accessor.readField(1, int.class);
+        this.ambient = accessor.readField(0, boolean.class);
+        this.showParticles = accessor.readField(1, boolean.class);
+        this.showIcon = accessor.readField(2, boolean.class);
+        if(accessor.readField(0, ClassAccessor.get().getMobEffectClass()) != null) {
+            this.hiddenEffect = new MobEffect((Object) accessor.readField(0, clazz()));
         } else {
             this.hiddenEffect = null;
         }
@@ -56,6 +58,7 @@ public class MobEffect implements ObjectSample {
     }
 
     public MobEffect(MobEffectList type, int duration, int amplifier, boolean ambient, boolean showParticles, boolean showIcon, @Nullable MobEffect hiddenEffect) {
+        Utils.checkClassSupportability(clazz(), "MobEffect", false);
         this.type = type;
         this.duration = duration;
         this.amplifier = amplifier;
@@ -65,12 +68,12 @@ public class MobEffect implements ObjectSample {
         this.hiddenEffect = hiddenEffect;
     }
 
-    public MobEffect(MobEffect instance) {
+    public MobEffect(@NotNull MobEffect instance) {
         this.type = instance.type;
         this.fromEffect(instance);
     }
 
-    public void fromEffect(MobEffect that) {
+    public void fromEffect(@NotNull MobEffect that) {
         this.duration = that.duration;
         this.amplifier = that.amplifier;
         this.ambient = that.ambient;
@@ -176,8 +179,12 @@ public class MobEffect implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getMobEffectClass(), ClassAccessor.get().getMobEffectListClass(), int.class, int.class, boolean.class, boolean.class, boolean.class),
+                Reflect.getConstructor(clazz(), false, MobEffectList.clazz(), int.class, int.class, boolean.class, boolean.class, boolean.class),
                 this.type.createOriginal(), this.duration, this.amplifier, this.ambient, this.showParticles, this.showIcon
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getMobEffectClass();
     }
 }

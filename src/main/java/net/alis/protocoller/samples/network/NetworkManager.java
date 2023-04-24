@@ -4,12 +4,13 @@ import io.netty.channel.Channel;
 import net.alis.protocoller.packet.Packet;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.samples.authlib.properties.Property;
+import net.alis.protocoller.util.ParametersChangeable;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.SocketAddress;
 import java.util.UUID;
 
-public interface NetworkManager {
+public interface NetworkManager extends ParametersChangeable {
 
     Property[] getSpoofedProfiles();
 

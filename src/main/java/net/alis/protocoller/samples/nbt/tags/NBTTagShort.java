@@ -75,8 +75,12 @@ public class NBTTagShort extends NBTPrimitive {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagShortClass(), Short.TYPE),
+                Reflect.getConstructor(clazz(), false, Short.TYPE),
                 this.data
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagShortClass();
     }
 }

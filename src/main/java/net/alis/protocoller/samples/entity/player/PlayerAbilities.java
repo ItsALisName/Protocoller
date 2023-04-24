@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.entity.player;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
@@ -22,17 +23,19 @@ public class PlayerAbilities implements ObjectSample {
     public PlayerAbilities() { }
 
     public PlayerAbilities(Object abilities) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(abilities);
-        this.isInvulnerable = accessor.read(0, boolean.class);
-        this.isFlying = accessor.read(1, boolean.class);
-        this.canFly = accessor.read(2, boolean.class);
-        this.canInstantlyBuild = accessor.read(3, boolean.class);
-        this.mayBuild = accessor.read(4, boolean.class);
-        this.flySpeed = accessor.read(0, Float.TYPE);
-        this.walkSpeed = accessor.read(1, Float.TYPE);
+        this.isInvulnerable = accessor.readField(0, boolean.class);
+        this.isFlying = accessor.readField(1, boolean.class);
+        this.canFly = accessor.readField(2, boolean.class);
+        this.canInstantlyBuild = accessor.readField(3, boolean.class);
+        this.mayBuild = accessor.readField(4, boolean.class);
+        this.flySpeed = accessor.readField(0, Float.TYPE);
+        this.walkSpeed = accessor.readField(1, Float.TYPE);
     }
 
     public PlayerAbilities(boolean isInvulnerable, boolean isFlying, boolean canFly, boolean canInstantlyBuild, boolean mayBuild, float flySpeed, float walkSpeed) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.isInvulnerable = isInvulnerable;
         this.isFlying = isFlying;
         this.canFly = canFly;
@@ -137,6 +140,10 @@ public class PlayerAbilities implements ObjectSample {
                 new IndexedParam<>(this.flySpeed, 0),
                 new IndexedParam<>(this.walkSpeed, 1)
         };
-        return Reflect.callEmptyConstructor(ClassAccessor.get().getPlayerAbilitiesClass(), params);
+        return Reflect.callEmptyConstructor(clazz(), params);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getPlayerAbilitiesClass();
     }
 }

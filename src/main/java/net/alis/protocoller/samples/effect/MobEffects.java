@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.effect;
 
 import com.google.common.collect.Maps;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -56,7 +57,7 @@ public class MobEffects {
         DARKNESS = register(33, "darkness", (new MobEffectList(MobEffectInfo.HARMFUL, 2696993)));
     }
 
-    private RegisteredMobEffect register(int rawId, String id, MobEffectList entry) {
+    private @NotNull RegisteredMobEffect register(int rawId, String id, MobEffectList entry) {
         RegisteredMobEffect registeredMobEffect = new RegisteredMobEffect(rawId, id, entry);
         this.access.put(rawId, registeredMobEffect);
         return registeredMobEffect;

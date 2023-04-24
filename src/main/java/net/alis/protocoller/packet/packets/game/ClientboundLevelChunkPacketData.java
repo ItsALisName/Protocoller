@@ -5,15 +5,16 @@ import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
-import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
+import net.alis.protocoller.plugin.v0_0_5.server.level.chunk.ProtocolChunk;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
+import net.alis.protocoller.samples.server.world.level.chunk.IChunk;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
-import org.bukkit.Chunk;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -28,31 +29,34 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
     private List<BlockEntityInfo> blockEntityData;
 
     public ClientboundLevelChunkPacketData(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), getPacketType());
         this.packetData = packetData;
         this.heightmaps = new NBTTagCompound();
         heightmaps.merge(packetData.readObject(0, ClassAccessor.get().getNbtTagCompoundClass()));
         this.buffer = packetData.readByteArray(0);
         this.blockEntityData = new ArrayList<>();
-        for(Object blockentdata : (List<Object>)packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
+        for(Object blockentdata : packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
     }
 
-    public ClientboundLevelChunkPacketData(Chunk chunk) {
-        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, MinecraftReflection.getMinecraftChunk(chunk)));
+    @Deprecated
+    public ClientboundLevelChunkPacketData(IChunk chunk) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, ((ProtocolChunk)chunk).getHandle().getOriginal()));
         this.heightmaps = new NBTTagCompound();
         heightmaps.merge(packetData.readObject(0, ClassAccessor.get().getNbtTagCompoundClass()));
         this.buffer = packetData.readByteArray(0);
         this.blockEntityData = new ArrayList<>();
-        for(Object blockentdata : (List<Object>)packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
+        for(Object blockentdata : packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
     }
 
-    public ClientboundLevelChunkPacketData(@NotNull Object rawPacketData) {
+    protected ClientboundLevelChunkPacketData(@NotNull Object rawPacketData) {
         this.packetData = new PacketDataSerializer(rawPacketData);
         this.heightmaps = new NBTTagCompound();
         heightmaps.merge(packetData.readObject(0, ClassAccessor.get().getNbtTagCompoundClass()));
         this.buffer = packetData.readByteArray(0);
         this.blockEntityData = new ArrayList<>();
-        for(Object blockentdata : (List<Object>)packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
+        for(Object blockentdata : packetData.readList(0)) this.blockEntityData.add(new BlockEntityInfo(blockentdata));
     }
 
     public NBTTagCompound getHeightmaps() {
@@ -107,11 +111,11 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
         
         public BlockEntityInfo(Object blockEntityInfo) {
             AccessedObject object = new AccessedObject(blockEntityInfo);
-            this.packedXZ = object.read(0, Integer.TYPE);
-            this.y = object.read(1, Integer.TYPE);
-            this.type = object.read(0, ClassAccessor.get().getTileEntityTypesClass());
+            this.packedXZ = object.readField(0, Integer.TYPE);
+            this.y = object.readField(1, Integer.TYPE);
+            this.type = object.readField(0, ClassAccessor.get().getTileEntityTypesClass());
             try {
-                Object rawNbt = object.read(0, ClassAccessor.get().getNbtTagCompoundClass());
+                Object rawNbt = object.readField(0, ClassAccessor.get().getNbtTagCompoundClass());
                 NBTTagCompound nbt = new NBTTagCompound();
                 nbt.merge(rawNbt);
                 this.tag = nbt;
@@ -152,7 +156,7 @@ public class ClientboundLevelChunkPacketData implements PlayOutPacket {
         @Override
         public Object createOriginal() {
             return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getBlockEntityInfoClass(), Integer.TYPE, Integer.TYPE, ClassAccessor.get().getTileEntityTypesClass(), ClassAccessor.get().getNbtTagCompoundClass()),
+                    Reflect.getConstructor(ClassAccessor.get().getBlockEntityInfoClass(), false, Integer.TYPE, Integer.TYPE, ClassAccessor.get().getTileEntityTypesClass(), ClassAccessor.get().getNbtTagCompoundClass()),
                     this.packedXZ, this.y, this.type, this.tag.toOriginal()
             );
         }

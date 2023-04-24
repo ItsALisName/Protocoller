@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.attributes;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -10,18 +11,22 @@ public class AttributeBase implements ObjectSample {
     protected boolean tracked;
     protected String translationKey;
 
-    protected AttributeBase() {}
+    protected AttributeBase() {
+        Utils.checkClassSupportability(clazz(), "AttributeBase", false);
+    }
 
     public AttributeBase(String translationKey, double fallback) {
+        Utils.checkClassSupportability(clazz(), "AttributeBase", false);
         this.fallback = fallback;
         this.translationKey = translationKey;
     }
 
     public AttributeBase(Object original) {
+        Utils.checkClassSupportability(clazz(), "AttributeBase", false);
         AccessedObject accessor = new AccessedObject(original);
-        this.fallback = accessor.read(0, double.class);
-        this.tracked = accessor.read(0, boolean.class);
-        this.translationKey = accessor.read(0, String.class);
+        this.fallback = accessor.readField(0, double.class);
+        this.tracked = accessor.readField(0, boolean.class);
+        this.translationKey = accessor.readField(0, String.class);
     }
 
     public void setTranslationKey(String translationKey) {
@@ -56,9 +61,14 @@ public class AttributeBase implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getAttributeBaseClass(), String.class, double.class),
+                Reflect.getConstructor(clazz(), false, String.class, double.class),
                 this.translationKey, this.fallback
         );
     }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getAttributeBaseClass();
+    }
+
 }
 

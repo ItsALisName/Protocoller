@@ -1,10 +1,11 @@
 package net.alis.protocoller.packet.packets.handshake;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -20,9 +21,10 @@ public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
     private int protocolVersion;
     private int port;
     private ProtocolEnum intendedState;
-    private final boolean legacyPacket = GlobalProvider.get().getServer().isLegacy();
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().isLegacy();
 
     public PacketHandshakingInSetProtocol(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), PacketType.Handshake.Client.SET_PROTOCOL);
         this.packetData = packetData;
         this.address = packetData.readString(0);
@@ -37,8 +39,9 @@ public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
     }
 
     public PacketHandshakingInSetProtocol(String address, int port, ProtocolEnum intendedState) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?, ?>[] params = {
                         new IndexedParam<>(address, 0),
@@ -59,7 +62,7 @@ public class PacketHandshakingInSetProtocol implements HandshakeInPacket {
         }
         this.intendedState = intendedState;
         this.address = address;
-        this.protocolVersion = GlobalProvider.get().getServer().getVersion().getProtocol();
+        this.protocolVersion = IProtocolAccess.get().getServer().getVersion().getProtocol();
         this.port = port;
     }
 

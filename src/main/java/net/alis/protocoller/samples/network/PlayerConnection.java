@@ -1,19 +1,21 @@
 package net.alis.protocoller.samples.network;
 
 import net.alis.protocoller.packet.type.PlayOutPacket;
+import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.exception.ProtocollerException;
 import net.alis.protocoller.plugin.exception.ReflectionException;
+import net.alis.protocoller.util.ParametersChangeable;
 import org.bukkit.entity.Player;
 
-public interface PlayerConnection {
+import java.util.function.Predicate;
 
-    <P> P getParameter(int index, Class<?> type) throws ProtocollerException;
-
-    void setParameter(int index, Class<?> type, Object parameter) throws ProtocollerException;
+public interface PlayerConnection extends ParametersChangeable {
 
     NetworkManager getNetworkManager();
 
     void sendPacket(PlayOutPacket packet);
+
+    void sendPackets(PlayOutPacket... packets);
 
     void disconnect(String reason);
 

@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -31,6 +32,7 @@ public class PacketPlayOutPosition implements PlayOutPacket {
     private boolean shouldDismount;
 
     public PacketPlayOutPosition(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.x = packetData.readDouble(0);
@@ -43,7 +45,7 @@ public class PacketPlayOutPosition implements PlayOutPacket {
         for(Object o : s) {
             this.flags.add(PlayerTeleportFlags.getById(((Enum<?>)o).ordinal()));
         }
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.teleportId = 0; this.shouldDismount = false; break;
             }
@@ -56,12 +58,13 @@ public class PacketPlayOutPosition implements PlayOutPacket {
         }
     }
 
-    public PacketPlayOutPosition(double x, double y, double z, float yaw, float pitch, Set<PlayerTeleportFlags> flags, int teleportId, boolean shouldDismount) {
+    public PacketPlayOutPosition(double x, double y, double z, float yaw, float pitch, @NotNull Set<PlayerTeleportFlags> flags, int teleportId, boolean shouldDismount) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         ArrayList<Object> newFlags = new ArrayList<>();
         for(PlayerTeleportFlags teleportFlags : flags) {
             newFlags.add(teleportFlags.original());
         }
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(converter.buildPacket(null, x, y, z, yaw, pitch, newFlags));
                 break;
@@ -151,7 +154,7 @@ public class PacketPlayOutPosition implements PlayOutPacket {
     }
 
     public void setTeleportId(int teleportId) {
-        if(converter.getConstructorIndicator().getLevel() >= 2) {
+        if(converter.getPacketLevel().getLevel() >= 2) {
             this.packetData.writeInt(0, teleportId);
         }
         this.teleportId = teleportId;
@@ -162,7 +165,7 @@ public class PacketPlayOutPosition implements PlayOutPacket {
     }
 
     public void setShouldDismount(boolean shouldDismount) {
-        if(converter.getConstructorIndicator().getLevel() >= 3) {
+        if(converter.getPacketLevel().getLevel() >= 3) {
             this.packetData.writeBoolean(0, shouldDismount);
         }
         this.shouldDismount = shouldDismount;

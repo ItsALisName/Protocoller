@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.effect;
 
 import com.google.common.collect.Maps;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.attributes.AttributeBase;
 import net.alis.protocoller.samples.attributes.AttributeModifier;
@@ -18,21 +19,25 @@ public class MobEffectList implements ObjectSample {
     protected MobEffectInfo category;
     protected int color;
 
-    protected MobEffectList() { }
+    protected MobEffectList() {
+        Utils.checkClassSupportability(clazz(), "MobEffectList", false);
+    }
 
     public MobEffectList(MobEffectInfo category, int color) {
+        Utils.checkClassSupportability(clazz(), "MobEffectList", false);
         this.category = category;
         this.color = color;
     }
 
     public MobEffectList(Object original) {
+        Utils.checkClassSupportability(clazz(), "MobEffectList", false);
         AccessedObject accessor = new AccessedObject(original);
-        Map<Object, Object> attMap = accessor.read(0, Map.class);
+        Map<Object, Object> attMap = accessor.readField(0, Map.class);
         for(Map.Entry<Object, Object> en : attMap.entrySet()) {
             this.attributeModifierMap.put(new AttributeBase(en.getKey()), new AttributeModifier(en.getValue()));
         }
-        this.category = MobEffectInfo.getById(((Enum<?>)accessor.read(0, ClassAccessor.get().getMobEffectInfoEnum())).ordinal());
-        this.color = accessor.read(0, int.class);
+        this.category = MobEffectInfo.getById(((Enum<?>)accessor.readField(0, MobEffectInfo.clazz())).ordinal());
+        this.color = accessor.readField(0, int.class);
     }
 
     public MobEffectInfo getCategory() {
@@ -71,15 +76,19 @@ public class MobEffectList implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        Object original = Reflect.callConstructor(Reflect.getConstructor(ClassAccessor.get().getMobEffectListClass(), ClassAccessor.get().getMobEffectInfoEnum(), int.class), this.category.original(), this.color);
+        Object original = Reflect.callConstructor(Reflect.getConstructor(clazz(), false, MobEffectInfo.clazz(), int.class), this.category.original(), this.color);
         if(this.attributeModifierMap.size() > 0) {
             Map<Object, Object> atrMap = new HashMap<>();
             for(Map.Entry<AttributeBase, AttributeModifier> e : this.attributeModifierMap.entrySet()) {
                 atrMap.put(e.getKey().createOriginal(), e.getValue().createOriginal());
             }
-            Reflect.writeField(original, Reflect.getField(original.getClass(), 0, Map.class), atrMap, false);
+            Reflect.writeField(original, Reflect.getField(original.getClass(), 0, Map.class, false), atrMap, false);
         }
         return original;
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getMobEffectListClass();
     }
 }
 

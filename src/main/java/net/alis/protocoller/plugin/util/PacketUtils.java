@@ -3,7 +3,7 @@ package net.alis.protocoller.plugin.util;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
-import net.alis.protocoller.plugin.memory.InitialData;
+import net.alis.protocoller.plugin.memory.ApproximateData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.NotNull;
@@ -26,29 +26,29 @@ public class PacketUtils {
             case CLIENTBOUND:
             case PLAY_CLIENTBOUND:
                 return Reflect.getClassOr(
-                        InitialData.get().getPacketsPackage() + ".game." + packetName,
-                        InitialData.get().getPacketsPackage() + "." + packetName,
+                        ApproximateData.get().getPacketsPackage() + ".game." + packetName,
+                        ApproximateData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case LOGIN_SERVERBOUND:
             case LOGIN_CLIENTBOUND:
                 return Reflect.getClassOr(
-                        InitialData.get().getPacketsPackage() + ".login." + packetName,
-                        InitialData.get().getPacketsPackage() + "." + packetName,
+                        ApproximateData.get().getPacketsPackage() + ".login." + packetName,
+                        ApproximateData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case HANDSHAKE_CLIENTBOUND:
             case HANDSHAKE_SERVERBOUND:
                 return Reflect.getClassOr(
-                        InitialData.get().getPacketsPackage() + ".handshake." + packetName,
-                        InitialData.get().getPacketsPackage() + "." + packetName,
+                        ApproximateData.get().getPacketsPackage() + ".handshake." + packetName,
+                        ApproximateData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             case STATUS_CLIENTBOUND:
             case STATUS_SERVERBOUND:
                 return Reflect.getClassOr(
-                        InitialData.get().getPacketsPackage() + ".status." + packetName,
-                        InitialData.get().getPacketsPackage() + "." + packetName,
+                        ApproximateData.get().getPacketsPackage() + ".status." + packetName,
+                        ApproximateData.get().getPacketsPackage() + "." + packetName,
                         true
                 );
             default: return null;

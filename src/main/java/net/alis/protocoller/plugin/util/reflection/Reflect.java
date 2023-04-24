@@ -1,6 +1,6 @@
 package net.alis.protocoller.plugin.util.reflection;
 
-import net.alis.protocoller.plugin.memory.InitialData;
+import net.alis.protocoller.plugin.memory.ApproximateData;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
 import net.alis.protocoller.util.IndexedParam;
 import net.alis.protocoller.util.AccessedObject;
@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,22 +35,22 @@ public class Reflect {
         return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().fieldNotFound(instance, fieldName).throwException();
     }
 
-    public static void writeField(Object instance, @NotNull Field field, Object param, boolean ignoreException) {
+    public static void writeField(Object instance, Field field, Object param, boolean ignoreException) {
         field.setAccessible(true);
         try {
             field.set(instance, param);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(e).writeFieldError(instance.getClass(), field).throwException();
         }
     }
 
     @Contract(pure = true)
     @Nullable
-    public static <PARAM> PARAM readField(Object instance, @NotNull Field field, boolean ignoreException) {
+    public static <PARAM> PARAM readField(Object instance, Field field, boolean ignoreException) {
         try {
             field.setAccessible(true);
             return (PARAM) field.get(instance);
-        } catch (IllegalAccessException accessException) {
+        } catch (Exception accessException) {
             return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().defineReason(accessException).readFieldError(instance.getClass(), field).throwException();
         }
     }
@@ -73,7 +72,7 @@ public class Reflect {
 
     @Nullable
     public static Class<?> getCraftBukkitClass(String clazz, boolean ignoreException) {
-        return getClass(InitialData.get().getCraftBukkitPackage() + "." + clazz, ignoreException);
+        return getClass(ApproximateData.get().getCraftBukkitPackage() + "." + clazz, ignoreException);
     }
 
     @Nullable
@@ -83,11 +82,11 @@ public class Reflect {
 
     @Nullable
     public static Class<?> getLegacyNMSClass(String clazz, boolean ignoreException) {
-        return getClass("net.minecraft.server." + InitialData.get().getPackageVersion() + "." + clazz, ignoreException);
+        return getClass("net.minecraft.server." + ApproximateData.get().getPackageVersion() + "." + clazz, ignoreException);
     }
 
     public static Class<?> getNMSClass(String clazzName, @Nullable String clazzPathWithName, boolean ignoreException) {
-        if(InitialData.get().isLegacyServer()) {
+        if(ApproximateData.get().isLegacyServer()) {
             return getLegacyNMSClass(clazzName, ignoreException);
         } else {
             return getClass(clazzPathWithName, ignoreException);
@@ -116,7 +115,29 @@ public class Reflect {
         return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().methodNotFound(instance, "unknown", parameters).throwException();
     }
 
-    public static @Nullable Method getMethod(@NotNull Class<?> instance, String methodName, Class<?> returnType, boolean ignoreException, Class<?>... paramTypes) {
+    public static Method getMethod(Class<?> instance, String methodName, boolean ignoreException) {
+        for(Method method : instance.getDeclaredMethods()) {
+            method.setAccessible(true);
+            if(method.getName().equalsIgnoreCase(methodName)) {
+                return method;
+            }
+        }
+        return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().methodNotFound(instance, 0, methodName).throwException();
+    }
+
+    public static Method getMethod(Class<?> instance, int index, Class<?> returnType, boolean ignoreException, Class<?>... parameters) {
+        int start = 0;
+        for(Method method : instance.getDeclaredMethods()) {
+            method.setAccessible(true);
+            if(method.getReturnType() == returnType) {
+                if(Arrays.equals(method.getParameterTypes(), parameters) && start == index) return method;
+                start += 1;
+            }
+        }
+        return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().methodNotFound(instance, "unknown", parameters).throwException();
+    }
+
+    public static @Nullable Method getMethod(Class<?> instance, String methodName, Class<?> returnType, boolean ignoreException, Class<?>... paramTypes) {
         for(Method m : instance.getDeclaredMethods()) {
             m.setAccessible(true);
             if(m.getName().equalsIgnoreCase(methodName) && m.getReturnType() == returnType && Arrays.equals(m.getParameterTypes(), paramTypes)) {
@@ -124,24 +145,6 @@ public class Reflect {
             }
         }
         return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().methodNotFound(instance, methodName, returnType, paramTypes).throwException();
-    }
-
-    public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, Class<?> returnType) {
-        int start = 0;
-        for(Method method : instance.getDeclaredMethods()) {
-            method.setAccessible(true);
-            if(method.getReturnType() == returnType || method.getReturnType().isAssignableFrom(returnType)) {
-                if(index == start) {
-                    return method;
-                }
-                start += 1;
-            }
-        }
-        return new ExceptionBuilder().getReflectionExceptions().methodNotFound(instance, index, returnType).throwException();
-    }
-
-    public static @NotNull Method getMethod(Class<?> instance, Class<?> returnType) {
-        return getMethod(instance, 0, returnType);
     }
 
     public static Method getSuperclassMethod(@NotNull Class<?> instance, String methodName, Class<?> returnType, boolean ignoreException, Class<?>... paramTypes) {
@@ -152,7 +155,8 @@ public class Reflect {
         return getMethod(instance.getSuperclass(), name, params);
     }
 
-    public static @NotNull Field getField(@NotNull Class<?> instance, int index, Class<?> type) {
+    @Nullable
+    public static Field getField(@NotNull Class<?> instance, int index, Class<?> type, boolean ignoreException) {
         int start = 0;
         for(Field field : instance.getDeclaredFields()) {
             field.setAccessible(true);
@@ -163,7 +167,7 @@ public class Reflect {
                 start += 1;
             }
         }
-        return new ExceptionBuilder().getReflectionExceptions().fieldNotFound(type, index, instance).throwException();
+        return new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().fieldNotFound(type, index, instance).throwException();
     }
 
     public static <PARAM> @Nullable PARAM readSuperclassField(@NotNull Object instance, int index, Class<?> type, boolean ignoreException) {
@@ -229,7 +233,7 @@ public class Reflect {
         new ExceptionBuilder().setIgnored(ignoreException).getReflectionExceptions().fieldNotFound(param.getClass(), index, instance.getClass()).throwException();
     }
 
-    public static @NotNull Method getMethod(@NotNull Class<?> instance, int index, String methodName) {
+    public static @Nullable Method getMethod(@NotNull Class<?> instance, int index, String methodName) {
         int start = 0;
         for(Method method : instance.getDeclaredMethods()) {
             method.setAccessible(true);
@@ -252,17 +256,17 @@ public class Reflect {
         }
     }
 
-    public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, Class<?> returnType) {
+    public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, Class<?> returnType, boolean ignoreException) {
         try {
-            return (PARAM) getMethod(instance, index, returnType).invoke(null);
+            return (PARAM) getMethod(instance, index, returnType, ignoreException).invoke(null);
         } catch (Exception e) {
             return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, returnType).throwException();
         }
     }
 
-    public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, Class<?> returnType, Object... objects) {
+    public static <PARAM> PARAM callInterfaceMethod(Class<?> instance, int index, Class<?> returnType, boolean ignoreException, Object... objects) {
         try {
-            return (PARAM) getMethod(instance, index, returnType).invoke(null, objects);
+            return (PARAM) getMethod(instance, index, returnType, ignoreException).invoke(null, objects);
         } catch (Exception e) {
             return new ExceptionBuilder().getReflectionExceptions().defineReason(e).callInterfaceMethodError(instance, index, returnType).throwException();
         }
@@ -301,18 +305,6 @@ public class Reflect {
         return null;
     }
 
-    @Nullable
-    public static Constructor<?> getConstructor(Class<?> instance, Object @NotNull ... parameters) {
-        List<Class<?>> params = new ArrayList<>(); for(Object obj : parameters) params.add(obj.getClass());
-        for(Constructor<?> constructor : instance.getDeclaredConstructors()) {
-            constructor.setAccessible(true);
-            if(Arrays.asList(constructor.getParameterTypes()).equals(params)) {
-                return constructor;
-            }
-        }
-        return new ExceptionBuilder().getReflectionExceptions().constructorNotFound(instance, params.toArray(new Class[0])).throwException();
-    }
-
     public static <PARAM> @Nullable PARAM classNewInstance(@NotNull Class<?> clazz) {
         try {
             return (PARAM) clazz.newInstance();
@@ -321,7 +313,7 @@ public class Reflect {
         }
     }
 
-    public static <PARAM> @NotNull PARAM callConstructor(Constructor<?> constructor, Object... parameters) {
+    public static <PARAM> @Nullable PARAM callConstructor(Constructor<?> constructor, Object... parameters) {
         try {
             if(parameters == null) {
                 return (PARAM) constructor.newInstance();
@@ -342,16 +334,25 @@ public class Reflect {
         for(IndexedParam<?, ?> p : params) {
             o.write(p.getIndex(), p.getObject());
         }
-        return (PARAM) o.getObject();
+        return (PARAM) o.getOriginal();
     }
 
-    public static <PARAM> @NotNull PARAM readEnumValue(@NotNull Class<? extends Enum<?>> clazz, int ordinal) {
+    public static <PARAM> @Nullable PARAM readEnumValue(@NotNull Class<? extends Enum<?>> clazz, int ordinal) {
         for(Enum<?> o : clazz.getEnumConstants()) {
             if(o.ordinal() == ordinal) {
                 return (PARAM) o;
             }
         }
         return new ExceptionBuilder().getReflectionExceptions().findEnumConstantError(clazz, ordinal).throwException();
+    }
+
+    public static <PARAM> @Nullable PARAM readEnumValue(@NotNull Class<? extends Enum<?>> clazz, String name) {
+        for(Enum<?> o : clazz.getEnumConstants()) {
+            if(o.name().equalsIgnoreCase(name)) {
+                return (PARAM) o;
+            }
+        }
+        return new ExceptionBuilder().getReflectionExceptions().findEnumConstantError(clazz, name).throwException();
     }
 
     public static int getEnumId(@NotNull Object enumObject) {

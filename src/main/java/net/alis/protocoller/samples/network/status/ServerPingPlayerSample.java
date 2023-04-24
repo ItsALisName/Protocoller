@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.network.status;
 
 import com.google.gson.*;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.authlib.GameProfile;
 import net.alis.protocoller.util.AccessedObject;
@@ -9,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.alis.protocoller.samples.util.ChatDeserializer;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.UUID;
 
@@ -20,15 +20,17 @@ public class ServerPingPlayerSample {
     private GameProfile[] sample;
 
     public ServerPingPlayerSample(int max, int online) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.max = max;
         this.online = online;
     }
 
     public ServerPingPlayerSample(Object pingPlayerSample) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(pingPlayerSample);
-        this.max = accessor.read(0, int.class);
-        this.online = accessor.read(1, int.class);
-        Object[] profiles = accessor.read(0, Array.newInstance(ClassAccessor.get().getGameProfileClass(), 1).getClass());
+        this.max = accessor.readField(0, int.class);
+        this.online = accessor.readField(1, int.class);
+        Object[] profiles = accessor.readField(0, ClassAccessor.arrayOfClass(GameProfile.clazz()));
         if(profiles != null && profiles.length > 0) {
             this.sample = new GameProfile[profiles.length];
             for(int i = 0; i < profiles.length; i++) {
@@ -113,19 +115,23 @@ public class ServerPingPlayerSample {
 
     public Object createOriginal() {
         Object response = Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getServerPingPlayerSampleClass(), int.class, int.class),
+                Reflect.getConstructor(clazz(), false, int.class, int.class),
                 this.max, this.online
         );
         if(this.sample != null && this.sample.length > 0) {
             Object[] profiles = new Object[this.sample.length];
             for(int i = 0; i < this.sample.length; i++) {
-                profiles[i] = ((GameProfile)this.sample[i]).createOriginal();
+                profiles[i] = (this.sample[i]).createOriginal();
             }
             AccessedObject accessor = new AccessedObject(response);
             accessor.write(0, Object[].class);
-            return accessor.getObject();
+            return accessor.getOriginal();
         }
         return response;
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getServerPingPlayerSampleClass();
     }
 
 }

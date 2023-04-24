@@ -1,13 +1,20 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.server.level.chunk.ProtocolChunk;
+import net.alis.protocoller.samples.server.world.level.chunk.IChunk;
+import net.alis.protocoller.samples.server.world.level.lighting.ILightEngine;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.BitSet;
 
 public class ClientboundLevelChunkWithLightPacket implements PlayOutPacket {
 
@@ -18,10 +25,20 @@ public class ClientboundLevelChunkWithLightPacket implements PlayOutPacket {
     private ClientboundLightUpdatePacketData lightUpdatePacketData;
 
     public ClientboundLevelChunkWithLightPacket(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), getPacketType());
         this.packetData = packetData;
         this.x = packetData.readInt(0);
         this.z = packetData.readInt(1);
+        this.chunkPacketData = new ClientboundLevelChunkPacketData((Object) packetData.readObject(0, PacketType.Play.Server.LEVEL_CHUNK_PACKET_DATA.getPacketClass()));
+        this.lightUpdatePacketData = new ClientboundLightUpdatePacketData((Object) packetData.readObject(0, PacketType.Play.Server.LIGHT_UPDATE_PACKET_DATA.getPacketClass()));
+    }
+
+    public ClientboundLevelChunkWithLightPacket(@NotNull IChunk chunk, @NotNull ILightEngine lightProvider, @Nullable BitSet skyBits, @Nullable BitSet blockBits, boolean nonEdge) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, ((ProtocolChunk)chunk).getHandle().getOriginal(), lightProvider.original(), skyBits, blockBits, nonEdge));
+        this.x = chunk.getCoordinates().getX();
+        this.z = chunk.getCoordinates().getZ();
         this.chunkPacketData = new ClientboundLevelChunkPacketData((Object) packetData.readObject(0, PacketType.Play.Server.LEVEL_CHUNK_PACKET_DATA.getPacketClass()));
         this.lightUpdatePacketData = new ClientboundLightUpdatePacketData((Object) packetData.readObject(0, PacketType.Play.Server.LIGHT_UPDATE_PACKET_DATA.getPacketClass()));
     }

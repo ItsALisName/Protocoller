@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.status;
 
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -16,14 +17,16 @@ public class PacketStatusInPing implements StatusInPacket {
     private long startTime;
 
     public PacketStatusInPing(@NotNull PacketDataContainer data) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(data.getType(), this.getPacketType());
         this.packetData = data;
         this.startTime = data.readLong(0);
     }
 
     public PacketStatusInPing(long startTime) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        if(converter.getConstructorIndicator().getLevel() > 0) {
+        if(converter.getPacketLevel().getLevel() > 0) {
             this.packetData = new PacketDataSerializer(converter.buildPacket(null, startTime));
         } else {
             IndexedParam<?, ?>[] params = {

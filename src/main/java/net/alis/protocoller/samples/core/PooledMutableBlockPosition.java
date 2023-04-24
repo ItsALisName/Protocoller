@@ -5,6 +5,7 @@ import net.alis.protocoller.samples.phys.BaseBlockPosition;
 import net.alis.protocoller.samples.util.Direction;
 import net.alis.protocoller.samples.util.MathHelper;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,19 +17,19 @@ public final class PooledMutableBlockPosition extends MutableBlockPosition {
         super(xIn, yIn, zIn);
     }
 
-    public static PooledMutableBlockPosition retain() {
+    public static @NotNull PooledMutableBlockPosition retain() {
         return retain(0, 0, 0);
     }
 
-    public static PooledMutableBlockPosition retain(double xIn, double yIn, double zIn) {
+    public static @NotNull PooledMutableBlockPosition retain(double xIn, double yIn, double zIn) {
         return retain(MathHelper.floor(xIn), MathHelper.floor(yIn), MathHelper.floor(zIn));
     }
 
-    public static PooledMutableBlockPosition retain(BaseBlockPosition vec) {
+    public static @NotNull PooledMutableBlockPosition retain(@NotNull BaseBlockPosition vec) {
         return retain(vec.getX(), vec.getY(), vec.getZ());
     }
 
-    public static PooledMutableBlockPosition retain(int xIn, int yIn, int zIn) {
+    public static @NotNull PooledMutableBlockPosition retain(int xIn, int yIn, int zIn) {
         synchronized (POOL) {
             if (!POOL.isEmpty()) {
                 PooledMutableBlockPosition BlockPosition$pooledmutableBlockPosition = (PooledMutableBlockPosition)POOL.remove(POOL.size() - 1);

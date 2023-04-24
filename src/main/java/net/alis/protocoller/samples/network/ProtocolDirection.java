@@ -1,5 +1,6 @@
 package net.alis.protocoller.samples.network;
 
+import net.alis.protocoller.plugin.memory.ClassAccessor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,5 +27,9 @@ public enum ProtocolDirection {
         for(ProtocolDirection s : ProtocolDirection.values())
             if(s.id == id) return s;
         return null;
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getProtocolDirectionEnum();
     }
 }

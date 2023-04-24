@@ -29,11 +29,11 @@ public class AttributeRanged extends AttributeBase {
 
     public AttributeRanged(Object original) {
         AccessedObject accessor = new AccessedObject(original);
-        this.min = accessor.read(0, double.class);
-        this.max = accessor.read(1, double.class);
-        this.fallback = accessor.readSuperclass(0, double.class);
-        this.tracked = accessor.readSuperclass(0, boolean.class);
-        this.translationKey = accessor.readSuperclass(0, String.class);
+        this.min = accessor.readField(0, double.class);
+        this.max = accessor.readField(1, double.class);
+        this.fallback = accessor.readSuperclassField(0, double.class);
+        this.tracked = accessor.readSuperclassField(0, boolean.class);
+        this.translationKey = accessor.readSuperclassField(0, String.class);
     }
 
     public double getMin() {
@@ -56,9 +56,13 @@ public class AttributeRanged extends AttributeBase {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getAttributeRangedClass(), String.class, double.class, double.class, double.class),
+                Reflect.getConstructor(clazz(), false, String.class, double.class, double.class, double.class),
                 this.getTranslationKey(), this.getFallback(), this.min, this.max
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getAttributeRangedClass();
     }
 }
 

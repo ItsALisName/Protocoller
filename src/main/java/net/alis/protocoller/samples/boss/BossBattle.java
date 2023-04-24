@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.boss;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.samples.network.chat.ChatSerializer;
@@ -20,6 +21,7 @@ public abstract class BossBattle implements ObjectSample {
     protected boolean createFog;
 
     public BossBattle(UUID uuid, ChatComponent title, BarColor color, BarStyle style) {
+        Utils.checkClassSupportability(clazz(), "BossBattle", false);
         this.uuid = uuid;
         this.title = title;
         this.color = color;
@@ -28,15 +30,16 @@ public abstract class BossBattle implements ObjectSample {
     }
 
     public BossBattle(Object original) {
+        Utils.checkClassSupportability(clazz(), "BossBattle", false);
         AccessedObject accessor = new AccessedObject(original);
-        this.uuid = accessor.read(0, UUID.class);
-        this.title = new ChatComponent(ChatSerializer.fromComponent(accessor.read(0, ClassAccessor.get().getIChatBaseComponentClass())));
-        this.progress = accessor.read(0, float.class);
-        this.color = BarColor.getById(((Enum<?>)accessor.read(0, ClassAccessor.get().getBarColorEnum())).ordinal());
-        this.style = BarStyle.getById(((Enum<?>)accessor.read(0, ClassAccessor.get().getBarStyleEnum())).ordinal());
-        this.darkenSky = accessor.read(0, boolean.class);
-        this.playMusic = accessor.read(1, boolean.class);
-        this.createFog = accessor.read(2, boolean.class);
+        this.uuid = accessor.readField(0, UUID.class);
+        this.title = new ChatComponent(ChatSerializer.fromComponent(accessor.readField(0, ChatComponent.clazz())));
+        this.progress = accessor.readField(0, float.class);
+        this.color = BarColor.getById(((Enum<?>)accessor.readField(0, ClassAccessor.get().getBarColorEnum())).ordinal());
+        this.style = BarStyle.getById(((Enum<?>)accessor.readField(0, ClassAccessor.get().getBarStyleEnum())).ordinal());
+        this.darkenSky = accessor.readField(0, boolean.class);
+        this.playMusic = accessor.readField(1, boolean.class);
+        this.createFog = accessor.readField(2, boolean.class);
     }
 
     public UUID getUUID() {
@@ -105,9 +108,13 @@ public abstract class BossBattle implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getBossBattleClass(), UUID.class, ClassAccessor.get().getIChatBaseComponentClass(), ClassAccessor.get().getBarColorEnum(), ClassAccessor.get().getBarStyleEnum()),
+                Reflect.getConstructor(clazz(), false, UUID.class, ChatComponent.clazz(), BarColor.clazz(), BarStyle.clazz()),
                 this.uuid, this.title.asIChatBaseComponent(), this.color.original(), this.style.original()
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getBossBattleClass();
     }
 }
 

@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -24,6 +25,7 @@ public class PacketPlayInSetCommandBlock implements PlayInPacket {
     private boolean alwaysActive;
 
     public PacketPlayInSetCommandBlock(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
@@ -35,8 +37,9 @@ public class PacketPlayInSetCommandBlock implements PlayInPacket {
     }
 
     public PacketPlayInSetCommandBlock(BlockPosition pos, String command, TileEntityCommandType type, boolean trackOutput, boolean conditional, boolean alwaysActive) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                         new IndexedParam<>(pos.createOriginal(), 0),

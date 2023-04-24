@@ -5,6 +5,7 @@ import net.alis.protocoller.samples.core.Position;
 import net.alis.protocoller.samples.util.Axis;
 import net.alis.protocoller.samples.util.Direction;
 import net.alis.protocoller.samples.util.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -42,7 +43,7 @@ public class Vector3I implements Comparable<Vector3I> {
         return (this.getY() + this.getZ() * 31) * 31 + this.getX();
     }
 
-    public int compareTo(Vector3I vector3I) {
+    public int compareTo(@NotNull Vector3I vector3I) {
         if (this.getY() == vector3I.getY()) {
             return this.getZ() == vector3I.getZ() ? this.getX() - vector3I.getX() : this.getZ() - vector3I.getZ();
         } else {
@@ -81,11 +82,11 @@ public class Vector3I implements Comparable<Vector3I> {
         return x == 0 && y == 0 && z == 0 ? this : new Vector3I(this.getX() + x, this.getY() + y, this.getZ() + z);
     }
 
-    public Vector3I offset(Vector3I vector3I) {
+    public Vector3I offset(@NotNull Vector3I vector3I) {
         return this.offset(vector3I.getX(), vector3I.getY(), vector3I.getZ());
     }
 
-    public Vector3I subtract(Vector3I vector3I) {
+    public Vector3I subtract(@NotNull Vector3I vector3I) {
         return this.offset(-vector3I.getX(), -vector3I.getY(), -vector3I.getZ());
     }
 
@@ -164,7 +165,7 @@ public class Vector3I implements Comparable<Vector3I> {
         }
     }
 
-    public Vector3I cross(Vector3I vector3I) {
+    public Vector3I cross(@NotNull Vector3I vector3I) {
         return new Vector3I(this.getY() * vector3I.getZ() - this.getZ() * vector3I.getY(), this.getZ() * vector3I.getX() - this.getX() * vector3I.getZ(), this.getX() * vector3I.getY() - this.getY() * vector3I.getX());
     }
 
@@ -176,11 +177,11 @@ public class Vector3I implements Comparable<Vector3I> {
         return this.distToCenterSqr(position) < MathHelper.square(d);
     }
 
-    public double distSqr(Vector3I vector3I) {
+    public double distSqr(@NotNull Vector3I vector3I) {
         return this.distToLowCornerSqr(vector3I.getX(), vector3I.getY(), vector3I.getZ());
     }
 
-    public double distToCenterSqr(Position position) {
+    public double distToCenterSqr(@NotNull Position position) {
         return this.distToCenterSqr(position.x(), position.y(), position.z());
     }
 
@@ -198,14 +199,14 @@ public class Vector3I implements Comparable<Vector3I> {
         return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
-    public int distManhattan(Vector3I vector3I) {
+    public int distManhattan(@NotNull Vector3I vector3I) {
         float f = (float)Math.abs(vector3I.getX() - this.getX());
         float f1 = (float)Math.abs(vector3I.getY() - this.getY());
         float f2 = (float)Math.abs(vector3I.getZ() - this.getZ());
         return (int)(f + f1 + f2);
     }
 
-    public int get(Axis axis) {
+    public int get(@NotNull Axis axis) {
         return axis.choose(this.x, this.y, this.z);
     }
 

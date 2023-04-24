@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.resources;
 
 import com.google.common.collect.Maps;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -22,14 +23,16 @@ public class ResourceKey<T> implements ObjectSample {
     }
 
     public ResourceKey(MinecraftKey k1, MinecraftKey k2) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.registry = k1;
         this.value = k2;
     }
 
     public ResourceKey(Object original) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(original);
-        this.registry = new MinecraftKey((Object) accessor.read(0, ClassAccessor.get().getMinecraftKeyClass()));
-        this.value = new MinecraftKey((Object) accessor.read(1, ClassAccessor.get().getMinecraftKeyClass()));
+        this.registry = new MinecraftKey((Object) accessor.readField(0, MinecraftKey.clazz()));
+        this.value = new MinecraftKey((Object) accessor.readField(1, MinecraftKey.clazz()));
     }
 
     public String toString() {
@@ -46,9 +49,10 @@ public class ResourceKey<T> implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getResourceKeyClass(), ClassAccessor.get().getMinecraftKeyClass(), ClassAccessor.get().getMinecraftKeyClass()),
-                this.registry.createOriginal(), this.value.createOriginal()
-        );
+        return Reflect.callConstructor(Reflect.getConstructor(clazz(), false, MinecraftKey.clazz(), MinecraftKey.clazz()), this.registry.createOriginal(), this.value.createOriginal());
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getResourceKeyClass();
     }
 }

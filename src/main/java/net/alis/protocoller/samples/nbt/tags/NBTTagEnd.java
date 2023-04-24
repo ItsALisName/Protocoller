@@ -30,6 +30,10 @@ public class NBTTagEnd extends NBTBase {
 
     @Override
     public Object toOriginal() {
-        return Reflect.classNewInstance(ClassAccessor.get().getNbtTagEndClass());
+        return Reflect.classNewInstance(clazz());
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagEndClass();
     }
 }

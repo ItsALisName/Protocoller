@@ -78,8 +78,12 @@ public class NBTTagDouble extends NBTPrimitive {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagDoubleClass(), Double.TYPE),
+                Reflect.getConstructor(clazz(), false, Double.TYPE),
                 this.data
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagDoubleClass();
     }
 }

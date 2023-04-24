@@ -13,7 +13,9 @@ public class BannedClientException extends ProtocollerException {
 
     @Override
     protected ProtocollerException changeStackTraceIfNeed(StackTraceElement[] traceElements) {
-        super.setStackTrace(traceElements);
+        if(traceElements != null && traceElements.length > 0){
+            setStackTrace(traceElements);
+        }
         return this;
     }
 

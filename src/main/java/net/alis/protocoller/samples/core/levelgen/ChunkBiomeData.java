@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.core.levelgen;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.core.ChunkCoordIntPair;
 import net.alis.protocoller.util.AccessedObject;
@@ -12,12 +13,14 @@ public class ChunkBiomeData implements ObjectSample {
     private byte[] buffer;
 
     public ChunkBiomeData(Object chunkBiomeData) {
+        Utils.checkClassSupportability(clazz(), "ChunkBiomeData", false);
         AccessedObject object = new AccessedObject(chunkBiomeData);
-        this.position = new ChunkCoordIntPair((Object) object.read(0, ClassAccessor.get().getChunkCoordIntPairClass()));
-        this.buffer = object.read(0, byte[].class);
+        this.position = new ChunkCoordIntPair((Object) object.readField(0, ChunkCoordIntPair.clazz()));
+        this.buffer = object.readField(0, byte[].class);
     }
 
     public ChunkBiomeData(ChunkCoordIntPair pos, byte[] buffer) {
+        Utils.checkClassSupportability(clazz(), "ChunkBiomeData", false);
         this.position = pos;
         this.buffer = buffer;
     }
@@ -41,8 +44,13 @@ public class ChunkBiomeData implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getChunkBiomeDataClass(), ClassAccessor.get().getChunkCoordIntPairClass(), byte[].class),
+                Reflect.getConstructor(clazz(), false, ChunkCoordIntPair.clazz(), byte[].class),
                 this.position.createOriginal(), this.buffer
         );
     }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getChunkBiomeDataClass();
+    }
+
 }

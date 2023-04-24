@@ -1,8 +1,9 @@
 package net.alis.protocoller.samples.entity;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
-import net.md_5.bungee.chat.ComponentSerializer;
+import libraries.net.md_5.bungee.chat.ComponentSerializer;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 
 public enum MainHand {
@@ -36,6 +37,7 @@ public enum MainHand {
     }
 
     public static MainHand getById(int id) {
+        Utils.checkClassSupportability(clazz(), "MainHand", false);
         for(MainHand hand : values()) {
             if(hand.id == id) return hand;
         }
@@ -43,6 +45,11 @@ public enum MainHand {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getMainHandEnum(), this.id);
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getMainHandEnum();
     }
 }

@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -19,6 +20,7 @@ public class PacketPlayInSetCreativeSlot implements PlayInPacket {
     private ItemStack itemStack;
 
     public PacketPlayInSetCreativeSlot(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.slot = packetData.readInt(0);
@@ -26,8 +28,9 @@ public class PacketPlayInSetCreativeSlot implements PlayInPacket {
     }
 
     public PacketPlayInSetCreativeSlot(int slot, ItemStack itemStack) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                     new IndexedParam<>(slot, 0),

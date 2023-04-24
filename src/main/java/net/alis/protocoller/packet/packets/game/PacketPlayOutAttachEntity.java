@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -19,9 +20,10 @@ public class PacketPlayOutAttachEntity implements PlayOutPacket {
     private int attachedEntityId;
     private int holdingEntityId;
 
-    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9);
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_9);
 
     public PacketPlayOutAttachEntity(PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(legacyPacket) {
@@ -34,20 +36,21 @@ public class PacketPlayOutAttachEntity implements PlayOutPacket {
     }
 
     public PacketPlayOutAttachEntity(int attachedEntityId, int holdingEntityId) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder builder = PacketBuilder.get(getPacketType());
-        switch (builder.getConstructorIndicator().getLevel()) {
+        switch (builder.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null,
                         1,
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(attachedEntityId)),
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(holdingEntityId))
+                        MinecraftReflection.getMinecraftEntity(IProtocolAccess.get().getServer().getEntityList().getEntity(attachedEntityId)),
+                        MinecraftReflection.getMinecraftEntity(IProtocolAccess.get().getServer().getEntityList().getEntity(holdingEntityId))
                 ));
                 break;
             }
             case 2: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null,
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(attachedEntityId)),
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(holdingEntityId))
+                        MinecraftReflection.getMinecraftEntity(IProtocolAccess.get().getServer().getEntityList().getEntity(attachedEntityId)),
+                        MinecraftReflection.getMinecraftEntity(IProtocolAccess.get().getServer().getEntityList().getEntity(holdingEntityId))
                 ));
                 break;
             }
@@ -93,12 +96,12 @@ public class PacketPlayOutAttachEntity implements PlayOutPacket {
 
     @Nullable
     public Entity getAttachedEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.attachedEntityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.attachedEntityId);
     }
 
     @Nullable
     public Entity getHoldingEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.holdingEntityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.holdingEntityId);
     }
 
     @Override

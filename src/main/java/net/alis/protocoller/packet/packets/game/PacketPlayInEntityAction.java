@@ -1,10 +1,11 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -23,6 +24,7 @@ public class PacketPlayInEntityAction implements PlayInPacket {
     private int mountJumpHeight;
 
     public PacketPlayInEntityAction(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
@@ -31,8 +33,9 @@ public class PacketPlayInEntityAction implements PlayInPacket {
     }
 
     public PacketPlayInEntityAction(int entityId, PlayerAction action, int mountJumpHeight) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                         new IndexedParam<>(entityId, 0),
@@ -44,7 +47,7 @@ public class PacketPlayInEntityAction implements PlayInPacket {
             }
             case 1: {
                 this.packetData = new PacketDataSerializer(creator.buildPacket(null,
-                        MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(entityId)),
+                        MinecraftReflection.getMinecraftEntity(IProtocolAccess.get().getServer().getEntityList().getEntity(entityId)),
                         action.original(),
                         mountJumpHeight
                 ));
@@ -66,7 +69,7 @@ public class PacketPlayInEntityAction implements PlayInPacket {
     }
 
     public Entity getEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public void setEntityId(int entityId) {

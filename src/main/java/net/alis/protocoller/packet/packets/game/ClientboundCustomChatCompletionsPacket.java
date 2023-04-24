@@ -5,9 +5,11 @@ import net.alis.protocoller.packet.PacketDataContainer;
 import net.alis.protocoller.packet.PacketType;
 import net.alis.protocoller.packet.type.PlayOutPacket;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,12 +22,15 @@ public class ClientboundCustomChatCompletionsPacket implements PlayOutPacket {
     private List<String> list;
 
     public ClientboundCustomChatCompletionsPacket(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        PacketUtils.checkPacketCompatibility(packetData.getType(), getPacketType());
         this.packetData = packetData;
         this.action = Action.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getChatCompletionsActionEnum()).ordinal());
         this.list = (List<String>) packetData.readList(0);
     }
 
     public ClientboundCustomChatCompletionsPacket(@NotNull Action action, List<String> list) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, action.original(), list));
         this.action = action;
         this.list = list;

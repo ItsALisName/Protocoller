@@ -1,7 +1,8 @@
 package net.alis.protocoller.packet.packets.login;
 
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -21,9 +22,10 @@ public class PacketLoginInStart implements LoginInPacket {
     private final PacketBuilder converter = PacketBuilder.get(getPacketType());
 
     public PacketLoginInStart(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(converter.getConstructorIndicator().getLevel() == 2) {
+        if(converter.getPacketLevel().getLevel() == 2) {
             this.gameProfile = new GameProfile(((Optional<UUID>) packetData.readOptional(0)).get(), packetData.readString(0));
         } else {
             this.gameProfile = packetData.readGameProfile(0);
@@ -31,7 +33,8 @@ public class PacketLoginInStart implements LoginInPacket {
     }
 
     public PacketLoginInStart(GameProfile gameProfile) {
-        switch (converter.getConstructorIndicator().getLevel()) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(converter.buildPacket(null, gameProfile.createOriginal()));
                 break;
@@ -53,7 +56,7 @@ public class PacketLoginInStart implements LoginInPacket {
     }
 
     public void setGameProfile(GameProfile gameProfile) {
-        if(converter.getConstructorIndicator().getLevel() >= 2) {
+        if(converter.getPacketLevel().getLevel() >= 2) {
             this.packetData.writeString(0, gameProfile.getName());
             this.packetData.writeOptional(0, Optional.ofNullable(gameProfile.getId()));
         } else {

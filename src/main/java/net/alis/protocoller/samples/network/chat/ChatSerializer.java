@@ -43,7 +43,9 @@ public class ChatSerializer {
 
     @Nullable
     public static Object fromJSON(String json) {
-        return Reflect.callMethod(null, fromJson, false, json);
+        if(fromJson != null)
+            return Reflect.callMethod(null, fromJson, false, json);
+        return fromString(json);
     }
 
     @Nullable
@@ -132,14 +134,22 @@ public class ChatSerializer {
         return Reflect.callMethod(null, fromComponent, false, iChatBaseComponent);
     }
 
-    public static void init() {
-        gson = new Gson();
-        fromJson = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromJSON", ClassAccessor.get().getIChatBaseComponentClass(), true, String.class);
-        fromString$1 = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassAccessor.get().getIChatBaseComponentClass(), 1).getClass(), true, String.class, Boolean.TYPE);
-        fromString$2 = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromString", Array.newInstance(ClassAccessor.get().getIChatBaseComponentClass(), 1).getClass(), true, String.class, Boolean.TYPE, Boolean.TYPE);
-        fromComponent = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromComponent", String.class, true, ClassAccessor.get().getIChatBaseComponentClass());
+    public static Object fromJSON0(String json) {
+        return Reflect.callMethod(null, fromJSON$1, false, json);
     }
 
-    private static Method fromString$1, fromString$2, fromComponent, fromJson;
+    public static void init() {
+        gson = new Gson();
+        fromJSON$1 = Reflect.getMethod(ClassAccessor.get().getChatSerializerClass(), "b", ChatComponent.clazz(), true, String.class);
+        if(fromJSON$1 == null) {
+            fromJSON$1 = Reflect.getMethod(ClassAccessor.get().getChatSerializerClass(), "b", ClassAccessor.get().getIChatMutableComponent(), false, String.class);
+        }
+        fromJson = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromJSON", ChatComponent.clazz(), true, String.class);
+        fromString$1 = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromString", ClassAccessor.arrayOfClass(ChatComponent.clazz()), true, String.class, Boolean.TYPE);
+        fromString$2 = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromString", ClassAccessor.arrayOfClass(ChatComponent.clazz()), true, String.class, Boolean.TYPE, Boolean.TYPE);
+        fromComponent = Reflect.getMethod(ClassAccessor.get().getCraftChatMessageClass(), "fromComponent", String.class, true, ChatComponent.clazz());
+    }
+
+    private static Method fromString$1, fromString$2, fromComponent, fromJson, fromJSON$1;
     private static Gson gson;
 }

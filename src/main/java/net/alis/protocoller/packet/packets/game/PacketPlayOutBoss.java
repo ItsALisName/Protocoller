@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -26,9 +27,10 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     private @Nullable BarStyle style;
 
     public PacketPlayOutBoss(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        if(GlobalProvider.get().getServer().isLegacy()) {
+        if(IProtocolAccess.get().getServer().isLegacy()) {
             this.action = Action.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBossActionEnum()).ordinal());
             this.color = BarColor.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBarColorEnum()).ordinal());
             this.style = BarStyle.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getBarStyleEnum()).ordinal());
@@ -43,7 +45,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     }
 
     public void setAction(Action action) {
-        if(GlobalProvider.get().getServer().isLegacy()) {
+        if(IProtocolAccess.get().getServer().isLegacy()) {
             this.packetData.writeEnumConstant(0, action.original());
         }
         this.action = action;
@@ -64,7 +66,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     }
 
     public void setColor(@Nullable BarColor color) {
-        if(GlobalProvider.get().getServer().isLegacy()) this.packetData.writeEnumConstant(0, color.original());
+        if(IProtocolAccess.get().getServer().isLegacy()) this.packetData.writeEnumConstant(0, color.original());
         this.color = color;
     }
 
@@ -74,7 +76,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
     }
 
     public void setStyle(@Nullable BarStyle style) {
-        if(GlobalProvider.get().getServer().isLegacy()) this.packetData.writeEnumConstant(0, style.original());
+        if(IProtocolAccess.get().getServer().isLegacy()) this.packetData.writeEnumConstant(0, style.original());
         this.style = style;
     }
 
@@ -120,7 +122,7 @@ public class PacketPlayOutBoss implements PlayOutPacket {
         }
 
         public static Action fromModernPacket(Object action) {
-            return Action.getById(((Enum<?>) Reflect.callMethod(action, Reflect.getMethod(action.getClass(), 0, ClassAccessor.get().getBossActionEnum()), false)).ordinal());
+            return Action.getById(((Enum<?>) Reflect.callMethod(action, Reflect.getMethod(action.getClass(), 0, ClassAccessor.get().getBossActionEnum(), false), false)).ordinal());
         }
 
         public @NotNull Enum<?> original() {

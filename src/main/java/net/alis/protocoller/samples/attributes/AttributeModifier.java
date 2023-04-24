@@ -2,6 +2,7 @@ package net.alis.protocoller.samples.attributes;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.managers.LogsManager;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.nbt.NBTTagCompound;
 import net.alis.protocoller.util.AccessedObject;
@@ -18,18 +19,21 @@ public class AttributeModifier implements ObjectSample {
     private Supplier<String> nameGetter;
     private UUID uuid;
 
-    protected AttributeModifier() {}
+    protected AttributeModifier() {
+        Utils.checkClassSupportability(clazz(), "AttributeModifier", false);
+    }
 
     public AttributeModifier(UUID uuid, String name, double value, AttributeOperation operation) {
         this(uuid, () -> name, value, operation);
     }
 
     public AttributeModifier(Object original) {
+        Utils.checkClassSupportability(clazz(), "AttributeModifier", false);
         AccessedObject accessor = new AccessedObject(original);
-        this.value = accessor.read(0, double.class);
-        this.operation = AttributeOperation.getById(((Enum<?>)accessor.read(0, ClassAccessor.get().getAttributeOperationEnum())).ordinal());
-        this.nameGetter = () -> ((Supplier<String>)accessor.read(0, Supplier.class)).get();
-        this.uuid = accessor.read(0, UUID.class);
+        this.value = accessor.readField(0, double.class);
+        this.operation = AttributeOperation.getById(((Enum<?>)accessor.readField(0, ClassAccessor.get().getAttributeOperationEnum())).ordinal());
+        this.nameGetter = () -> ((Supplier<String>)accessor.readField(0, Supplier.class)).get();
+        this.uuid = accessor.readField(0, UUID.class);
     }
 
     public AttributeModifier(UUID uuid, Supplier<String> nameGetter, double value, AttributeOperation operation) {
@@ -112,8 +116,12 @@ public class AttributeModifier implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getAttributeModifierClass(), UUID.class, Supplier.class, double.class, ClassAccessor.get().getAttributeOperationEnum()),
+                Reflect.getConstructor(clazz(), false, UUID.class, Supplier.class, double.class, ClassAccessor.get().getAttributeOperationEnum()),
                 this.uuid, this.nameGetter, this.value, this.operation.original()
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getAttributeModifierClass();
     }
 }

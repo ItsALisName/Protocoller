@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.phys;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.MathHelper;
 import net.alis.protocoller.util.AccessedObject;
@@ -17,21 +18,23 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition>, ObjectS
     private int z;
 
     public BaseBlockPosition(int xIn, int yIn, int zIn) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.x = xIn;
         this.y = yIn;
         this.z = zIn;
     }
 
     public BaseBlockPosition(Object blockPosition, boolean trueLink) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         if (!trueLink) {
             this.x = Reflect.readSuperclassField(blockPosition, 0, int.class, false);
             this.y = Reflect.readSuperclassField(blockPosition, 1, int.class, false);
             this.z = Reflect.readSuperclassField(blockPosition, 2, int.class, false);
         } else {
             AccessedObject accessor = new AccessedObject(blockPosition);
-            this.x = accessor.read(0, int.class);
-            this.y = accessor.read(1, int.class);
-            this.z = accessor.read(2, int.class);
+            this.x = accessor.readField(0, int.class);
+            this.y = accessor.readField(1, int.class);
+            this.z = accessor.readField(2, int.class);
         }
     }
 
@@ -108,20 +111,21 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition>, ObjectS
     }
 
     public double distanceSq(BaseBlockPosition to) {
-        return this.distanceSq((double)to.getX(), (double)to.getY(), (double)to.getZ());
+        return this.distanceSq(to.getX(), to.getY(), to.getZ());
     }
 
     @Override
     public Object createOriginal() {
-        return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getBaseBlockPositionClass(), int.class, int.class, int.class),
-                this.x, this.y, this.z
-        );
+        return Reflect.callConstructor(Reflect.getConstructor(clazz(), false, int.class, int.class, int.class), this.x, this.y, this.z);
     }
 
     @Override
     public String toString() {
         return "BaseBlockPosition{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getBaseBlockPositionClass();
     }
 }
 

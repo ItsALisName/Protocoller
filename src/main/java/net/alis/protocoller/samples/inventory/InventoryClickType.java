@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.inventory;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 
 public enum InventoryClickType {
@@ -30,6 +31,7 @@ public enum InventoryClickType {
     }
 
     public static InventoryClickType getById(int id) {
+        Utils.checkClassSupportability(clazz(), "InventoryClickType", false);
         for(InventoryClickType clickType : values()) {
             if(clickType.id == id) return clickType;
         }
@@ -37,6 +39,11 @@ public enum InventoryClickType {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getInventoryClickTypeEnum(), this.id);
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getInventoryClickTypeEnum();
     }
 }

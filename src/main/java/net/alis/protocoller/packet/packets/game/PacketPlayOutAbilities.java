@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.managers.LogsManager;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -23,6 +24,7 @@ public class PacketPlayOutAbilities implements PlayOutPacket {
     private float walkSpeed;
 
     public PacketPlayOutAbilities(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.invulnerable = packetData.readBoolean(0);
@@ -34,6 +36,7 @@ public class PacketPlayOutAbilities implements PlayOutPacket {
     }
 
     public PacketPlayOutAbilities(boolean invulnerable, boolean flying, boolean canFly, boolean canInstantlyBuild, float flySpeed, float walkSpeed) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PlayerAbilities abilities = new PlayerAbilities(invulnerable, flying, canFly, canInstantlyBuild, true, flySpeed, walkSpeed);
         this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, abilities.createOriginal()));
         this.invulnerable = invulnerable;

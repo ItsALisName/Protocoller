@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -19,18 +20,20 @@ public class PacketPlayInAdvancements implements PlayInPacket {
 
     private final PacketDataContainer packetData;
     private Status status;
-    private MinecraftKey minecraftKey;
+    private @Nullable MinecraftKey minecraftKey;
 
     public PacketPlayInAdvancements(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.status = Status.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getAdvancementsStatusEnum()).ordinal());
         this.minecraftKey = packetData.readMinecraftKey(0);
     }
 
-    public PacketPlayInAdvancements(Status status, MinecraftKey minecraftKey) {
+    public PacketPlayInAdvancements(Status status, @Nullable MinecraftKey minecraftKey) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 0: {
                 int i = 0;
                 IndexedParam<?,?>[] params = {new IndexedParam<>(status.original(), 0), new IndexedParam<>(minecraftKey.createOriginal(), 0)};
@@ -59,6 +62,7 @@ public class PacketPlayInAdvancements implements PlayInPacket {
         this.status = status;
     }
 
+    @Nullable
     public MinecraftKey getMinecraftKey() {
         return minecraftKey;
     }

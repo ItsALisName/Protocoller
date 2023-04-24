@@ -2,8 +2,9 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -22,9 +23,10 @@ public class PacketPlayOutCommands implements PlayOutPacket {
     private @Nullable Object rootCommandNode;
     private @Nullable List<Object> rootCommands;
 
-    private boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_19);
+    private boolean legacyPacket = IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_19);
 
     public PacketPlayOutCommands(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.nodes = new ArrayList<>();
@@ -39,6 +41,9 @@ public class PacketPlayOutCommands implements PlayOutPacket {
             Map<Object, Object> nods = Reflect.readSuperclassField(this.rootCommandNode, 0, Map.class, false);
             for(Map.Entry<Object, Object> entry : nods.entrySet()) this.nodes.add((String) entry.getKey());
         }
+
+
+
     }
 
     public Collection<String> getNodes() {

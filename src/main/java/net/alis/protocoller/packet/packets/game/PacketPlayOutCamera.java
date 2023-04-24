@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -19,6 +20,7 @@ public class PacketPlayOutCamera implements PlayOutPacket {
     private int entityId;
 
     public PacketPlayOutCamera(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
@@ -31,7 +33,7 @@ public class PacketPlayOutCamera implements PlayOutPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public int getEntityId() {
@@ -39,7 +41,7 @@ public class PacketPlayOutCamera implements PlayOutPacket {
     }
 
     public void setEntityId(int entityId) {
-        if(GlobalProvider.get().getServer().getEntityList().isIdPresent(entityId)) {
+        if(IProtocolAccess.get().getServer().getEntityList().isIdPresent(entityId)) {
             this.packetData.writeInt(0, entityId);
             this.entityId = entityId;
         }

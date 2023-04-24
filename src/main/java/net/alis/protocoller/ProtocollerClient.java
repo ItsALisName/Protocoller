@@ -13,8 +13,6 @@ public interface ProtocollerClient {
 
     String getName();
 
-    boolean equals(Object object);
-
     boolean equals(ProtocollerClient client);
 
 }

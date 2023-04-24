@@ -16,8 +16,8 @@ public class RemoteStatusReply implements ObjectSample {
 
     public RemoteStatusReply(Object remStRp) {
         AccessedObject object = new AccessedObject(remStRp);
-        this.outputStream = object.read(0, ByteArrayOutputStream.class);
-        this.dataOutputStream = object.read(0, DataOutputStream.class);
+        this.outputStream = object.readField(0, ByteArrayOutputStream.class);
+        this.dataOutputStream = object.readField(0, DataOutputStream.class);
     }
 
     public RemoteStatusReply(int size) {
@@ -61,7 +61,7 @@ public class RemoteStatusReply implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getRemoteStatusReplyClass(), Integer.TYPE),
+                Reflect.getConstructor(ClassAccessor.get().getRemoteStatusReplyClass(), false, Integer.TYPE),
                 this.outputStream.size()
         );
     }

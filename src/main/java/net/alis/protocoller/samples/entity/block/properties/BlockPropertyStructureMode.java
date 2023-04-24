@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.entity.block.properties;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
 import org.jetbrains.annotations.Contract;
@@ -37,6 +38,7 @@ public enum BlockPropertyStructureMode {
 
     @Contract(pure = true)
     public static @Nullable BlockPropertyStructureMode getById(int id) {
+        Utils.checkClassSupportability(clazz(), "BlockPropertyStructureMode", false);
         for(BlockPropertyStructureMode structureMode : values()) {
             if(structureMode.id == id) return structureMode;
         }
@@ -44,7 +46,12 @@ public enum BlockPropertyStructureMode {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getBlockPropertyStructureModeEnum(), this.id);
+        Utils.checkClassSupportability(clazz(), "BlockPropertyStructureMode", false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getBlockPropertyStructureModeEnum();
     }
 
 }

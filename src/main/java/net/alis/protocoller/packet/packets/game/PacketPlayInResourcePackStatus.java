@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -22,9 +23,10 @@ public class PacketPlayInResourcePackStatus implements PlayInPacket {
     private @Nullable String decodedString;
     private ResourcePackStatus resourcePackStatus;
 
-    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_11);
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_11);
 
     public PacketPlayInResourcePackStatus(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(legacyPacket) {
@@ -36,8 +38,9 @@ public class PacketPlayInResourcePackStatus implements PlayInPacket {
     }
 
     public PacketPlayInResourcePackStatus(@Nullable String decodedString, ResourcePackStatus resourcePackStatus) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {
                         new IndexedParam<>(decodedString, 0),

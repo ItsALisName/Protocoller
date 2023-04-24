@@ -1,11 +1,11 @@
 package net.alis.protocoller.plugin.exception;
 
 import lombok.SneakyThrows;
-import net.alis.protocoller.plugin.config.ProtocollerConfig;
-import net.alis.protocoller.plugin.memory.InitialData;
+import net.alis.protocoller.plugin.config.configs.ProtocollerConfig;
+import net.alis.protocoller.plugin.memory.ApproximateData;
 import net.alis.protocoller.util.FileWorker;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
-import net.alis.protocoller.plugin.util.TaskSimplifier;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
+import net.alis.protocoller.plugin.util.ITaskAccess;
 import net.alis.protocoller.plugin.util.Utils;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
@@ -92,16 +92,20 @@ public class ExceptionBuilder {
         return new UpdaterException.Builder(showStacktrace, saveToFile, ignore);
     }
 
+    public UnsupportedObjectException.Builder getUnsupportedObjectsExceptions() {
+        return new UnsupportedObjectException.Builder(showStacktrace, saveToFile, ignore);
+    }
+
     protected static void writeExceptionFile(@NotNull Throwable e) {
-        String serverVersion = GlobalProvider.get() != null ? GlobalProvider.get().getServer().getVersion().asString() : InitialData.get().getPreVersion().asString();
-        String fileName = e.getClass().getSimpleName() + "_" + Utils.getCurrentDate(false) + "_" + Utils.getCurrentTime(true) + ".txt";
-        if(TaskSimplifier.get() != null && ProtocollerConfig.isAsyncFilesWorking()) {
-            TaskSimplifier.get().preformAsync(() -> {
+        String serverVersion = IProtocolAccess.get() != null ? IProtocolAccess.get().getServer().getVersion().asString() : ApproximateData.get().getPreVersion().asString();
+        String fileName = e.getClass().getSimpleName() + "_" + Utils.currentDate(false) + "_" + Utils.currentTime(true) + ".txt";
+        if(ITaskAccess.get() != null && ProtocollerConfig.isAsyncFilesWorking()) {
+            ITaskAccess.get().doAsync(() -> {
                 FileWorker fileWorker = new FileWorker(ExceptionBuilder.path, fileName);
                 fileWorker.startWriting()
                         .write("Exception: " + e.getClass().getName())
                         .writeNewLine()
-                        .writeNewLine("Date and time: " + Utils.getCurrentDate(true) + ", " + Utils.getCurrentTime(false))
+                        .writeNewLine("Date and time: " + Utils.currentDate(true) + ", " + Utils.currentTime(false))
                         .writeNewLine()
                         .writeNewLine("Reason: " + e.getMessage())
                         .writeNewLine()
@@ -121,7 +125,7 @@ public class ExceptionBuilder {
             fileWorker.startWriting()
                     .write("Exception: " + e.getClass().getName())
                     .writeNewLine()
-                    .writeNewLine("Date and time: " + Utils.getCurrentDate(true) + ", " + Utils.getCurrentTime(false))
+                    .writeNewLine("Date and time: " + Utils.currentDate(true) + ", " + Utils.currentTime(false))
                     .writeNewLine()
                     .writeNewLine("Reason: " + e.getMessage())
                     .writeNewLine()

@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.sounds;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public enum SoundCategory {
     private final String name;
     private final int id;
 
-    private SoundCategory(String name, int id) {
+    SoundCategory(String name, int id) {
         this.name = name;
         this.id = id;
     }
@@ -36,13 +37,19 @@ public enum SoundCategory {
 
     @Contract(pure = true)
     public static @Nullable SoundCategory getById(int id) {
+        Utils.checkClassSupportability(clazz(), "SoundCategory", false);
         for(SoundCategory s : SoundCategory.values())
             if(s.id == id) return s;
         return null;
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getSoundCategoryEnum(), this.id);
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getSoundCategoryEnum();
     }
 
 }

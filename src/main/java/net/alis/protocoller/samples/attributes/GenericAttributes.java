@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.attributes;
 
 import com.google.common.collect.Maps;
+import org.jetbrains.annotations.NotNull;
 import org.spigotmc.SpigotConfig;
 
 import java.util.Map;
@@ -34,7 +35,7 @@ public class GenericAttributes {
         HORSE_JUMP_STRENGTH = register("horse.jump_strength", (new AttributeRanged("attribute.name.horse.jump_strength", 0.7, 0.0, 2.0)).setTracked(true));
     }
 
-    private RegisteredGenericAttribute register(String id, AttributeBase attribute) {
+    private @NotNull RegisteredGenericAttribute register(String id, AttributeBase attribute) {
         RegisteredGenericAttribute genericAttribute = new RegisteredGenericAttribute(id, (AttributeRanged) attribute);
         this.access.put(id, genericAttribute);
         return genericAttribute;

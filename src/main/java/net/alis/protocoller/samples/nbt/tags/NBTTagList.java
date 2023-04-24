@@ -218,10 +218,14 @@ public class NBTTagList extends NBTBase {
 
     @Override
     public Object toOriginal() {
-        AccessedObject object = new AccessedObject(Reflect.classNewInstance(ClassAccessor.get().getNbtTagListClass()));
+        AccessedObject object = new AccessedObject(Reflect.classNewInstance(clazz()));
         List<Object> tagL = new ArrayList<>();
         for(NBTBase base : this.tagList) tagL.add(NBTUtil.readOriginalBase(base));
         object.writeSpecify(0, List.class, tagL);
-        return object.getObject();
+        return object.getOriginal();
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagListClass();
     }
 }

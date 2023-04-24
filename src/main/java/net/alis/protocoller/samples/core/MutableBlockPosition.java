@@ -3,6 +3,7 @@ package net.alis.protocoller.samples.core;
 import net.alis.protocoller.samples.phys.BaseBlockPosition;
 import net.alis.protocoller.samples.util.Direction;
 import net.alis.protocoller.samples.util.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class MutableBlockPosition extends BlockPosition {
     protected int x;
@@ -13,7 +14,7 @@ public class MutableBlockPosition extends BlockPosition {
         this(0, 0, 0);
     }
 
-    public MutableBlockPosition(BlockPosition pos) {
+    public MutableBlockPosition(@NotNull BlockPosition pos) {
         this(pos.getX(), pos.getY(), pos.getZ());
     }
 
@@ -59,7 +60,7 @@ public class MutableBlockPosition extends BlockPosition {
         return this.move(direction, 1);
     }
 
-    public MutableBlockPosition move(Direction direction, int i) {
+    public MutableBlockPosition move(@NotNull Direction direction, int i) {
         return this.setPos(this.x + direction.getStepX() * i, this.y + direction.getStepY() * i, this.z + direction.getStepZ() * i);
     }
 

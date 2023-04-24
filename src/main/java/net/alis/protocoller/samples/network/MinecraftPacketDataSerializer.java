@@ -41,7 +41,7 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     }
     
     public MinecraftPacketDataSerializer(Object originalSerializer) {
-        this.byteBuf = new AccessedObject(originalSerializer).read(0, ByteBuf.class);
+        this.byteBuf = new AccessedObject(originalSerializer).readField(0, ByteBuf.class);
     }
 
     public static int getVarIntSize(int input) {
@@ -1013,9 +1013,10 @@ public class MinecraftPacketDataSerializer extends ByteBuf {
     }
 
     public Object createOriginal() {
-        return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getPacketDataSerializerClass(), ByteBuf.class),
-                this.byteBuf
-        );
+        return Reflect.callConstructor(Reflect.getConstructor(clazz(), false, ByteBuf.class), this.byteBuf);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getPacketDataSerializerClass();
     }
 }

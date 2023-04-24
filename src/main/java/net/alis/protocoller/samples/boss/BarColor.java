@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.boss;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatFormat;
 
@@ -36,6 +37,7 @@ public enum BarColor {
     }
 
     public static BarColor getById(int id) {
+        Utils.checkClassSupportability(clazz(), "BarColor", false);
         for(BarColor color : values()) {
             if(color.id == id) return color;
         }
@@ -43,7 +45,11 @@ public enum BarColor {
     }
 
     public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getBarColorEnum(), this.id);
+        Utils.checkClassSupportability(clazz(), "BarColor", false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
     }
 
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getBarColorEnum();
+    }
 }

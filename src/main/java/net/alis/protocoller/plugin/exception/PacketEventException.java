@@ -22,7 +22,9 @@ public class PacketEventException extends ProtocollerException {
     }
 
     protected ProtocollerException changeStackTraceIfNeed(StackTraceElement[] traceElements) {
-        setStackTrace(traceElements);
+        if(traceElements != null && traceElements.length > 0){
+            setStackTrace(traceElements);
+        }
         return this;
     }
 

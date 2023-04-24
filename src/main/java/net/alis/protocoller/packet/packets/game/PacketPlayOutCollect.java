@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -20,9 +21,10 @@ public class PacketPlayOutCollect implements PlayOutPacket {
     private int collectorId;
     private int stackAmount;
 
-    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_9);
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().getVersion().lessThanOrEqualTo(Version.v1_9);
 
     public PacketPlayOutCollect(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.entityId = packetData.readInt(0);
@@ -34,8 +36,9 @@ public class PacketPlayOutCollect implements PlayOutPacket {
     }
 
     public PacketPlayOutCollect(int entityId, int collectorId, int stackAmount) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(converter.buildPacket(null, entityId, collectorId));
                 break;
@@ -74,7 +77,7 @@ public class PacketPlayOutCollect implements PlayOutPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public int getStackAmount() {

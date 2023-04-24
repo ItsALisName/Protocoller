@@ -1,6 +1,7 @@
 package net.alis.protocoller.samples.entity.block;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.DirectionTransformationO;
 import org.jetbrains.annotations.Contract;
@@ -37,6 +38,7 @@ public enum BlockRotation {
 
     @Contract(pure = true)
     public static @Nullable BlockRotation getById(int id) {
+        Utils.checkClassSupportability(clazz(), "BlockRotation", false);
         for(BlockRotation rotation : values()) {
             if(rotation.id == id) return rotation;
         }
@@ -44,6 +46,11 @@ public enum BlockRotation {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getBlockRotationEnum(), this.id);
+        Utils.checkClassSupportability(clazz(), "BlockRotation", false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getBlockRotationEnum();
     }
 }

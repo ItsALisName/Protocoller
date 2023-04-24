@@ -1,7 +1,11 @@
 package net.alis.protocoller.samples.entity.block;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum TileEntityCommandType {
     SEQUENCE(0),
@@ -18,14 +22,21 @@ public enum TileEntityCommandType {
         return id;
     }
 
-    public static TileEntityCommandType getById(int id) {
+    @Contract(pure = true)
+    public static @Nullable TileEntityCommandType getById(int id) {
+        Utils.checkClassSupportability(clazz(), "TileEntityCommandType", false);
         for(TileEntityCommandType type : values()) {
             if(type.id == id) return type;
         }
         return null;
     }
 
-    public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getTileEntityCommandTypeEnum(), this.id);
+    public @NotNull Enum<?> original() {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getTileEntityCommandTypeEnum();
     }
 }

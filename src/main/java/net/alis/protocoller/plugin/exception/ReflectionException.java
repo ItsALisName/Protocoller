@@ -68,6 +68,10 @@ public class ReflectionException extends ProtocollerException {
             return this;
         }
 
+        public CompletedException customMessage(String message) {
+            return new CompletedException(new ReflectionException(message + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
+        }
+
         public CompletedException fieldNotFound(@NotNull Class<?> type, int index, @NotNull Class<?> from) {
             return new CompletedException(new ReflectionException("Could not find field with type \"" + type.getSimpleName() + "\" at number \"" + index + "\" in class \"" + from.getName() + "\"" + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
@@ -198,6 +202,10 @@ public class ReflectionException extends ProtocollerException {
 
         public CompletedException findEnumConstantError(@NotNull Class<?> from, int id) {
             return new CompletedException(new ReflectionException("Failed to find enum constant number \"" + id + "\" from enum \"" + from.getName() + "\"" + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
+        }
+
+        public CompletedException findEnumConstantError(@NotNull Class<?> from, String name) {
+            return new CompletedException(new ReflectionException("Failed to find enum constant named \"" + name + "\" from enum \"" + from.getName() + "\"" + definedReason).mergeStackTracesIfNeed(elementsToMerge).changeStackTraceIfNeed(newStackTrace), showStackTrace, saveToFile, ignore);
         }
 
     }

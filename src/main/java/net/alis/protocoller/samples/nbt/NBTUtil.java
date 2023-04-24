@@ -157,7 +157,7 @@ public final class NBTUtil {
     }
 
     public static @Nullable NBTBase readOriginalBase(Object nbtBase) {
-        int nbtTypeId = Reflect.callMethod(nbtBase, Reflect.getMethod(nbtBase.getClass(), 0, Integer.TYPE), false);
+        int nbtTypeId = Reflect.callMethod(nbtBase, Reflect.getMethod(nbtBase.getClass(), 0, Integer.TYPE, false), false);
         switch (nbtTypeId) {
             case 0: {
                 return new NBTTagEnd();

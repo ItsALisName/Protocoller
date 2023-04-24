@@ -1,7 +1,11 @@
 package net.alis.protocoller.samples.entity.player;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum ChatVisibility {
     FULL(0, "options.chat.visibility.full"),
@@ -25,15 +29,22 @@ public enum ChatVisibility {
         return optionName;
     }
 
-    public static ChatVisibility getById(int id) {
+    @Contract(pure = true)
+    public static @Nullable ChatVisibility getById(int id) {
+        Utils.checkClassSupportability(clazz(), "ChatVisibility", false);
         for(ChatVisibility chatVisibility : values()) {
             if(chatVisibility.id == id) return chatVisibility;
         }
         return null;
     }
 
-    public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getChatVisibilityEnum(), this.id);
+    public @NotNull Enum<?> original() {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getChatVisibilityEnum();
     }
 }
 

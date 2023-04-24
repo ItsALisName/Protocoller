@@ -1,9 +1,9 @@
 package net.alis.protocoller.samples.network.chat;
 
-import com.google.common.base.Preconditions;
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.MinecraftEncryption;
 import net.alis.protocoller.util.AccessedObject;
@@ -28,25 +28,27 @@ public class MessageSignature implements ObjectSample {
 
     //For 1.19.1 and higher
     public MessageSignature(byte @NotNull [] bytes) {
-        Preconditions.checkState((bytes.length == 256), "Invalid message signature size");
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.bytes = bytes;
     }
 
     //For 1.19 and lower
     public MessageSignature(UUID uuid, Instant instant, MinecraftEncryption.SignatureData signatureData) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.uuid = uuid;
         this.instant = instant;
         this.signatureData = signatureData;
     }
 
     public MessageSignature(Object messageSignature) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(messageSignature);
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
-            this.bytes = accessor.read(0, byte[].class);
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
+            this.bytes = accessor.readField(0, byte[].class);
         } else {
-            this.uuid = accessor.read(0, UUID.class);
-            this.instant = accessor.read(0, Instant.class);
-            this.signatureData = new MinecraftEncryption.SignatureData(accessor.read(0, ClassAccessor.get().getMinecraftEncryptionSignatureDataClass()));
+            this.uuid = accessor.readField(0, UUID.class);
+            this.instant = accessor.readField(0, Instant.class);
+            this.signatureData = new MinecraftEncryption.SignatureData(accessor.readField(0, MinecraftEncryption.SignatureData.clazz()));
         }
     }
 
@@ -84,18 +86,19 @@ public class MessageSignature implements ObjectSample {
     @Override
     public Object createOriginal() {
         Object response = null;
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
-            response = Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getMessageSignatureClass(), byte[].class),
-                    (Object) this.bytes
-            );
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
+            response = Reflect.callConstructor(Reflect.getConstructor(clazz(), false, byte[].class), (Object) this.bytes);
         } else {
             response = Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getMessageSignatureClass(), UUID.class, Instant.class, ClassAccessor.get().getMinecraftEncryptionSignatureDataClass()),
+                    Reflect.getConstructor(clazz(), false, UUID.class, Instant.class, MinecraftEncryption.SignatureData.clazz()),
                     this.uuid, this.instant, this.signatureData.createOriginal()
             );
         }
         return response;
+    }
+    
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getMessageSignatureClass();
     }
 
     public static class Storage implements ObjectSample {
@@ -104,12 +107,14 @@ public class MessageSignature implements ObjectSample {
         private MessageSignature fullSignature;
 
         public Storage(Object storage) {
+            Utils.checkClassSupportability(Storage.clazz(), super.getClass().getSimpleName(), false);
             AccessedObject object = new AccessedObject(storage);
-            this.id = object.read(0, Integer.TYPE);
-            this.fullSignature = new MessageSignature((Object) object.read(0, ClassAccessor.get().getMessageSignatureClass()));
+            this.id = object.readField(0, Integer.TYPE);
+            this.fullSignature = new MessageSignature((Object) object.readField(0, MessageSignature.clazz()));
         }
 
         public Storage(int id, @Nullable MessageSignature fullSignature) {
+            Utils.checkClassSupportability(Storage.clazz(), super.getClass().getSimpleName(), false);
             this.id = id;
             this.fullSignature = fullSignature;
         }
@@ -133,9 +138,13 @@ public class MessageSignature implements ObjectSample {
         @Override
         public Object createOriginal() {
             return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getMessageSignatureStorageClass(), Integer.TYPE, ClassAccessor.get().getMessageSignatureClass()),
+                    Reflect.getConstructor(Storage.clazz(), false, Integer.TYPE, MessageSignature.clazz()),
                     this.id, this.fullSignature.createOriginal()
             );
+        }
+        
+        public static Class<?> clazz() {
+            return ClassAccessor.get().getMessageSignatureStorageClass();
         }
     }
 }

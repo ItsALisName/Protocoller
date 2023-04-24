@@ -1,8 +1,9 @@
 package net.alis.protocoller.packet.packets.login;
 
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -21,6 +22,7 @@ public class PacketLoginInEncryptionBegin implements LoginInPacket {
     private byte[] nonce;
 
     public PacketLoginInEncryptionBegin(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.publicKey = packetData.readByteArray(0);
@@ -28,10 +30,11 @@ public class PacketLoginInEncryptionBegin implements LoginInPacket {
     }
 
     public PacketLoginInEncryptionBegin(@NotNull SecretKey secretKey, PublicKey publicKey, byte[] nonce) throws Exception {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
         this.publicKey = MinecraftEncryption.readBytes(publicKey, secretKey.getEncoded());
         this.nonce = MinecraftEncryption.readBytes(publicKey, nonce);
-        if(converter.getConstructorIndicator().getLevel() > 0) {
+        if(converter.getPacketLevel().getLevel() > 0) {
             this.packetData = new PacketDataSerializer(converter.buildPacket(null, secretKey, publicKey, nonce));
         } else {
             IndexedParam<?,?>[] params = {

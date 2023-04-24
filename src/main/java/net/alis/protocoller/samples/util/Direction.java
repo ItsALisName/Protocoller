@@ -356,6 +356,10 @@ public enum Direction {
     }
 
     public @NotNull Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getDirectionEnum(), this.ordinal());
+        return Reflect.readEnumValue((Class<? extends Enum<?>>) clazz(), this.ordinal());
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getDirectionEnum();
     }
 }

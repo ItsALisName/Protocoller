@@ -89,8 +89,13 @@ public class NBTTagIntArray extends NBTBase {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagIntArrayClass(), int[].class),
+                Reflect.getConstructor(clazz(), false, int[].class),
                 this.intArray
         );
     }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagIntArrayClass();
+    }
+
 }

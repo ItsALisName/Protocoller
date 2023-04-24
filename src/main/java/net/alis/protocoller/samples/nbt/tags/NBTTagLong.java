@@ -75,8 +75,12 @@ public class NBTTagLong extends NBTPrimitive {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagLongClass(), Long.TYPE),
+                Reflect.getConstructor(clazz(), false, Long.TYPE),
                 this.data
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagLongClass();
     }
 }

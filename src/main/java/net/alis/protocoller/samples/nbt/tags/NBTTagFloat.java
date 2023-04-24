@@ -77,8 +77,12 @@ public class NBTTagFloat extends NBTPrimitive {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagFloatClass(), Float.TYPE),
+                Reflect.getConstructor(clazz(), false, Float.TYPE),
                 this.data
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagFloatClass();
     }
 }

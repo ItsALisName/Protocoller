@@ -5,6 +5,8 @@ import lombok.Setter;
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 
+import java.lang.reflect.Array;
+
 public class ClassAccessor {
 
     private @Setter @Getter Class<?>
@@ -36,8 +38,52 @@ public class ClassAccessor {
         nbtTagLongClass, nbtTagFloatClass, nbtTagDoubleClass, nbtTagByteArrayClass, nbtTagStringClass, nbtTagListClass, nbtTagIntArrayClass, nbtTagLongArrayClass,
         lightEngineClass, playerChatMessageClass, signedMessageLinkClass, chatMessageContentClass, signedMessageBodyClass, filterMaskTypeEnum, filterMaskClass,
         minecraftPacketClass, protocolDirectionEnum, remoteStatusReplyClass, remoteStatusListenerClass, remoteControlListenerClass, chatCompletionsActionEnum,
-        chatModifierClass, chatSenderClass, signedMessageBodyPackedClass;
+        chatModifierClass, chatSenderClass, signedMessageBodyPackedClass, playerInfoUpdateActionEnum, playerInfoUpdateEntryClass, remoteChatSessionDataClass,
+        profilePublicKeyClass, profilePublicKeyDataClass, remoteChatSessionClass, gamemodeEnum, worldDataClass, worldDataMutable, worldDataServerClass, spigotTickLimiterClass,
+        worldSettingsClass, chunkSectionClass, chunkProviderServer, iLightAccessClass, commandListenerWrapperClass, vector2FClass, iCommandListenerClass,
+        outgoingChatMessageClass, outgoingChatMessageDisguisedClass, outgoingChatMessagePlayerClass, chatBoundClass, signedMessageHeaderClass, chatDecorationClass, chatDecorationParameterEnum,
+        titleActionEnum, craftCommandMapClass, simpleHelpMapClass, customFunctionClass, cacheableFunctionClass, customFunctionEntryInterface, customFunctionCommandEntryClass, advancementRewardsClass,
+        criterionClass, criterionInstanceClass, criterionProgressClass;
     ClassAccessor() {
+        setCriterionProgressClass(Reflect.getNMSClass("CriterionProgress", "net.minecraft.advancements.CriterionProgress", true));
+        setCriterionInstanceClass(Reflect.getNMSClass("CriterionInstance", "net.minecraft.advancements.CriterionInstance", true));
+        setCriterionClass(Reflect.getNMSClass("Criterion", "net.minecraft.advancements.Criterion", true));
+        setAdvancementRewardsClass(Reflect.getNMSClass("AdvancementRewards", "net.minecraft.advancements.AdvancementRewards", true));
+        setCustomFunctionCommandEntryClass(Reflect.getNMSClass("CustomFunction$b", "net.minecraft.commands.CustomFunction$b", true));
+        setCustomFunctionEntryInterface(Reflect.getNMSClass("CustomFunction$c", "net.minecraft.commands.CustomFunction$c", true));
+        setCacheableFunctionClass(Reflect.getNMSClass("CustomFunction$a", "net.minecraft.commands.CustomFunction$a", true));
+        setCustomFunctionClass(Reflect.getNMSClass("CustomFunction", "net.minecraft.commands.CustomFunction", true));
+        setSimpleHelpMapClass(Reflect.getCraftBukkitClass("help.SimpleHelpMap", true));
+        setCraftCommandMapClass(Reflect.getCraftBukkitClass("command.CraftCommandMap", true));
+        setTitleActionEnum(Reflect.getLegacyNMSClass("EnumTitleAction", true));
+        if(titleActionEnum == null) {
+            setTitleActionEnum(Reflect.getLegacyNMSClass("PacketPlayOutTitle$EnumTitleAction", true));
+        }
+        setChatDecorationParameterEnum(Reflect.getNMSClass("ChatDecoration$a", "net.minecraft.network.chat.ChatDecoration$a", true));
+        setChatDecorationClass(Reflect.getNMSClass("ChatDecoration", "net.minecraft.network.chat.ChatDecoration", true));
+        setSignedMessageHeaderClass(Reflect.getNMSClass("SignedMessageHeader", "net.minecraft.network.chat.SignedMessageHeader", true));
+        setChatBoundClass(Reflect.getNMSClass("ChatMessageType$a", "net.minecraft.network.chat.ChatMessageType$a", true));
+        setOutgoingChatMessagePlayerClass(Reflect.getNMSClass("OutgoingPlayerChatMessage$b", "net.minecraft.network.chat.OutgoingPlayerChatMessage$b", true));
+        setOutgoingChatMessageDisguisedClass(Reflect.getNMSClass("OutgoingPlayerChatMessage$a", "net.minecraft.network.chat.OutgoingPlayerChatMessage$a", true));
+        setOutgoingChatMessageClass(Reflect.getNMSClass("OutgoingPlayerChatMessage", "net.minecraft.network.chat.OutgoingPlayerChatMessage", true));
+        setICommandListenerClass(Reflect.getNMSClass("ICommandListener", "net.minecraft.commands.ICommandListener", true));
+        setVector2FClass(Reflect.getNMSClass("Vec2F", "net.minecraft.world.phys.Vec2F", true));
+        setCommandListenerWrapperClass(Reflect.getNMSClass("CommandListenerWrapper", "net.minecraft.commands.CommandListenerWrapper", true));
+        setILightAccessClass(Reflect.getNMSClass("ILightAccess", "net.minecraft.world.level.chunk.ILightAccess", true));
+        setChunkProviderServer(Reflect.getNMSClass("ChunkProviderServer", "net.minecraft.server.level.ChunkProviderServer", true));
+        setChunkSectionClass(Reflect.getNMSClass("ChunkSection", "net.minecraft.world.level.chunk.ChunkSection", true));
+        setWorldSettingsClass(Reflect.getNMSClass("WorldSettings", "net.minecraft.world.level.WorldSettings", true));
+        setSpigotTickLimiterClass(Reflect.getClass("org.spigotmc.TickLimiter", true));
+        setWorldDataClass(Reflect.getNMSClass("WorldData", "net.minecraft.world.level.storage.WorldData", true));
+        setWorldDataMutable(Reflect.getNMSClass("WorldDataMutable", "net.minecraft.world.level.storage.WorldDataMutable", true));
+        setWorldDataServerClass(Reflect.getNMSClass("WorldDataServer", "net.minecraft.world.level.storage.WorldDataServer", true));
+        setGamemodeEnum(Reflect.getNMSClass("EnumGamemode", "net.minecraft.world.level.EnumGamemode", true));
+        setRemoteChatSessionClass(Reflect.getNMSClass("RemoteChatSession", "net.minecraft.network.chat.RemoteChatSession", true));
+        setProfilePublicKeyDataClass(Reflect.getNMSClass("ProfilePublicKey$a", "net.minecraft.world.entity.player.ProfilePublicKey$a", true));
+        setProfilePublicKeyClass(Reflect.getNMSClass("ProfilePublicKey", "net.minecraft.world.entity.player.ProfilePublicKey", true));
+        setRemoteChatSessionDataClass(Reflect.getNMSClass("RemoteChatSession$a", "net.minecraft.network.chat.RemoteChatSession$a", true));
+        setPlayerInfoUpdateEntryClass(Reflect.getClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket$b", true));
+        setPlayerInfoUpdateActionEnum(Reflect.getClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket$a", true));
         setSignedMessageBodyPackedClass(Reflect.getNMSClass("SignedMessageBody$a", "net.minecraft.network.chat.SignedMessageBody$a", true));
         setChatSenderClass(Reflect.getNMSClass("ChatSender", "net.minecraft.network.chat.ChatSender", true));
         setChatModifierClass(Reflect.getNMSClass("ChatModifier", "net.minecraft.network.chat.ChatModifier", true));
@@ -161,7 +207,7 @@ public class ClassAccessor {
         setCraftItemStackClass(Reflect.getCraftBukkitClass("inventory.CraftItemStack", true));
         setCraftPlayerClass(Reflect.getCraftBukkitClass("entity.CraftPlayer", true));
         setResourcePackStatusEnum(Reflect.getNMSClass("PacketPlayInResourcePackStatus$EnumResourcePackStatus", "net.minecraft.network.protocol.game.PacketPlayInResourcePackStatus$EnumResourcePackStatus", true));
-        if(InitialData.get().getPreVersion().greaterThanOrEqualTo(Version.v1_11) && InitialData.get().getPreVersion().lessThan(Version.v1_14)) {
+        if(ApproximateData.get().getPreVersion().greaterThanOrEqualTo(Version.v1_11) && ApproximateData.get().getPreVersion().lessThan(Version.v1_14)) {
             setChatVisibilityEnum(Reflect.getNMSClass("EntityHuman$EnumChatVisibility", "null", true));
         } else {
             setChatVisibilityEnum(Reflect.getNMSClass("EnumChatVisibility", "net.minecraft.world.entity.player.EnumChatVisibility", true));
@@ -236,5 +282,9 @@ public class ClassAccessor {
     }
     public static ClassAccessor get() {
         return INSTANCE;
+    }
+
+    public static Class<?> arrayOfClass(Class<?> input) {
+        return Array.newInstance(input, 1).getClass();
     }
 }

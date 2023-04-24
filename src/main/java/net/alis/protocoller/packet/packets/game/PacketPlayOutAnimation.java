@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.plugin.util.reflection.MinecraftReflection;
 import net.alis.protocoller.packet.MinecraftPacketType;
@@ -20,9 +21,10 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
     private int entityId;
     private int animationId;
 
-    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_17);
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_17);
 
     public PacketPlayOutAnimation(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         if(legacyPacket){
@@ -35,7 +37,8 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
     }
 
     public PacketPlayOutAnimation(int entityId, int animationId) {
-        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, MinecraftReflection.getMinecraftEntity(GlobalProvider.get().getServer().getEntityList().getEntity(entityId)), animationId));
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, MinecraftReflection.getMinecraftEntity(IProtocolAccess.get().getServer().getEntityList().getEntity(entityId)), animationId));
         this.entityId = entityId;
         this.animationId = animationId;
     }
@@ -49,7 +52,7 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
     }
 
     public void setEntityId(int entityId) {
-        if(GlobalProvider.get().getServer().getEntityList().isIdPresent(entityId)) {
+        if(IProtocolAccess.get().getServer().getEntityList().isIdPresent(entityId)) {
             this.packetData.writeInt(0, entityId);
             this.entityId = entityId;
         }
@@ -66,7 +69,7 @@ public class PacketPlayOutAnimation implements PlayOutPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     @Override

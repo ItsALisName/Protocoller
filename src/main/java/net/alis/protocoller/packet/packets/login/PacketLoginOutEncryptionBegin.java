@@ -1,7 +1,8 @@
 package net.alis.protocoller.packet.packets.login;
 
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -21,10 +22,11 @@ public class PacketLoginOutEncryptionBegin implements LoginOutPacket {
     private final PacketBuilder converter = PacketBuilder.get(getPacketType());
 
     public PacketLoginOutEncryptionBegin(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.serverId = packetData.readString(0);
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.publicKey = packetData.readPublicKey(0).getEncoded();
                 this.nonce = packetData.readByteArray(0);
@@ -39,7 +41,8 @@ public class PacketLoginOutEncryptionBegin implements LoginOutPacket {
     }
 
     public PacketLoginOutEncryptionBegin(String serverId, byte[] publicKey, byte[] nonce) throws Exception {
-        switch (converter.getConstructorIndicator().getLevel()) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(converter.buildPacket(null, serverId, MinecraftEncryption.getPublicKey(publicKey), nonce));
                 break;
@@ -56,7 +59,7 @@ public class PacketLoginOutEncryptionBegin implements LoginOutPacket {
     }
 
     public PacketLoginOutEncryptionBegin(String serverId, PublicKey publicKey, byte[] nonce) {
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(converter.buildPacket(null, serverId, publicKey, nonce));
                 break;
@@ -90,7 +93,7 @@ public class PacketLoginOutEncryptionBegin implements LoginOutPacket {
     }
 
     public void setPublicKey(byte[] publicKey) throws Exception {
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData.writeObject(0, MinecraftEncryption.getPublicKey(publicKey));
                 break;
@@ -104,7 +107,7 @@ public class PacketLoginOutEncryptionBegin implements LoginOutPacket {
     }
 
     public void setPublicKey(PublicKey key) {
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData.writeObject(0, key);
                 break;
@@ -118,7 +121,7 @@ public class PacketLoginOutEncryptionBegin implements LoginOutPacket {
     }
 
     public void setNonce(byte[] nonce) {
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 1: this.packetData.writeByteArray(0, nonce); break;
             case 2: this.packetData.writeByteArray(1, nonce); break;
         }

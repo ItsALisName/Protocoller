@@ -1,11 +1,12 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.samples.network.chat.ChatComponent;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -23,15 +24,16 @@ public class PacketPlayInUpdateSign implements PlayInPacket {
     private BlockPosition position;
     private String[] lines;
 
-    private final boolean legacyPacket = GlobalProvider.get().getServer().getVersion().lessThan(Version.v1_9);
+    private final boolean legacyPacket = IProtocolAccess.get().getServer().getVersion().lessThan(Version.v1_9);
 
     public PacketPlayInUpdateSign(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
         this.lines = new String[4];
         if(legacyPacket) {
-            Object[] components = packetData.readObject(0, Array.newInstance(ClassAccessor.get().getIChatBaseComponentClass(), 1).getClass());
+            Object[] components = packetData.readObject(0, Array.newInstance(ChatComponent.clazz(), 1).getClass());
             if(components.length > 0){
                 for (int i = 0; i < 4; i++) {
                     if(components[i] != null){
@@ -48,8 +50,9 @@ public class PacketPlayInUpdateSign implements PlayInPacket {
     }
 
     public PacketPlayInUpdateSign(BlockPosition position, String[] lines) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
                 if(legacyPacket) {

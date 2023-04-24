@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -31,8 +32,9 @@ public class PacketPlayInSettings implements PlayInPacket {
     private final PacketBuilder creator = PacketBuilder.get(getPacketType());
 
     public PacketPlayInSettings(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 this.packetData = packetData;
                 this.language = packetData.readString(0);
@@ -40,7 +42,7 @@ public class PacketPlayInSettings implements PlayInPacket {
                 this.chatVisibility = ChatVisibility.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getChatVisibilityEnum()).ordinal());
                 this.chatColors = packetData.readBoolean(0);
                 this.modelBitMask = packetData.readInt(1);
-                if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
+                if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
                     this.mainArm = MainHand.getById(packetData.readEnumConstant(0, (Class<? extends Enum<?>>) ClassAccessor.get().getMainHandEnum()).ordinal());
                 } else {
                     this.mainArm = MainHand.RIGHT;
@@ -81,10 +83,11 @@ public class PacketPlayInSettings implements PlayInPacket {
     }
 
     public PacketPlayInSettings(String language, int viewDistance, ChatVisibility chatVisibility, boolean chatColors, int modelBitMask, MainHand mainArm, boolean filterText, boolean decodedBoolean) {
-        switch (creator.getConstructorIndicator().getLevel()) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
+                if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_9)) {
                     params = new IndexedParam[]{
                             new IndexedParam<>(language, 0),
                             new IndexedParam<>(viewDistance, 0),
@@ -142,7 +145,7 @@ public class PacketPlayInSettings implements PlayInPacket {
     }
 
     public void setViewDistance(int viewDistance) {
-        if(creator.getConstructorIndicator().getLevel() == 1) {
+        if(creator.getPacketLevel().getLevel() == 1) {
             this.packetData.writeInt(1, viewDistance);
         } else {
             this.packetData.writeInt(0, viewDistance);
@@ -173,7 +176,7 @@ public class PacketPlayInSettings implements PlayInPacket {
     }
 
     public void setModelBitMask(int modelBitMask) {
-        if(creator.getConstructorIndicator().getLevel() == 1) {
+        if(creator.getPacketLevel().getLevel() == 1) {
             this.packetData.writeInt(2, modelBitMask);
         } else {
             this.packetData.writeInt(1, modelBitMask);
@@ -187,7 +190,7 @@ public class PacketPlayInSettings implements PlayInPacket {
     }
 
     public void setMainArm(@Nullable MainHand mainArm) {
-        if(creator.getConstructorIndicator().getLevel() >= 1) {
+        if(creator.getPacketLevel().getLevel() >= 1) {
             this.packetData.writeEnumConstant(0, mainArm.original());
         }
         this.mainArm = mainArm;
@@ -198,7 +201,7 @@ public class PacketPlayInSettings implements PlayInPacket {
     }
 
     public void setFilterText(boolean filterText) {
-        if(creator.getConstructorIndicator().getLevel() >= 1) {
+        if(creator.getPacketLevel().getLevel() >= 1) {
             this.packetData.writeBoolean(1, filterText);
         }
         this.filterText = filterText;
@@ -209,7 +212,7 @@ public class PacketPlayInSettings implements PlayInPacket {
     }
 
     public void setDecodedBoolean(boolean decodedBoolean) {
-        if(creator.getConstructorIndicator().getLevel() >= 2) {
+        if(creator.getPacketLevel().getLevel() >= 2) {
             this.packetData.writeBoolean(2, decodedBoolean);
         }
         this.decodedBoolean = decodedBoolean;

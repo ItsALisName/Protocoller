@@ -75,8 +75,12 @@ public class NBTTagInt extends NBTPrimitive {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagIntClass(), Integer.TYPE),
+                Reflect.getConstructor(clazz(), false, Integer.TYPE),
                 this.data
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagIntClass();
     }
 }

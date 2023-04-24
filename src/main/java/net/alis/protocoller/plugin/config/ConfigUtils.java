@@ -38,7 +38,7 @@ public class ConfigUtils {
             plugin.saveResource("general.yml", force);
     }
 
-    protected static @Nullable String getConfigVersion(FileConfiguration config) {
+    public static @Nullable String getConfigVersion(FileConfiguration config) {
         try {
             return getIfNotNull(config, "config-version", String.class);
         } catch (Exception e) {

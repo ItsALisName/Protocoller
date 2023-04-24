@@ -82,8 +82,12 @@ public class NBTTagString extends NBTBase {
     @Override
     public Object toOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getNbtTagStringClass(), String.class),
+                Reflect.getConstructor(clazz(), false, String.class),
                 this.data
         );
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagStringClass();
     }
 }

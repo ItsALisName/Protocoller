@@ -356,10 +356,10 @@ public class NBTTagCompound extends NBTBase {
 
     public void merge(Object nbtTagCompound) {
         AccessedObject nbt = new AccessedObject(nbtTagCompound);
-        Map<String, Object> nbtMap = nbt.read(0, Map.class);
+        Map<String, Object> nbtMap = nbt.readField(0, Map.class);
         for(String s : nbtMap.keySet()) {
             Object nbtBase = nbtMap.get(s);
-            int nbtTypeId = Reflect.callMethod(nbtBase, Reflect.getMethod(nbtBase.getClass(), 0, Integer.TYPE), false);
+            int nbtTypeId = Reflect.callMethod(nbtBase, Reflect.getMethod(nbtBase.getClass(), 0, Integer.TYPE, false), false);
             if(nbtTypeId == 10){
                 if (this.hasKey(s, 10)) {
                     NBTTagCompound nbttagcompound = this.getCompoundTag(s);
@@ -379,10 +379,15 @@ public class NBTTagCompound extends NBTBase {
 
     @Override
     public Object toOriginal() {
-        AccessedObject object = new AccessedObject(Reflect.classNewInstance(ClassAccessor.get().getNbtTagCompoundClass()));
+        AccessedObject object = new AccessedObject(Reflect.classNewInstance(clazz()));
         Map<String, Object> nbtMap = new HashMap<>();
         for(Map.Entry<String, NBTBase> e : this.tagMap.entrySet()) nbtMap.put(e.getKey(), e.getValue().toOriginal());
         object.writeSpecify(0, Map.class, nbtMap);
-        return object.getObject();
+        return object.getOriginal();
     }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getNbtTagCompoundClass();
+    }
+
 }

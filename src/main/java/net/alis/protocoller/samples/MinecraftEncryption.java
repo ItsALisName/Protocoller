@@ -2,6 +2,7 @@ package net.alis.protocoller.samples;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
@@ -119,9 +120,10 @@ public class MinecraftEncryption {
         private byte[] bytes;
 
         public SignatureData(Object signatureData) {
+            Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
             AccessedObject object = new AccessedObject(signatureData);
-            this.l = object.read(0, Long.TYPE);
-            this.bytes = object.read(0, byte[].class);
+            this.l = object.readField(0, Long.TYPE);
+            this.bytes = object.readField(0, byte[].class);
         }
 
         public SignatureData(long l, byte[] bytes) {
@@ -129,11 +131,11 @@ public class MinecraftEncryption {
             this.bytes = bytes;
         }
 
-        public long getL() {
+        public long getLong() {
             return l;
         }
 
-        public void setL(long l) {
+        public void setLong(long l) {
             this.l = l;
         }
 
@@ -147,10 +149,11 @@ public class MinecraftEncryption {
 
         @Override
         public Object createOriginal() {
-            return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getMinecraftEncryptionSignatureDataClass(), Long.TYPE, byte[].class),
-                    this.l, this.bytes
-            );
+            return Reflect.callConstructor(Reflect.getConstructor(clazz(), false, Long.TYPE, byte[].class), this.l, this.bytes);
+        }
+        
+        public static Class<?> clazz() {
+            return ClassAccessor.get().getMinecraftEncryptionSignatureDataClass();
         }
     }
 

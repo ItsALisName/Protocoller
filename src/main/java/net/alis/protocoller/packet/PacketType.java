@@ -112,6 +112,7 @@ public abstract class PacketType {
             public static MinecraftPacketType OPEN_WINDOW;
             public static MinecraftPacketType OPEN_WINDOW_HORSE;
             public static MinecraftPacketType OPEN_WINDOW_MERCHANT;
+            public static MinecraftPacketType TITLE;
             public static MinecraftPacketType PLAYER_INFO;
             public static MinecraftPacketType PLAYER_LIST_HEADER_FOOTER;
             public static MinecraftPacketType POSITION;

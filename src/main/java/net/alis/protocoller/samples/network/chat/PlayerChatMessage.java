@@ -2,7 +2,7 @@ package net.alis.protocoller.samples.network.chat;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public class PlayerChatMessage implements ObjectSample {
 
+    private @NotOnAllVersions SignedMessageHeader signedMessageHeader;
     private @NotOnAllVersions SignedMessageLink link;
     private MessageSignature signature;
     private @NotOnAllVersions SignedMessageBody signedBody;
@@ -22,21 +23,27 @@ public class PlayerChatMessage implements ObjectSample {
     private @NotOnAllVersions FilterMask filterMask;
 
     public PlayerChatMessage(Object playerChatMessage) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject object = new AccessedObject(playerChatMessage);
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_1n2)) {
-            this.link = new SignedMessageLink(object.read(0, ClassAccessor.get().getSignedMessageLinkClass()));
-            this.signature = new MessageSignature((Object) object.read(0, ClassAccessor.get().getMessageSignatureClass()));
-            this.signedBody = new SignedMessageBody(object.read(0, ClassAccessor.get().getSignedMessageBodyClass()));
-            if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
-                this.unsignedContent = new ChatComponent(ChatSerializer.fromComponent(object.read(0, ClassAccessor.get().getIChatBaseComponentClass())));
-            } else {
-                this.unsignedContent = new ChatComponent(ChatSerializer.fromComponent(((Optional<?>)object.read(0, Optional.class)).get()));
-            }
-            this.filterMask = new FilterMask(object.read(0, ClassAccessor.get().getFilterMaskClass()));
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+            this.link = new SignedMessageLink(object.readField(0, SignedMessageLink.clazz()));
+            this.signature = new MessageSignature((Object) object.readField(0, MessageSignature.clazz()));
+            this.signedBody = new SignedMessageBody(object.readField(0, SignedMessageBody.clazz()));
+            this.unsignedContent = new ChatComponent(ChatSerializer.fromComponent(object.readField(0, ChatComponent.clazz())));
+        } else {
+            this.signedMessageHeader = new SignedMessageHeader(object.readField(0, SignedMessageHeader.clazz()));
+            this.signature = new MessageSignature((Object) object.readField(0, MessageSignature.clazz()));
+            this.signedBody = new SignedMessageBody(object.readField(0, SignedMessageBody.clazz()));
+            Optional<Object> unsCont = object.readField(0, Optional.class);
+            if(unsCont != null && unsCont.isPresent())
+                this.unsignedContent = new ChatComponent(ChatSerializer.fromComponent(unsCont.get()));
         }
+        this.filterMask = new FilterMask(object.readField(0, FilterMask.clazz()));
     }
 
+    // For 1.19.3 and higher
     public PlayerChatMessage(SignedMessageLink link, MessageSignature signature, SignedMessageBody signedBody, ChatComponent unsignedContent, FilterMask filterMask) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.link = link;
         this.signature = signature;
         this.signedBody = signedBody;
@@ -44,19 +51,13 @@ public class PlayerChatMessage implements ObjectSample {
         this.filterMask = filterMask;
     }
 
-    @Override
-    public Object createOriginal() {
-        if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
-            return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getPlayerChatMessageClass(), ClassAccessor.get().getSignedMessageLinkClass(), ClassAccessor.get().getMessageSignatureClass(), ClassAccessor.get().getSignedMessageBodyClass(), ClassAccessor.get().getIChatBaseComponentClass(), ClassAccessor.get().getFilterMaskClass()),
-                        this.link.createOriginal(), this.signature.createOriginal(), this.signedBody.createOriginal(), this.unsignedContent.asIChatBaseComponent(), this.filterMask.createOriginal()
-                    );
-        } else {
-            return Reflect.callConstructor(
-                    Reflect.getConstructor(ClassAccessor.get().getPlayerChatMessageClass(), ClassAccessor.get().getSignedMessageLinkClass(), ClassAccessor.get().getMessageSignatureClass(), ClassAccessor.get().getSignedMessageBodyClass(), Optional.class, ClassAccessor.get().getFilterMaskClass()),
-                    this.link.createOriginal(), this.signature.createOriginal(), this.signedBody.createOriginal(), Optional.of(this.unsignedContent.asIChatBaseComponent()), this.filterMask.createOriginal()
-            );
-        }
+    public PlayerChatMessage(SignedMessageHeader signedMessageHeader, MessageSignature messageSignature, SignedMessageBody signedMessageBody, Optional<ChatComponent> unsignedContent, FilterMask filterMask) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
+        this.signedMessageHeader = signedMessageHeader;
+        this.signature = messageSignature;
+        this.signedBody = signedMessageBody;
+        this.unsignedContent = unsignedContent.get();
+        this.filterMask = filterMask;
     }
 
     @NotOnAllVersions
@@ -110,5 +111,24 @@ public class PlayerChatMessage implements ObjectSample {
         SignedMessageBody signedmessagebody = SignedMessageBody.unsigned(content);
         SignedMessageLink signedmessagelink = SignedMessageLink.unsigned(sender);
         return new PlayerChatMessage(signedmessagelink, null, signedmessagebody, null, FilterMask.PASS_THROUGH);
+    }
+
+    @Override
+    public Object createOriginal() {
+        if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+            return Reflect.callConstructor(
+                    Reflect.getConstructor(clazz(), false, SignedMessageLink.clazz(), MessageSignature.clazz(), SignedMessageBody.clazz(), ChatComponent.clazz(), FilterMask.clazz()),
+                    this.link.createOriginal(), this.signature.createOriginal(), this.signedBody.createOriginal(), this.unsignedContent.asIChatBaseComponent(), this.filterMask.createOriginal()
+            );
+        } else {
+            return Reflect.callConstructor(
+                    Reflect.getConstructor(clazz(), false, SignedMessageHeader.clazz(), MessageSignature.clazz(), SignedMessageBody.clazz(), Optional.class, FilterMask.clazz()),
+                    this.signedMessageHeader.createOriginal(), this.signature.createOriginal(), this.signedBody.createOriginal(), Optional.of(this.unsignedContent.asIChatBaseComponent()), this.filterMask.createOriginal()
+            );
+        }
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getPlayerChatMessageClass();
     }
 }

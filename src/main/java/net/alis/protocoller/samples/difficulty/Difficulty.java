@@ -1,8 +1,11 @@
 package net.alis.protocoller.samples.difficulty;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.network.chat.ChatComponent;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum Difficulty {
@@ -23,11 +26,13 @@ public enum Difficulty {
         return this.id;
     }
 
-    public ChatComponent component() {
+    @Contract(" -> new")
+    public @NotNull ChatComponent component() {
         return new ChatComponent("options.difficulty." + this.name);
     }
 
-    public static Difficulty getById(int id) {
+    @Contract(pure = true)
+    public static @Nullable Difficulty getById(int id) {
         for (Difficulty difficulty : values()) {
             if (difficulty.id == id)
                 return difficulty;
@@ -37,6 +42,7 @@ public enum Difficulty {
 
     @Nullable
     public static Difficulty getByName(String name) {
+        Utils.checkClassSupportability(clazz(), "Difficulty", false);
         for (Difficulty difficulty : values()) {
             if (difficulty.name.equals(name))
                 return difficulty;
@@ -48,7 +54,12 @@ public enum Difficulty {
         return this.name;
     }
 
-    public Enum<?> original() {
-        return Reflect.readEnumValue((Class<? extends Enum<?>>) ClassAccessor.get().getDifficultyEnum(), this.id);
+    public @NotNull Enum<?> original() {
+        Utils.checkClassSupportability(clazz(), "Difficulty", false);
+        return Reflect.readEnumValue((Class<? extends Enum<?>>)clazz(), this.id);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getDifficultyEnum();
     }
 }

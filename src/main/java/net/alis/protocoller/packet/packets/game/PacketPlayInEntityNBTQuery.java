@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.game;
 
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -20,6 +21,7 @@ public class PacketPlayInEntityNBTQuery implements PlayInPacket {
     private int entityId;
 
     public PacketPlayInEntityNBTQuery(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.transactionId = packetData.readInt(0);
@@ -27,8 +29,9 @@ public class PacketPlayInEntityNBTQuery implements PlayInPacket {
     }
 
     public PacketPlayInEntityNBTQuery(int transactionId, int entityId) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {new IndexedParam<>(transactionId, 0), new IndexedParam<>(entityId, 1)};
                 this.packetData = new PacketDataSerializer(creator.buildPacket(params));
@@ -49,7 +52,7 @@ public class PacketPlayInEntityNBTQuery implements PlayInPacket {
 
     @Nullable
     public Entity getEntity() {
-        return GlobalProvider.get().getServer().getEntityList().getEntity(this.entityId);
+        return IProtocolAccess.get().getServer().getEntityList().getEntity(this.entityId);
     }
 
     public int getTransactionId() {

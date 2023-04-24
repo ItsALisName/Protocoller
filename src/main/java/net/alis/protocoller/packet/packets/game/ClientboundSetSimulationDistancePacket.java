@@ -1,7 +1,8 @@
 package net.alis.protocoller.packet.packets.game;
 
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -11,27 +12,29 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClientboundSetSimulationDistancePacket implements PlayOutPacket {
 
-    private final PacketDataContainer packetData;
-    private int decodedInt$0;
+    private PacketDataContainer packetData;
+    private int simulationDistance;
 
     public ClientboundSetSimulationDistancePacket(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
-        this.decodedInt$0 = packetData.readInt(0);
+        this.simulationDistance = packetData.readInt(0);
     }
 
-    public ClientboundSetSimulationDistancePacket(int decodedInt$0) {
-        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, decodedInt$0));
-        this.decodedInt$0 = decodedInt$0;
+    public ClientboundSetSimulationDistancePacket(int simulationDistance) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        this.packetData = new PacketDataSerializer(PacketBuilder.get(getPacketType()).buildPacket(null, simulationDistance));
+        this.simulationDistance = simulationDistance;
     }
 
-    public int getDecodedInt$0() {
-        return decodedInt$0;
+    public int getSimulationDistance() {
+        return simulationDistance;
     }
 
-    public void setDecodedInt$0(int decodedInt$0) {
-        this.packetData.writeInt(0, decodedInt$0);
-        this.decodedInt$0 = decodedInt$0;
+    public void setSimulationDistance(int simulationDistance) {
+        this.packetData = new ClientboundSetSimulationDistancePacket(simulationDistance).packetData;
+        this.simulationDistance = simulationDistance;
     }
 
     @Override

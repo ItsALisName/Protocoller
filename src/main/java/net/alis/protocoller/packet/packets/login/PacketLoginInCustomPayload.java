@@ -1,9 +1,10 @@
 package net.alis.protocoller.packet.packets.login;
 
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -19,6 +20,7 @@ public class PacketLoginInCustomPayload implements LoginInPacket {
     private MinecraftPacketDataSerializer originalSerializer;
 
     public PacketLoginInCustomPayload(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.queryId = packetData.readInt(0);
@@ -26,8 +28,9 @@ public class PacketLoginInCustomPayload implements LoginInPacket {
     }
 
     public PacketLoginInCustomPayload(int queryId, MinecraftPacketDataSerializer originalSerializer) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params = {new IndexedParam<>(queryId, 0), new IndexedParam<>(originalSerializer.createOriginal(), 0)};
                 this.packetData = new PacketDataSerializer(converter.buildPacket(params));
@@ -58,7 +61,7 @@ public class PacketLoginInCustomPayload implements LoginInPacket {
             return buffer;
         });
         PacketBuilder converter = PacketBuilder.get(getPacketType());
-        switch (converter.getConstructorIndicator().getLevel()) {
+        switch (converter.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?, ?>[] params = {new IndexedParam<>(this.queryId, 0), new IndexedParam<>(serializer.createOriginal(), 0)};
                 this.packetData = new PacketDataSerializer(converter.buildPacket(params));

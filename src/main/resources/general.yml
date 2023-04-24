@@ -1,12 +1,18 @@
-config-version: "0.0.4"
+config-version: "0.0.5"
 async:
   file-working: true
   update-checking: true
+  command-execution: true
 banned-plugins: []
 banned-authors: []
 listeners-registration-notify: true
 client-registration-notify: true
 save-errors: true
+replace-version-command: true
+version-command-message: "This server is running '%name%' version '%version%' (Implementing API version '%api_version%')"
+disable-reload-command: true
+replace-plugins-command: true
+commands-deny-message: "&c[Protocoller] You do not have enough permissions to execute this command!"
 bstats:
   allow-force-enable: true
   enabled: true

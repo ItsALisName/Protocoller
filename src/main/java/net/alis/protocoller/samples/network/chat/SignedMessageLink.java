@@ -17,13 +17,15 @@ public class SignedMessageLink implements ObjectSample {
     private UUID sessionId;
 
     public SignedMessageLink(Object signedMessageLink) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject object = new AccessedObject(signedMessageLink);
-        this.index = object.read(0, int.class);
-        this.sender = object.read(0, UUID.class);
-        this.sessionId = object.read(1, UUID.class);
+        this.index = object.readField(0, int.class);
+        this.sender = object.readField(0, UUID.class);
+        this.sessionId = object.readField(1, UUID.class);
     }
 
     public SignedMessageLink(int index, UUID sender, UUID sessionId) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.index = index;
         this.sender = sender;
         this.sessionId = sessionId;
@@ -70,10 +72,13 @@ public class SignedMessageLink implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getSignedMessageLinkClass(), Integer.TYPE, UUID.class, UUID.class),
+                Reflect.getConstructor(clazz(), false, Integer.TYPE, UUID.class, UUID.class),
                 this.index, this.sender, this.sessionId
         );
     }
 
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getSignedMessageLinkClass();
+    }
 
 }

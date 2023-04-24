@@ -2,9 +2,9 @@ package net.alis.protocoller.plugin.memory;
 
 import net.alis.protocoller.plugin.enums.Version;
 import net.alis.protocoller.plugin.managers.LogsManager;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketLevel;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketLevel;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketType;
 
@@ -82,7 +82,12 @@ public class PacketBuilders {
         this.addAny(PacketType.Play.Server.DAMAGE_EVENT_PACKET, PacketLevel.ClientboundDamageEventPacket_1);
         this.addAny(PacketType.Play.Server.DISGUISED_CHAT_PACKET, PacketLevel.ClientboundDisguisedChatPacket_1);
         this.addAny(PacketType.Play.Server.HURT_ANIMATION_PACKET, PacketLevel.ClientboundHurtAnimationPacket_1);
+        this.addAny(PacketType.Play.Server.LIGHT_UPDATE_PACKET_DATA, PacketLevel.ClientboundLightUpdatePacketData_1);
+        this.addAny(PacketType.Play.Server.TITLE, PacketLevel.PacketPlayOutTitle_1);
 
+        this.add(PacketType.Play.Server.UPDATE_ENABLED_FEATURES, PacketLevel.ClientboundUpdateEnabledFeaturesPacket_1, Version.v1_19_3);
+        this.add(PacketType.Play.Server.SYSTEM_CHAT_PACKET, PacketLevel.ClientboundSystemChatPacket_1, Version.v1_19);
+        this.add(PacketType.Play.Server.SYSTEM_CHAT_PACKET, PacketLevel.ClientboundSystemChatPacket_2, Version.v1_19_1n2);
         this.add(PacketType.Play.Server.PLAYER_CHAT_PACKET, PacketLevel.ClientboundPlayerChatPacket_1, Version.v1_19);
         this.add(PacketType.Play.Server.PLAYER_CHAT_PACKET, PacketLevel.ClientboundPlayerChatPacket_2, Version.v1_19_1n2);
         this.add(PacketType.Play.Server.PLAYER_CHAT_PACKET, PacketLevel.ClientboundPlayerChatPacket_3, Version.v1_19_3);
@@ -206,6 +211,11 @@ public class PacketBuilders {
         this.add(PacketType.Play.Client.CHAT, PacketLevel.PacketPlayInChat_4, Version.v1_19_3);
         this.add(PacketType.Play.Server.DELETE_CHAT_PACKET, PacketLevel.ClientboundDeleteChatPacket_1, Version.v1_19_1n2);
         this.add(PacketType.Play.Server.DELETE_CHAT_PACKET, PacketLevel.ClientboundDeleteChatPacket_2, Version.v1_19_3);
+        this.add(PacketType.Play.Server.PLAYER_INFO_UPDATE_PACKET, PacketLevel.ClientboundPlayerInfoUpdatePacket_1, Version.v1_19_3);
+        this.add(PacketType.Play.Server.SERVER_DATA_PACKET, PacketLevel.ClientboundServerDataPacket_1, Version.v1_19);
+        this.add(PacketType.Play.Server.SERVER_DATA_PACKET, PacketLevel.ClientboundServerDataPacket_2, Version.v1_19_1n2);
+        this.add(PacketType.Play.Server.SERVER_DATA_PACKET, PacketLevel.ClientboundServerDataPacket_1, Version.v1_19_3);
+        this.add(PacketType.Play.Server.SERVER_DATA_PACKET, PacketLevel.ClientboundServerDataPacket_3, Version.v1_19_4);
         LogsManager.get().getLogger().info("[*] Packet creators loaded in " + (System.currentTimeMillis() - start) + "ms.");
     }
 
@@ -213,7 +223,7 @@ public class PacketBuilders {
         PacketBuilder creator = new PacketBuilder(type, indicator, version);
         for(PacketBuilder c : this.packetBuilders) {
             if(c.equals(creator) && c.getVersion().lessThan(version)) {
-                if(version.lessThanOrEqualTo(GlobalProvider.get().getServer().getVersion())){
+                if(version.lessThanOrEqualTo(IProtocolAccess.get().getServer().getVersion())){
                     this.packetBuilders.remove(c);
                     this.packetBuilders.add(creator);
                     return;
@@ -221,7 +231,7 @@ public class PacketBuilders {
                 return;
             }
         }
-        if(version.lessThanOrEqualTo(GlobalProvider.get().getServer().getVersion())) this.packetBuilders.add(creator);
+        if(version.lessThanOrEqualTo(IProtocolAccess.get().getServer().getVersion())) this.packetBuilders.add(creator);
     }
 
     void addAny(MinecraftPacketType type, PacketLevel indicator) {

@@ -277,8 +277,13 @@ public class BlockPosition extends BaseBlockPosition implements ObjectSample {
     @Override
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getBlockPositionClass(), int.class, int.class, int.class),
+                Reflect.getConstructor(clazz(), false, int.class, int.class, int.class),
                 getX(), getY(), getZ()
         );
     }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getBlockPositionClass();
+    }
+
 }

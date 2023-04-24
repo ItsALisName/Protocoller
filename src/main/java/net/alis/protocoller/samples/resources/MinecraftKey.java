@@ -2,7 +2,8 @@ package net.alis.protocoller.samples.resources;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.exception.ExceptionBuilder;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.util.AccessedObject;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ public class MinecraftKey {
     private final String path;
 
     protected MinecraftKey(String namespace, String path, @Nullable ExtraData extraData) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         this.namespace = namespace;
         this.path = path;
     }
@@ -26,13 +28,14 @@ public class MinecraftKey {
     }
 
     public MinecraftKey(Object originalKey) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(originalKey);
-        if(GlobalProvider.get().getServer().isLegacy()) {
-            this.namespace = accessor.read(0, String.class);
-            this.path = accessor.read(1, String.class);
+        if(IProtocolAccess.get().getServer().isLegacy()) {
+            this.namespace = accessor.readField(0, String.class);
+            this.path = accessor.readField(1, String.class);
         } else {
-            this.namespace = accessor.read(2, String.class);
-            this.path = accessor.read(3, String.class);
+            this.namespace = accessor.readField(2, String.class);
+            this.path = accessor.readField(3, String.class);
         }
     }
 
@@ -131,9 +134,13 @@ public class MinecraftKey {
 
     public Object createOriginal() {
         return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getMinecraftKeyClass(), String.class, String.class),
+                Reflect.getConstructor(clazz(), false, String.class, String.class),
                 this.namespace, this.path
         );
+    }
+    
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getMinecraftKeyClass();
     }
     
 }

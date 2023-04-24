@@ -2,9 +2,10 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.util.Utils;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.*;
 import net.alis.protocoller.packet.type.PlayInPacket;
@@ -31,20 +32,21 @@ public class PacketPlayInChat implements PlayInPacket {
     private final PacketBuilder builder = PacketBuilder.get(getPacketType());
 
     public PacketPlayInChat(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.message = packetData.readString(0);
-        if(GlobalProvider.get().getServer().getVersion().equals(Version.v1_19)) {
+        if(IProtocolAccess.get().getServer().getVersion().equals(Version.v1_19)) {
             this.timestamp = packetData.readObject(0, Instant.class);
             this.data = new MinecraftEncryption.SignatureData(packetData.readObject(0, ClassAccessor.get().getMinecraftEncryptionSignatureDataClass()));
             this.flag = packetData.readBoolean(0);
-        } else if(GlobalProvider.get().getServer().getVersion().equals(Version.v1_19_1n2)) {
+        } else if(IProtocolAccess.get().getServer().getVersion().equals(Version.v1_19_1n2)) {
             this.timestamp = packetData.readObject(0, Instant.class);
             this.salt = packetData.readLong(0);
             this.signature = new MessageSignature((Object) packetData.readObject(0, ClassAccessor.get().getMessageSignatureClass()));
             this.flag = packetData.readBoolean(0);
             this.update = new LastSeenMessages.Updater(packetData.readObject(0, ClassAccessor.get().getLastSeenMessagesUpdaterClass()));
-        } else if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
+        } else if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_19_3)) {
             this.timestamp = packetData.readObject(0, Instant.class);
             this.salt = packetData.readLong(0);
             Object msgSignature = packetData.readObject(0, ClassAccessor.get().getMessageSignatureClass());
@@ -57,7 +59,8 @@ public class PacketPlayInChat implements PlayInPacket {
 
     //For 1.19.1 and 1.19.2
     public PacketPlayInChat(String message, Instant timestamp, long salt, @Nullable MessageSignature signature, boolean flag, LastSeenMessages.Updater update) {
-        switch (builder.getConstructorIndicator().getLevel()) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
+        switch (builder.getPacketLevel().getLevel()) {
             case 1: {
                 this.packetData = new PacketDataSerializer(builder.buildPacket(null, message));
                 break;
@@ -109,7 +112,7 @@ public class PacketPlayInChat implements PlayInPacket {
     }
 
     public void setMessage(String message) {
-        if(builder.getConstructorIndicator().getLevel() > 1) {
+        if(builder.getPacketLevel().getLevel() > 1) {
             this.packetData = new PacketPlayInChat(message, this.timestamp, this.salt, this.signature, this.flag, this.update).packetData;
         } else {
             this.packetData.writeString(0, message);
@@ -122,7 +125,7 @@ public class PacketPlayInChat implements PlayInPacket {
     }
 
     public void setTimestamp(@NotOnAllVersions Instant timestamp) {
-        if (builder.getConstructorIndicator().getLevel() > 1) {
+        if (builder.getPacketLevel().getLevel() > 1) {
             this.packetData = new PacketPlayInChat(this.message, timestamp, this.salt, this.signature, this.flag, this.update).packetData;
         }
     }
@@ -132,7 +135,7 @@ public class PacketPlayInChat implements PlayInPacket {
     }
 
     public void setSalt(long salt) {
-        if (builder.getConstructorIndicator().getLevel() > 1) {
+        if (builder.getPacketLevel().getLevel() > 1) {
             this.packetData = new PacketPlayInChat(this.message, this.timestamp, salt, this.signature, this.flag, this.update).packetData;
         }
     }
@@ -147,7 +150,7 @@ public class PacketPlayInChat implements PlayInPacket {
     }
 
     public void setSignature(@NotOnAllVersions MessageSignature signature) {
-        if (builder.getConstructorIndicator().getLevel() > 1) {
+        if (builder.getPacketLevel().getLevel() > 1) {
             this.packetData = new PacketPlayInChat(this.message, this.timestamp, this.salt, signature, this.flag, this.update).packetData;
         }
     }
@@ -158,7 +161,7 @@ public class PacketPlayInChat implements PlayInPacket {
     }
 
     public void setUpdate(@NotOnAllVersions LastSeenMessages.Updater update) {
-        if (builder.getConstructorIndicator().getLevel() > 1) {
+        if (builder.getPacketLevel().getLevel() > 1) {
             this.packetData = new PacketPlayInChat(this.message, this.timestamp, this.salt, this.signature, this.flag, update).packetData;
         }
     }
@@ -168,7 +171,7 @@ public class PacketPlayInChat implements PlayInPacket {
     }
 
     public void setFlag(boolean flag) {
-        if (builder.getConstructorIndicator().getLevel() > 1) {
+        if (builder.getPacketLevel().getLevel() > 1) {
             this.packetData = new PacketPlayInChat(this.message, this.timestamp, this.salt, this.signature, flag, this.update).packetData;
         }
     }

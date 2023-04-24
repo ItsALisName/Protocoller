@@ -2,10 +2,11 @@ package net.alis.protocoller.packet.packets.game;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
 import net.alis.protocoller.plugin.enums.Version;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.util.IndexedParam;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketBuilder;
-import net.alis.protocoller.plugin.v0_0_4.network.packet.PacketDataSerializer;
-import net.alis.protocoller.plugin.providers.GlobalProvider;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketBuilder;
+import net.alis.protocoller.plugin.v0_0_5.network.packet.PacketDataSerializer;
+import net.alis.protocoller.plugin.providers.IProtocolAccess;
 import net.alis.protocoller.plugin.util.PacketUtils;
 import net.alis.protocoller.packet.MinecraftPacketType;
 import net.alis.protocoller.packet.PacketDataContainer;
@@ -28,9 +29,10 @@ public class PacketPlayInSetJigsaw implements PlayInPacket {
     private String finalState;
     private @Nullable TileEntityJigsawJointType jointType;
     
-    private final boolean modernPacket = GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16);
+    private final boolean modernPacket = IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16);
 
     public PacketPlayInSetJigsaw(@NotNull PacketDataContainer packetData) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketUtils.checkPacketCompatibility(packetData.getType(), this.getPacketType());
         this.packetData = packetData;
         this.position = packetData.readBlockPosition(0);
@@ -47,11 +49,12 @@ public class PacketPlayInSetJigsaw implements PlayInPacket {
     }
 
     public PacketPlayInSetJigsaw(BlockPosition position, MinecraftKey name, MinecraftKey target, @Nullable MinecraftKey pool, String finalState, @Nullable TileEntityJigsawJointType jointType) {
+        Utils.checkClassSupportability(getPacketType().getPacketClass(), getPacketType().getPacketName(), true);
         PacketBuilder creator = PacketBuilder.get(getPacketType());
-        switch (creator.getConstructorIndicator().getLevel()) {
+        switch (creator.getPacketLevel().getLevel()) {
             case 0: {
                 IndexedParam<?,?>[] params;
-                if(GlobalProvider.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
+                if(IProtocolAccess.get().getServer().getVersion().greaterThanOrEqualTo(Version.v1_16)) {
                     params = new IndexedParam[]{
                             new IndexedParam<>(position.createOriginal(), 0),
                             new IndexedParam<>(name.createOriginal(), 0),

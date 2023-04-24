@@ -1,10 +1,13 @@
 package net.alis.protocoller.samples.phys;
 
 import net.alis.protocoller.plugin.memory.ClassAccessor;
+import net.alis.protocoller.plugin.util.Utils;
 import net.alis.protocoller.plugin.util.reflection.Reflect;
 import net.alis.protocoller.samples.util.MathHelper;
 import net.alis.protocoller.util.AccessedObject;
 import net.alis.protocoller.util.ObjectSample;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Vector3D implements ObjectSample {
@@ -16,6 +19,7 @@ public class Vector3D implements ObjectSample {
     public double z;
 
     public Vector3D(double x, double y, double z) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         if (x == -0.0D) x = 0.0D;
         if (y == -0.0D) y = 0.0D;
         if (z == -0.0D) z = 0.0D;
@@ -25,10 +29,11 @@ public class Vector3D implements ObjectSample {
     }
 
     public Vector3D(Object originalVec3D) {
+        Utils.checkClassSupportability(clazz(), super.getClass().getSimpleName(), false);
         AccessedObject accessor = new AccessedObject(originalVec3D);
-        this.x = accessor.read(0, double.class);
-        this.y = accessor.read(1, double.class);
-        this.z = accessor.read(2, double.class);
+        this.x = accessor.readField(0, double.class);
+        this.y = accessor.readField(1, double.class);
+        this.z = accessor.readField(2, double.class);
     }
 
     public Vector3D subtractReverse(Vector3D vec) {
@@ -48,7 +53,7 @@ public class Vector3D implements ObjectSample {
         return new Vector3D(this.y * vec.z - this.z * vec.y, this.z * vec.x - this.x * vec.z, this.x * vec.y - this.y * vec.x);
     }
 
-    public Vector3D subtract(Vector3D vec) {
+    public Vector3D subtract(@NotNull Vector3D vec) {
         return this.subtract(vec.x, vec.y, vec.z);
     }
 
@@ -56,7 +61,7 @@ public class Vector3D implements ObjectSample {
         return this.addVector(-x, -y, -z);
     }
 
-    public Vector3D add(Vector3D vec) {
+    public Vector3D add(@NotNull Vector3D vec) {
         return this.addVector(vec.x, vec.y, vec.z);
     }
     
@@ -64,14 +69,14 @@ public class Vector3D implements ObjectSample {
         return new Vector3D(this.x + x, this.y + y, this.z + z);
     }
     
-    public double distanceTo(Vector3D vec) {
+    public double distanceTo(@NotNull Vector3D vec) {
         double d0 = vec.x - this.x;
         double d1 = vec.y - this.y;
         double d2 = vec.z - this.z;
         return (double)MathHelper.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
     }
     
-    public double squareDistanceTo(Vector3D vec) {
+    public double squareDistanceTo(@NotNull Vector3D vec) {
         double d0 = vec.x - this.x;
         double d1 = vec.y - this.y;
         double d2 = vec.z - this.z;
@@ -98,7 +103,7 @@ public class Vector3D implements ObjectSample {
     }
 
     @Nullable
-    public Vector3D getIntermediateWithXValue(Vector3D vec, double x) {
+    public Vector3D getIntermediateWithXValue(@NotNull Vector3D vec, double x) {
         double d0 = vec.x - this.x;
         double d1 = vec.y - this.y;
         double d2 = vec.z - this.z;
@@ -111,7 +116,7 @@ public class Vector3D implements ObjectSample {
     }
 
     @Nullable
-    public Vector3D getIntermediateWithYValue(Vector3D vec, double y) {
+    public Vector3D getIntermediateWithYValue(@NotNull Vector3D vec, double y) {
         double d0 = vec.x - this.x;
         double d1 = vec.y - this.y;
         double d2 = vec.z - this.z;
@@ -124,7 +129,7 @@ public class Vector3D implements ObjectSample {
     }
 
     @Nullable
-    public Vector3D getIntermediateWithZValue(Vector3D vec, double z) {
+    public Vector3D getIntermediateWithZValue(@NotNull Vector3D vec, double z) {
         double d0 = vec.x - this.x;
         double d1 = vec.y - this.y;
         double d2 = vec.z - this.z;
@@ -179,11 +184,13 @@ public class Vector3D implements ObjectSample {
         return new Vector3D(d0, d1, d2);
     }
     
-    public static Vector3D fromPitchYawVector(Vector2F vec) {
+    @Contract("_ -> new")
+    public static @NotNull Vector3D fromPitchYawVector(@NotNull Vector2F vec) {
         return fromPitchYaw(vec.x, vec.y);
     }
     
-    public static Vector3D fromPitchYaw(float fl1, float fl2) {
+    @Contract("_, _ -> new")
+    public static @NotNull Vector3D fromPitchYaw(float fl1, float fl2) {
         float f = MathHelper.cos(-fl2 * 0.017453292F - (float)Math.PI);
         float f1 = MathHelper.sin(-fl2 * 0.017453292F - (float)Math.PI);
         float f2 = -MathHelper.cos(-fl1 * 0.017453292F);
@@ -193,9 +200,10 @@ public class Vector3D implements ObjectSample {
 
     @Override
     public Object createOriginal() {
-        return Reflect.callConstructor(
-                Reflect.getConstructor(ClassAccessor.get().getVector3dClass(), double.class, double.class, double.class),
-                this.x, this.y, this.z
-        );
+        return Reflect.callConstructor(Reflect.getConstructor(clazz(), false, double.class, double.class, double.class), this.x, this.y, this.z);
+    }
+
+    public static Class<?> clazz() {
+        return ClassAccessor.get().getVector3dClass();
     }
 }
